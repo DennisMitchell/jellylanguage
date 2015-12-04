@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+
+import ast, jelly, re, sys
+
+re_atom = re.escape(''.join(jelly.atoms.keys()))
+re_hyper = re.escape(''.join(jelly.hypers.keys()))
+re_joint = re.escape(''.join(jelly.joints.keys()))
+re_over = re.escape(''.join(jelly.overs.keys()))
+re_syntax = re_atom + re_hyper + re_joint + re_over + '¶'
+re_literal = '[^' + re_syntax + ']+'
+re_atom = re_atom.join('[]')
+re_hyper = re_hyper.join('[]')
+re_joint = re_joint.join('[]')
+re_over = re_over.join('[]')
+re_hyperatom = re_atom + re_hyper + '?'
+re_jointed_atoms = re_hyperatom + '(?:' + re_joint + re_hyperatom + ')?'
+re_non_literal = re_over + '?' + re_jointed_atoms
+re_token = re.compile(re_non_literal + '|' + re_literal)
+re_non_literal = re.compile(re_non_literal)
+re_atom = re.compile(re_atom)
+re_hyper = re.compile(re_hyper)
+re_joint = re.compile(re_joint)
+re_over = re.compile(re_over)
+re_hyperatom = re.compile(re_hyperatom)
+
+char_table = ''.join(sorted(set(''.join(map(chr,range(0,127))) + re_syntax)))
+
+with open(sys.argv[2], 'rb') as file:
+  code = file.read()
+
+if 'u' in sys.argv[1]:
+	code = code.decode()
+else:
+	code = ''.join([char_table[i] for i in code])
+
+link_stack = []
+
+for line in code.split('\n'):
+	chains = []
+	for word in line.rstrip('\n').split(' '):
+		chain = []
+		for token in re_token.findall(word):
+			if re_non_literal.fullmatch(token):
+				hyperatoms = []
+				for hyperatom in re_hyperatom.findall(token):
+					atom = jelly.atoms[re_atom.match(hyperatom).group(0)]
+					sre_hyper = re_hyper.search(hyperatom)
+					hyperatoms.append(jelly.hypers[sre_hyper.group(0)](atom) if sre_hyper else atom)
+				sre_joint = re_joint.search(token)
+				jointed_atoms = jelly.joints[sre_joint.group(0)](hyperatoms) if sre_joint else hyperatoms[0]
+				sre_over = re_over.search(token)
+				overatom = jelly.overs[sre_over.group(0)](jointed_atoms) if sre_over else jointed_atoms
+				chain.append(overatom)
+			else:
+				chain.append(jelly.literal(token))
+		chains.append(chain)
+	link_stack.append(chains)
+
+args = list(map(ast.literal_eval,sys.argv[3:]))
+
+jelly.link_stack = link_stack
+
+if len(args) == 1:
+	print(jelly.monadic_link(link_stack[-1], args[0]))
+
+if len(args) == 2:
+	print(jelly.dyadic_link(link_stack[-1], args))
