@@ -1,4 +1,4 @@
-import ast, functools, helper, math, operator
+import ast, functools, helper, itertools, math, operator
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -193,6 +193,12 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: dyadic_link(link_stack[7], (x, y))
 	),
+	'a': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: x and y
+	),
 	'B': attrdict(
 		arity = 1,
 		depth = 0,
@@ -229,6 +235,12 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: -z
+	),
+	'o': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: x or y
 	),
 	'P': attrdict(
 		arity = 1,
@@ -298,6 +310,29 @@ atoms = {
 		rdepth = 0,
 		call = operator.pow
 	),
+	'&': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = operator.and_
+	),
+	'^': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = operator.xor
+	),
+	'|': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = operator.or_
+	),
+	'~': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: ~z
+	),
 	'²': attrdict(
 		arity = 1,
 		depth = 0,
@@ -311,7 +346,7 @@ atoms = {
 	'¬': attrdict(
 		arity = 1,
 		depth = 0,
-		call = lambda z: not z
+		call = operator.not_
 	),
 	'‘': attrdict(
 		arity = 1,
@@ -363,6 +398,11 @@ overs = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atom, (x, y)), z)
+	),
+	'\\': lambda atom: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(atom, (x, y))))
 	)
 }
 
