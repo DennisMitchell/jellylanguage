@@ -8,7 +8,7 @@ re_joint = re.escape(''.join(jelly.joints.keys()))
 re_over = re.escape(''.join(jelly.overs.keys()))
 re_syntax = re_atom + re_hyper + re_joint + re_over + '¶'
 re_literal = '[^' + re_syntax + ']+'
-re_atom = re_atom.join('[]')
+re_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
 re_hyper = re_hyper.join('[]')
 re_joint = re_joint.join('[]')
 re_over = re_over.join('[]')
@@ -23,7 +23,7 @@ re_joint = re.compile(re_joint)
 re_over = re.compile(re_over)
 re_hyperatom = re.compile(re_hyperatom)
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0,127))) + re_syntax)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0,128))) + re_syntax)))
 
 with open(sys.argv[2], 'rb') as file:
   code = file.read()

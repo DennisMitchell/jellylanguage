@@ -1,4 +1,4 @@
-import ast, functools, helper, itertools, math, operator
+import ast, functools, helper, itertools, math, operator, sympy
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -37,8 +37,8 @@ def monadic_link(link, arg):
 	if depth_match(link.depth, arg):
 		return link.call(arg)
 	if depth(arg) < link.depth:
-		return arg
-	return list(map(link.call, arg))
+		return monadic_link(link, [arg])
+	return [monadic_link(link, z) for z in arg]
 
 def monadic_chain(chain, arg):
 	ret = arg
@@ -71,6 +71,10 @@ def dyadic_link(link, args):
 		return monadic_link(link[1:], dyadic_chain(link[0], args))
 	if depth_match(link.ldepth, larg) and depth_match(link.rdepth, rarg):
 		return link.call(larg, rarg)
+	if depth(larg) < link.ldepth:
+		return dyadic_link(link, ([larg], rarg))
+	if depth(rarg) < link.rdepth:
+		return dyadic_link(link, (larg, [rarg]))
 	if depth(larg) - depth(rarg) < link.ldepth - link.rdepth:
 		return [dyadic_link(link, (larg, y)) for y in rarg]
 	if depth(larg) - depth(rarg) > link.ldepth - link.rdepth:
@@ -210,6 +214,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: helper.toBase(x, y)
 	),
+	'c': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: helper.div(helper.pi(x), helper.pi(x - y) * helper.pi(y))
+	),
 	'I': attrdict(
 		arity = 1,
 		depth = 1,
@@ -244,13 +254,19 @@ atoms = {
 	),
 	'P': attrdict(
 		arity = 1,
-		depth = 1,
+		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['×'], (x, y)), z, 1)
 	),
 	'R': attrdict(
 		arity = 1,
 		depth = 0,
 		call = lambda z: list(range(1, z + 1))
+	),
+	'r': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: list(range(x, y))
 	),
 	'U': attrdict(
 		arity = 1,
@@ -260,7 +276,7 @@ atoms = {
 	'!': attrdict(
 		arity = 1,
 		depth = 0,
-		call = lambda z: math.factorial(z) if type(z) == int else math.gamma(z + 1)
+		call = helper.pi
 	),
 	'=': attrdict(
 		arity = 2,
@@ -272,7 +288,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: (x if depth(x) else [x]) + (y if depth(x) else [y])
+		call = lambda x, y: (x if depth(x) else [x]) + (y if depth(y) else [y])
 	),
 	'+': attrdict(
 		arity = 2,
@@ -296,7 +312,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = operator.truediv
+		call = helper.div
 	),
 	'%': attrdict(
 		arity = 2,
@@ -385,12 +401,47 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: x
 	),
+	'¹': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: z
+	),
 	'}': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: y
-	)
+	),
+	'ÆC': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.generate.primepi
+	),
+	'ÆN': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.generate.prime
+	),
+	'Æn': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.generate.nextprime
+	),
+	'ÆP': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: int(sympy.primetest.isprime(z))
+	),
+	'Æp': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.generate.prevprime
+	),
+	'ÆR': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
+	),
 }
 
 overs = {
