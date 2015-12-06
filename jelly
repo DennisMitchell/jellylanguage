@@ -2,31 +2,33 @@
 
 import ast, jelly, re, sys
 
-re_atom = re.escape(''.join(jelly.atoms.keys()))
-re_hyper = re.escape(''.join(jelly.hypers.keys()))
-re_joint = re.escape(''.join(jelly.joints.keys()))
-re_over = re.escape(''.join(jelly.overs.keys()))
-re_syntax = re_atom + re_hyper + re_joint + re_over + '¶'
-re_literal = '[^' + re_syntax + ']+'
-re_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
-re_hyper = re_hyper.join('[]')
-re_joint = re_joint.join('[]')
-re_over = re_over.join('[]')
-re_hyperatom = re_atom + re_hyper + '?'
-re_jointed_atoms = re_hyperatom + '(?:' + re_joint + re_hyperatom + ')?'
-re_non_literal = re_over + '?' + re_jointed_atoms
-re_token = re.compile(re_non_literal + '|' + re_literal)
-re_non_literal = re.compile(re_non_literal)
-re_atom = re.compile(re_atom)
-re_hyper = re.compile(re_hyper)
-re_joint = re.compile(re_joint)
-re_over = re.compile(re_over)
-re_hyperatom = re.compile(re_hyperatom)
+str_arity = 'øµð'
+str_atom = re.escape(''.join(jelly.atoms.keys()))
+str_hyper = re.escape(''.join(jelly.hypers.keys()))
+str_joint = re.escape(''.join(jelly.joints.keys()))
+str_over = re.escape(''.join(jelly.overs.keys()))
+str_syntax = str_atom + str_hyper + str_joint + str_over + ' '
+str_literal = '[^' + str_syntax + ']+'
+str_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
+str_hyper = str_hyper.join('[]')
+str_joint = str_joint.join('[]')
+str_over = str_over.join('[]')
+str_hyperatom = str_atom + str_hyper + '?'
+str_jointed_atoms = str_hyperatom + '(?:' + str_joint + str_hyperatom + ')?'
+str_non_literal = str_over + '?' + str_jointed_atoms
+re_chain = re.compile('(?:^|[' + str_arity + '])[^' + str_arity + ']+')
+re_token = re.compile(str_non_literal + '|' + str_literal)
+re_non_literal = re.compile(str_non_literal)
+re_atom = re.compile(str_atom)
+re_hyper = re.compile(str_hyper)
+re_joint = re.compile(str_joint)
+re_over = re.compile(str_over)
+re_hyperatom = re.compile(str_hyperatom)
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0,128))) + re_syntax)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0,128))) + str_syntax)))
 
 with open(sys.argv[2], 'rb') as file:
-  code = file.read()
+	code = file.read()
 
 if 'u' in sys.argv[1]:
 	code = code.decode()
@@ -37,7 +39,10 @@ link_stack = []
 
 for line in code.split('\n'):
 	chains = []
-	for word in line.rstrip('\n').split(' '):
+	for word in re_chain.findall(line.rstrip('\n')):
+		arity = str_arity.find(word[0])
+		if arity > -1:
+			word = word[1:]
 		chain = []
 		for token in re_token.findall(word):
 			if re_non_literal.fullmatch(token):
@@ -53,15 +58,17 @@ for line in code.split('\n'):
 				chain.append(overatom)
 			else:
 				chain.append(jelly.literal(token))
-		chains.append(chain)
+		chains.append(jelly.attrdict(
+			arity = arity,
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda larg = None, rarg = None, chain = chain: jelly.variadic_chain(chain, (larg, rarg))
+		))
 	link_stack.append(chains)
-
-args = list(map(ast.literal_eval,sys.argv[3:]))
 
 jelly.link_stack = link_stack
 
-if len(args) == 1:
-	print(jelly.monadic_link(link_stack[-1], args[0]))
+args = tuple(map(ast.literal_eval,sys.argv[3:]))
 
-if len(args) == 2:
-	print(jelly.dyadic_link(link_stack[-1], args))
+print(jelly.variadic_chain(link_stack[-1], args))
