@@ -3,8 +3,9 @@
 import ast, jelly, re, sys
 
 reu_strings = '“[^”]*”'
-reu_realnum = '-?(?:[0-9]+(?:\.[0-9]*)?|(?:(?:[0-9]*\.)[0-9]+))'
-reu_complex = reu_realnum.join(['', '(?:ı', '?)?|(?:', '?ı)?', ''])
+reu_realdec = '(?:-?\d+(?:\.\d*)?|-?\d*\.\d+)'
+reu_realnum = reu_realdec.join(['(?:', '?€', '?|', ')'])
+reu_complex = reu_realnum.join(['(?:', '?ı', '?|', ')'])
 reu_literal = reu_strings + '|' + reu_complex
 reu_litlist = '\[*' + reu_literal + '(?:(?:\]*,\[*)' + reu_literal + ')*' + '\]*'
 
@@ -13,7 +14,6 @@ str_atom = re.escape(''.join(jelly.atoms.keys()))
 str_hyper = re.escape(''.join(jelly.hypers.keys()))
 str_joint = re.escape(''.join(jelly.joints.keys()))
 str_over = re.escape(''.join(jelly.overs.keys()))
-str_syntax = str_atom + str_hyper + str_joint + str_over + ' '
 str_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
 str_hyper = str_hyper.join('[]')
 str_joint = str_joint.join('[]')
@@ -22,7 +22,7 @@ str_hyperatom = str_atom + str_hyper + '?'
 str_jointed_atoms = str_hyperatom + '(?:' + str_joint + str_hyperatom + ')?'
 str_non_literal = str_over + '?' + str_jointed_atoms
 re_chain = re.compile('(?:^|[' + str_arity + '])[^' + str_arity + ']+')
-re_token = re.compile(str_non_literal + '|' + reu_litlist)
+re_token = re.compile(str_non_literal + '|' + reu_litlist, flags = re.ASCII)
 re_non_literal = re.compile(str_non_literal)
 re_atom = re.compile(str_atom)
 re_hyper = re.compile(str_hyper)
@@ -30,7 +30,7 @@ re_joint = re.compile(str_joint)
 re_over = re.compile(str_over)
 re_hyperatom = re.compile(str_hyperatom)
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0,128))) + str_syntax)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + reu_litlist + str_arity)))
 
 with open(sys.argv[2], 'rb') as file:
 	code = file.read()
@@ -62,14 +62,8 @@ for line in code.split('\n'):
 				overatom = jelly.overs[sre_over.group(0)](jointed_atoms) if sre_over else jointed_atoms
 				chain.append(overatom)
 			else:
-				chain.append(jelly.literal(token))
-		chains.append(jelly.attrdict(
-			arity = arity,
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda larg = None, rarg = None, chain = chain: jelly.variadic_chain(chain, (larg, rarg))
-		))
+				chain.append(jelly.create_literal(token))
+		chains.append(jelly.create_chain(chain, arity))
 	link_stack.append(chains)
 
 jelly.link_stack = link_stack

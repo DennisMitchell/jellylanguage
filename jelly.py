@@ -8,6 +8,21 @@ class attrdict(dict):
 def arities(links):
 	return [link.arity for link in links]
 
+def create_chain(chain, arity, depth = -1, ldepth = -1, rdepth = -1):
+	return attrdict(
+		arity = arity,
+		depth = depth,
+		ldepth = ldepth,
+		rdepth = rdepth,
+		call = lambda larg = None, rarg = None: variadic_chain(chain, (larg, rarg))
+	)
+
+def create_literal(string):
+	return attrdict(
+		arity = 0,
+		call = lambda: ast.literal_eval(string)
+	)
+
 def copy(value):
 	atoms['®'].call = lambda: value
 	return value
@@ -19,12 +34,6 @@ def depth(link):
 
 def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
-
-def literal(string):
-	return attrdict(
-		arity = 0,
-		call = lambda: ast.literal_eval(string)
-	)
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
@@ -272,13 +281,13 @@ atoms = {
 	'R': attrdict(
 		arity = 1,
 		depth = 0,
-		call = lambda z: list(range(1, z + 1))
+		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
 	),
 	'r': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: list(range(x, y))
+		call = lambda x, y: list(range(int(x), int(y) + 1) or range(int(x), int(y) - 1, -1))
 	),
 	'U': attrdict(
 		arity = 1,
@@ -460,6 +469,12 @@ atoms = {
 		depth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
 	),
+	'Æ%': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = helper.symmetric_mod
+	),
 	'Æ²': attrdict(
 		arity = 1,
 		depth = 0,
@@ -495,16 +510,16 @@ hypers = {
 }
 
 joints = {
-	'$': lambda atoms: attrdict(
+	'¤': lambda atoms: attrdict(
 		arity = 0,
 		call = lambda z: niladic_chain(atoms)
 	),
-	'€': lambda atoms: attrdict(
+	'$': lambda atoms: attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(atoms, z)
 	),
-	'£': lambda atoms: attrdict(
+	'¥': lambda atoms: attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,

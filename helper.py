@@ -30,6 +30,10 @@ def pi(number):
 		return inf if number < 0 else math.factorial(number)
 	return math.gamma(number + 1)
 
+def symmetric_mod(number, half_divisor):
+	modulus = number % (2 * half_divisor)
+	return modulus - 2 * half_divisor * (modulus > half_divisor)
+
 def toBase(integer, base):
 	digits = []
 	integer = abs(integer)
