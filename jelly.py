@@ -127,78 +127,78 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[0], (x, y))
 	),
-	'Ċ': attrdict(
+	'Ḃ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[1], z)
 	),
-	'ċ': attrdict(
+	'ḃ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[1], (x, y))
 	),
-	'Ė': attrdict(
+	'Ċ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[2], z)
 	),
-	'ė': attrdict(
+	'ċ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[2], (x, y))
 	),
-	'Ġ': attrdict(
+	'Ḋ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[3], z)
 	),
-	'ġ': attrdict(
+	'ḋ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[3], (x, y))
 	),
-	'İ': attrdict(
+	'Ė': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[4], z)
 	),
-	'ı': attrdict(
+	'ė': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[4], (x, y))
 	),
-	'Ŀ': attrdict(
+	'Ḟ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[5], z)
 	),
-	'ŀ': attrdict(
+	'ḟ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[5], (x, y))
 	),
-	'Ȯ': attrdict(
+	'Ġ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[6], z)
 	),
-	'ȯ': attrdict(
+	'ġ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[6], (x, y))
 	),
-	'Ż': attrdict(
+	'Ḣ': attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(link_stack[7], z)
 	),
-	'ż': attrdict(
+	'ḣ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
@@ -253,6 +253,11 @@ atoms = {
 		depth = 0,
 		call = lambda z: -z
 	),
+	'O': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: functools.reduce(operator.add, [[u + 1] * v for u, v in enumerate(z)])
+	),
 	'o': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -279,6 +284,12 @@ atoms = {
 		arity = 1,
 		depth = 1,
 		call = lambda z: z[::-1]
+	),
+	'x': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 1,
+		call = lambda x, y: functools.reduce(operator.add, [u * [v] for u, v in zip(x, y)])
 	),
 	'!': attrdict(
 		arity = 1,
@@ -369,7 +380,7 @@ atoms = {
 	'¬': attrdict(
 		arity = 1,
 		depth = 0,
-		call = operator.not_
+		call = lambda z: int(not z)
 	),
 	'‘': attrdict(
 		arity = 1,
@@ -449,6 +460,16 @@ atoms = {
 		depth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
 	),
+	'Æ²': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: int(helper.isqrt(z) ** 2 == z)
+	),
+	'Æ½': attrdict(
+		arity = 1,
+		depth = 0,
+		call = helper.isqrt
+	),
 }
 
 overs = {
@@ -474,12 +495,16 @@ hypers = {
 }
 
 joints = {
-	'#': lambda atoms: attrdict(
+	'$': lambda atoms: attrdict(
+		arity = 0,
+		call = lambda z: niladic_chain(atoms)
+	),
+	'€': lambda atoms: attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: monadic_chain(atoms, z)
 	),
-	'$': lambda atoms: attrdict(
+	'£': lambda atoms: attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,

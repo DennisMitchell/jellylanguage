@@ -2,13 +2,18 @@
 
 import ast, jelly, re, sys
 
+reu_strings = '“[^”]*”'
+reu_realnum = '-?(?:[0-9]+(?:\.[0-9]*)?|(?:(?:[0-9]*\.)[0-9]+))'
+reu_complex = reu_realnum.join(['', '(?:ı', '?)?|(?:', '?ı)?', ''])
+reu_literal = reu_strings + '|' + reu_complex
+reu_litlist = '\[*' + reu_literal + '(?:(?:\]*,\[*)' + reu_literal + ')*' + '\]*'
+
 str_arity = 'øµð'
 str_atom = re.escape(''.join(jelly.atoms.keys()))
 str_hyper = re.escape(''.join(jelly.hypers.keys()))
 str_joint = re.escape(''.join(jelly.joints.keys()))
 str_over = re.escape(''.join(jelly.overs.keys()))
 str_syntax = str_atom + str_hyper + str_joint + str_over + ' '
-str_literal = '[^' + str_syntax + ']+'
 str_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
 str_hyper = str_hyper.join('[]')
 str_joint = str_joint.join('[]')
@@ -17,7 +22,7 @@ str_hyperatom = str_atom + str_hyper + '?'
 str_jointed_atoms = str_hyperatom + '(?:' + str_joint + str_hyperatom + ')?'
 str_non_literal = str_over + '?' + str_jointed_atoms
 re_chain = re.compile('(?:^|[' + str_arity + '])[^' + str_arity + ']+')
-re_token = re.compile(str_non_literal + '|' + str_literal)
+re_token = re.compile(str_non_literal + '|' + reu_litlist)
 re_non_literal = re.compile(str_non_literal)
 re_atom = re.compile(str_atom)
 re_hyper = re.compile(str_hyper)

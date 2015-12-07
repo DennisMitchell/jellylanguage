@@ -17,10 +17,18 @@ def div(dividend, divisor):
 		return dividend // divisor
 	return dividend / divisor
 
-def pi(integer):
-	if type(integer) == int:
-		return inf if integer < 0 else math.factorial(integer)
-	return math.gamma(integer + 1)
+def isqrt(number):
+	a = number
+	b = (a + 1) // 2
+	while b < a:
+		a = b
+		b = (a + number // a) // 2
+	return a
+
+def pi(number):
+	if type(number) == int:
+		return inf if number < 0 else math.factorial(number)
+	return math.gamma(number + 1)
 
 def toBase(integer, base):
 	digits = []
