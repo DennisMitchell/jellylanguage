@@ -21,8 +21,9 @@ str_over = str_over.join('[]')
 str_hyperatom = str_atom + str_hyper + '?'
 str_jointed_atoms = str_hyperatom + '(?:' + str_joint + str_hyperatom + ')?'
 str_non_literal = str_over + '?' + str_jointed_atoms
+str_syntax = str_non_literal + '|' + reu_litlist
 re_chain = re.compile('(?:^|[' + str_arity + '])[^' + str_arity + ']+')
-re_token = re.compile(str_non_literal + '|' + reu_litlist, flags = re.ASCII)
+re_token = re.compile(str_syntax, flags = re.ASCII)
 re_non_literal = re.compile(str_non_literal)
 re_atom = re.compile(str_atom)
 re_hyper = re.compile(str_hyper)
@@ -30,7 +31,9 @@ re_joint = re.compile(str_joint)
 re_over = re.compile(str_over)
 re_hyperatom = re.compile(str_hyperatom)
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + reu_litlist + str_arity)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + str_syntax + str_arity)))
+
+assert(len(char_table) <= 256)
 
 with open(sys.argv[2], 'rb') as file:
 	code = file.read()
