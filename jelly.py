@@ -1,4 +1,4 @@
-import ast, functools, helper, itertools, math, operator, sympy
+import ast, fractions, functools, helper, itertools, math, operator, sympy
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -222,13 +222,29 @@ atoms = {
 	'B': attrdict(
 		arity = 1,
 		depth = 0,
-		call = lambda z: helper.toBase(z, 2)
+		call = lambda z: helper.to_base(z, 2)
+	),
+	'Ḅ': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: helper.from_base(z, 2)
 	),
 	'b': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.toBase(x, y)
+		call = lambda x, y: helper.to_base(x, y)
+	),
+	'ḅ': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 0,
+		call = lambda x, y: helper.from_base(x, y)
+	),
+	'C': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: 1 - z
 	),
 	'c': attrdict(
 		arity = 2,
@@ -236,21 +252,47 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: helper.div(helper.pi(x), helper.pi(x - y) * helper.pi(y))
 	),
+	'D': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.to_base(z, 10)
+	),
+	'Ḍ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.from_base(z, 10)
+	),
+	'g': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = fractions.gcd
+	),
+	'H': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.div(z, 2)
+	),
+	'Ḥ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: z * 2
+	),
 	'I': attrdict(
 		arity = 1,
-		depth = 1,
-		call = lambda z: helper.fromBase(z, 2)
-	),
-	'i': attrdict(
-		arity = 2,
-		ldepth = 1,
-		rdepth = 0,
-		call = lambda x, y: helper.fromBase(x, y)
+		depth = 0,
+		call = lambda z: helper.div(1, z)
 	),
 	'L': attrdict(
 		arity = 1,
 		depth = -1,
 		call = len
+	),
+	'l': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = math.log
 	),
 	'S': attrdict(
 		arity = 1,
@@ -298,18 +340,36 @@ atoms = {
 		arity = 2,
 		ldepth = 1,
 		rdepth = 1,
-		call = lambda x, y: functools.reduce(operator.add, [u * [v] for u, v in zip(x, y)])
+		call = lambda x, y: helper.rld(zip(x, y))
 	),
 	'!': attrdict(
 		arity = 1,
 		depth = 0,
 		call = helper.pi
 	),
+	'<': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = operator.lt
+	),
 	'=': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
 		call = operator.eq
+	),
+	'>': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = operator.gt
+	),
+	':': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: helper.div(x, y, True)
 	),
 	';': attrdict(
 		arity = 2,
@@ -444,6 +504,31 @@ atoms = {
 		depth = 0,
 		call = sympy.ntheory.generate.primepi
 	),
+	'ÆD': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.factor_.divisors
+	),
+	'ÆE': attrdict(
+		arity = 1,
+		depth = 0,
+		call = helper.to_exponents
+	),
+	'ÆẸ': attrdict(
+		arity = 1,
+		depth = 1,
+		call = helper.from_exponents
+	),
+	'ÆF': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: [[x, y] for x, y in sympy.ntheory.factor_.factorint(z).items()]
+	),
+	'Æf': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.rld(sympy.ntheory.factor_.factorint(z).items())
+	),
 	'ÆN': attrdict(
 		arity = 1,
 		depth = 0,
@@ -469,12 +554,6 @@ atoms = {
 		depth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
 	),
-	'Æ%': attrdict(
-		arity = 2,
-		ldepth = 0,
-		rdepth = 0,
-		call = helper.symmetric_mod
-	),
 	'Æ²': attrdict(
 		arity = 1,
 		depth = 0,
@@ -484,6 +563,12 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = helper.isqrt
+	),
+	'æ%': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = helper.symmetric_mod
 	),
 }
 
