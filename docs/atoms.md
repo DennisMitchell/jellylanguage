@@ -60,3 +60,18 @@ Symbol|Arity|Function|Note
 `{`|2|Left argument; return **x**.
 `¹`|1|Identity; retutrn **z**.
 `}`|2|Right argument; return **y**.
+`ÆC`|1|Count the primes less or equal to **z**.
+`ÆD`|1|Compute the array of **z**'s divisors.
+`ÆE`|1|Compute the array of exponents of **z**'s prime factorization.|Includes zero exponents.
+`ÆẸ`|1|Inverse of `ÆE`.
+`ÆF`|1|Compute **z**'s prime factorization as **[prime, exponent]** pairs.
+`Æf`|1|Compute the array of primes whose product is **z**.
+`ÆN`|1|Generate the **z**<sup>th</sup> prime.
+`Æn`|1|Next; generate the closest prime strictly greater than **z**.
+`ÆP`|1|Test if **z** is a prime.|Returns **1** or **0**.
+`Æp`|1|Previous; generate the closest prime strictly lesser than **z**.
+`ÆR`|1|Range; generate all primes between **2** and **z**.
+`ÆT`|1|Totient function.
+`Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
+`Æ½`|1|Compute the integer square root of **z**.
+`æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
