@@ -71,6 +71,6 @@ for line in code.split('\n'):
 
 jelly.link_stack = link_stack
 
-args = tuple(map(ast.literal_eval,sys.argv[3:]))
+args = tuple(map(ast.literal_eval, sys.argv[3:]))
 
-print(jelly.variadic_chain(link_stack[-1], args))
+print(jelly.variadic_chain(link_stack[-1], args), end = '')

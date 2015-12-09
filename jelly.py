@@ -213,6 +213,11 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(link_stack[7], (x, y))
 	),
+	'A': attrdict(
+		arity = 1,
+		depth = 0,
+		call = abs
+	),
 	'a': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -294,11 +299,6 @@ atoms = {
 		rdepth = 0,
 		call = math.log
 	),
-	'S': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['+'], (x, y)), z, 0)
-	),
 	'N': attrdict(
 		arity = 1,
 		depth = 0,
@@ -330,6 +330,16 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: list(range(int(x), int(y) + 1) or range(int(x), int(y) - 1, -1))
+	),
+	'S': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['+'], (x, y)), z, 0)
+	),
+	'Ṡ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: (z > 0) - (z < 0)
 	),
 	'U': attrdict(
 		arity = 1,
@@ -553,6 +563,11 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
+	),
+	'ÆT': attrdict(
+		arity = 1,
+		depth = 0,
+		call = sympy.ntheory.factor_.totient
 	),
 	'Æ²': attrdict(
 		arity = 1,
