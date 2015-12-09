@@ -361,19 +361,19 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = operator.lt
+		call = lambda x, y: int(x < y)
 	),
 	'=': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = operator.eq
+		call = lambda x, y: int(x == y)
 	),
 	'>': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = operator.gt
+		call = lambda x, y: int(x > y)
 	),
 	':': attrdict(
 		arity = 2,
