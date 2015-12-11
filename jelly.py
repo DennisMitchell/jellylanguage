@@ -35,6 +35,16 @@ def depth(link):
 def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
 
+def variadic_link(link, args):
+	print(link, args)
+	if link.arity == 0:
+		return niladic_link(link)
+	if link.arity == 1:
+		return monadic_link(link, args[0])
+	if link.arity == 2:
+		return dyadic_link(link, args)
+	raise hell # unimplemented
+
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
 	if len(args) == 0:
@@ -621,5 +631,12 @@ joints = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(links, (x, y))
+	),
+	'¡': lambda links: attrdict(
+		arity = max(links[0].arity, links[1].arity),
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x = None, y = None: helper.ntimes(links[0], links[1], (x, y))
 	)
 }

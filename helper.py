@@ -1,4 +1,4 @@
-import functools, math, operator, sympy
+import functools, jelly, math, operator, sympy
 
 inf = float('inf')
 
@@ -30,6 +30,12 @@ def isqrt(number):
 		a = b
 		b = (a + number // a) // 2
 	return a
+
+def ntimes(link, repetitions, args):
+	ret, rarg = args
+	for _ in range(jelly.variadic_link(repetitions, args)):
+		ret = jelly.variadic_link(link, (ret, rarg))
+	return ret
 
 def pi(number):
 	if type(number) == int:

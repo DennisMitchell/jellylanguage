@@ -24,7 +24,9 @@ def parse_word(word):
 		elif token in jelly.hypers:
 			chain.append(jelly.hypers[token](chain.pop()))
 		elif token in jelly.joints:
-			chain.append(jelly.joints[token]((chain.pop(), chain.pop)))
+			y = chain.pop()
+			x = chain.pop()
+			chain.append(jelly.joints[token]((x, y)))
 		else:
 			chain.append(jelly.create_literal(token))
 	return jelly.create_chain(chain, arity)
