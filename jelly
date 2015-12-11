@@ -1,37 +1,8 @@
 #!/usr/bin/python3
 
-import ast, jelly, re, sys
+import parser, sys
 
-reu_strings = '“[^”]*”'
-reu_realdec = '(?:-?\d+(?:\.\d*)?|-?\d*\.\d+)'
-reu_realnum = reu_realdec.join(['(?:', '?€', '?|', ')'])
-reu_complex = reu_realnum.join(['(?:', '?ı', '?|', ')'])
-reu_literal = reu_strings + '|' + reu_complex
-reu_litlist = '\[*' + reu_literal + '(?:(?:\]*,\[*)' + reu_literal + ')*' + '\]*'
-
-str_arity = 'øµð'
-str_atom = re.escape(''.join(jelly.atoms.keys()))
-str_hyper = re.escape(''.join(jelly.hypers.keys()))
-str_joint = re.escape(''.join(jelly.joints.keys()))
-str_over = re.escape(''.join(jelly.overs.keys()))
-str_atom = '(?:' + '|'.join(map(re.escape, jelly.atoms.keys())) + ')'
-str_hyper = str_hyper.join('[]')
-str_joint = str_joint.join('[]')
-str_over = str_over.join('[]')
-str_hyperatom = str_atom + str_hyper + '?'
-str_jointed_atoms = str_hyperatom + '(?:' + str_joint + str_hyperatom + ')?'
-str_non_literal = str_over + '?' + str_jointed_atoms
-str_syntax = str_non_literal + '|' + reu_litlist
-re_chain = re.compile('(?:^|[' + str_arity + '])[^' + str_arity + ']+')
-re_token = re.compile(str_syntax, flags = re.ASCII)
-re_non_literal = re.compile(str_non_literal)
-re_atom = re.compile(str_atom)
-re_hyper = re.compile(str_hyper)
-re_joint = re.compile(str_joint)
-re_over = re.compile(str_over)
-re_hyperatom = re.compile(str_hyperatom)
-
-char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + str_syntax + str_arity)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_arities + parser.str_litlist + parser.str_nonlits)))
 
 assert(len(char_table) <= 256)
 
@@ -43,34 +14,8 @@ if 'u' in sys.argv[1]:
 else:
 	code = ''.join([char_table[i] for i in code])
 
-link_stack = []
+parser.jelly.link_stack = parser.parse_code(code)
 
-for line in code.split('\n'):
-	chains = []
-	for word in re_chain.findall(line.rstrip('\n')):
-		arity = str_arity.find(word[0])
-		if arity > -1:
-			word = word[1:]
-		chain = []
-		for token in re_token.findall(word):
-			if re_non_literal.fullmatch(token):
-				hyperatoms = []
-				for hyperatom in re_hyperatom.findall(token):
-					atom = jelly.atoms[re_atom.match(hyperatom).group(0)]
-					sre_hyper = re_hyper.search(hyperatom)
-					hyperatoms.append(jelly.hypers[sre_hyper.group(0)](atom) if sre_hyper else atom)
-				sre_joint = re_joint.search(token)
-				jointed_atoms = jelly.joints[sre_joint.group(0)](hyperatoms) if sre_joint else hyperatoms[0]
-				sre_over = re_over.search(token)
-				overatom = jelly.overs[sre_over.group(0)](jointed_atoms) if sre_over else jointed_atoms
-				chain.append(overatom)
-			else:
-				chain.append(jelly.create_literal(token))
-		chains.append(jelly.create_chain(chain, arity))
-	link_stack.append(chains)
+args = tuple(map(parser.jelly.ast.literal_eval, sys.argv[3:]))
 
-jelly.link_stack = link_stack
-
-args = tuple(map(ast.literal_eval, sys.argv[3:]))
-
-print(jelly.variadic_chain(link_stack[-1], args), end = '')
+print(parser.jelly.variadic_chain(parser.jelly.link_stack[-1], args), end = '')

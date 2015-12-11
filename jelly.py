@@ -587,42 +587,39 @@ atoms = {
 	),
 }
 
-overs = {
-	'/': lambda atom: attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atom, (x, y)), z)
-	),
-	'\\': lambda atom: attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(atom, (x, y))))
-	)
-}
-
 hypers = {
-	'@': lambda atom: attrdict(
+	'@': lambda link: attrdict(
 		arity = 2,
-		ldepth = atom.rdepth,
-		rdepth = atom.ldepth,
-		call = lambda x, y: atom.call(y, x)
+		ldepth = link.rdepth,
+		rdepth = link.ldepth,
+		call = lambda x, y: link.call(y, x)
+	),
+	'/': lambda link: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), z)
+	),
+	'\\': lambda link: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
 	)
 }
 
 joints = {
-	'¤': lambda atoms: attrdict(
+	'¤': lambda links: attrdict(
 		arity = 0,
-		call = lambda z: niladic_chain(atoms)
+		call = lambda z: niladic_chain(links)
 	),
-	'$': lambda atoms: attrdict(
+	'$': lambda links: attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: monadic_chain(atoms, z)
+		call = lambda z: monadic_chain(links, z)
 	),
-	'¥': lambda atoms: attrdict(
+	'¥': lambda links: attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: dyadic_chain(atoms, (x, y))
+		call = lambda x, y: dyadic_chain(links, (x, y))
 	)
 }
