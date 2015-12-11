@@ -36,7 +36,9 @@ def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
 
 def variadic_link(link, args):
-	print(link, args)
+	if link.arity < 0:
+		args = list(filter(None.__ne__, args))
+		link.arity = len(args)
 	if link.arity == 0:
 		return niladic_link(link)
 	if link.arity == 1:
