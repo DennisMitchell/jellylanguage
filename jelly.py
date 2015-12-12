@@ -111,7 +111,7 @@ def dyadic_link(link, args):
 
 def dyadic_chain(chain, args):
 	larg, rarg = args
-	if chain[0].arity in (-1, 2):
+	if chain and chain[0].arity in (-1, 2):
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
 	else:
