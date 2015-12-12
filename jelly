@@ -16,8 +16,6 @@ if 'u' in sys.argv[1]:
 else:
 	code = ''.join([char_table[i] for i in code])
 
-parser.jelly.link_stack = parser.parse_code(code)
-
 args = tuple(map(parser.jelly.ast.literal_eval, sys.argv[3:]))
 
-print(parser.jelly.variadic_chain(parser.jelly.link_stack[-1], args), end = '')
+print(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args), end = '')

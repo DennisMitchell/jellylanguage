@@ -7,7 +7,7 @@ str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_complex + ')'
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
-str_nonlits = '|'.join(map(re.escape, list(jelly.atoms.keys()) + list(jelly.hypers.keys()) + list(jelly.joints.keys())))
+str_nonlits = '|'.join(map(re.escape, list(jelly.atoms.keys()) + list(jelly.actors.keys()) + list(jelly.hypers.keys()) + list(jelly.joints.keys())))
 str_allchar = str_arities + str_litlist + str_nonlits + '¶'
 
 regex_chain = re.compile('(?:^|[' + str_arities + '])[^' + str_arities + ']+')
@@ -15,17 +15,20 @@ regex_liter = re.compile(str_literal)
 regex_token = re.compile(str_nonlits + '|' + str_litlist, flags = re.ASCII)
 
 def parse_code(code):
-	links = []
-	for line in code.split('\n'):
-		chains = []
+	lines = code.split('\n')
+	links = [[] for line in lines]
+	for index, line in enumerate(lines):
+		chains = links[index]
 		for word in regex_chain.findall(line):
 			chain = []
 			arity = str_arities.find(word[0])
 			for token in regex_token.findall(word):
 				if token in jelly.atoms.keys():
 					chain.append(jelly.atoms[token])
+				elif token in jelly.actors:
+					chain.append(jelly.actors[token](index, links))
 				elif token in jelly.hypers:
-					chain.append(jelly.hypers[token](chain.pop()))
+					chain.append(jelly.hypers[token](chain.pop(), links))
 				elif token in jelly.joints:
 					y = chain.pop() if chain else chains.pop()
 					x = chain.pop() if chain else chains.pop()
@@ -33,7 +36,6 @@ def parse_code(code):
 				else:
 					chain.append(jelly.create_literal(regex_liter.sub(parse_literal, token)))
 			chains.append(jelly.create_chain(chain, arity))
-		links.append(chains)
 	return links
 
 def parse_literal(literal_match):

@@ -14,7 +14,7 @@ def create_chain(chain, arity, depth = -1, ldepth = -1, rdepth = -1):
 		depth = depth,
 		ldepth = ldepth,
 		rdepth = rdepth,
-		call = lambda larg = None, rarg = None: variadic_chain(chain, (larg, rarg))
+		call = lambda x = None, y = None: variadic_chain(chain, (x, y))
 	)
 
 def create_literal(string):
@@ -111,7 +111,10 @@ def dyadic_link(link, args):
 
 def dyadic_chain(chain, args):
 	larg, rarg = args
-	if chain and chain[0].arity in (-1, 2):
+	for link in chain:
+		if link.arity == -1:
+			link.arity = 2
+	if chain and chain[0].arity == 2:
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
 	else:
@@ -137,94 +140,6 @@ def dyadic_chain(chain, args):
 	return ret
 
 atoms = {
-	'Ȧ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[0], z)
-	),
-	'ȧ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[0], (x, y))
-	),
-	'Ḃ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[1], z)
-	),
-	'ḃ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[1], (x, y))
-	),
-	'Ċ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[2], z)
-	),
-	'ċ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[2], (x, y))
-	),
-	'Ḋ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[3], z)
-	),
-	'ḋ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[3], (x, y))
-	),
-	'Ė': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[4], z)
-	),
-	'ė': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[4], (x, y))
-	),
-	'Ḟ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[5], z)
-	),
-	'ḟ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[5], (x, y))
-	),
-	'Ġ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[6], z)
-	),
-	'ġ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[6], (x, y))
-	),
-	'Ḣ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(link_stack[7], z)
-	),
-	'ḣ': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(link_stack[7], (x, y))
-	),
 	'A': attrdict(
 		arity = 1,
 		depth = 0,
@@ -599,22 +514,73 @@ atoms = {
 	),
 }
 
+actors = {
+	'ß': lambda index, links: attrdict(
+		arity = -1,
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x = None, y = None: variadic_chain(links[index], (x, y))
+	),
+	'¢': lambda index, links: attrdict(
+		arity = 0,
+		call = lambda: niladic_chain(links[index - 1])
+	),
+	'Ç': lambda index, links: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: monadic_chain(links[index - 1], z)
+	),
+	'ç': lambda index, links: attrdict(
+		arity = 1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: monadic_chain(links[index - 1], (x, y))
+	),
+	'Ñ': lambda index, links: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: monadic_chain(links[(index + 1) % len(links)], z)
+	),
+	'ñ': lambda index, links: attrdict(
+		arity = 1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: monadic_chain(links[(index + 1) % len(links)], (x, y))
+	)
+}
+
 hypers = {
-	'@': lambda link: attrdict(
+	'@': lambda link, none = None: attrdict(
 		arity = 2,
 		ldepth = link.rdepth,
 		rdepth = link.ldepth,
 		call = lambda x, y: link.call(y, x)
 	),
-	'/': lambda link: attrdict(
+	'/': lambda link, none = None: attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), z)
 	),
-	'\\': lambda link: attrdict(
+	'\\': lambda link, none = None: attrdict(
 		arity = 1,
 		depth = -1,
 		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
+	),
+	'£': lambda index, links: attrdict(
+		arity = 0,
+		call = lambda: niladic_chain(links[index.call() % len(links)])
+	),
+	'Ŀ': lambda index, links: attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: monadic_chain(links[index.call() % len(links)], z)
+	),
+	'ŀ': lambda index, links: attrdict(
+		arity = 1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: monadic_chain(links[index.call() % len(links)], (x, y))
 	)
 }
 
