@@ -8,6 +8,7 @@ str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_complex + ')'
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
 str_nonlits = '|'.join(map(re.escape, list(jelly.atoms.keys()) + list(jelly.hypers.keys()) + list(jelly.joints.keys())))
+str_allchar = str_arities + str_litlist + str_nonlits + '¶'
 
 regex_chain = re.compile('(?:^|[' + str_arities + '])[^' + str_arities + ']+')
 regex_liter = re.compile(str_literal)
@@ -36,7 +37,7 @@ def parse_code(code):
 	return links
 
 def parse_literal(literal_match):
-	literal = literal_match.group(0)
+	literal = literal_match.group(0).replace('¶', '\n')
 	if '“' in literal:
 		parsed = literal.rstrip('”').split('“')[1:]
 		if len(parsed) == 1:

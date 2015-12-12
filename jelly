@@ -2,7 +2,7 @@
 
 import parser, sys
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_arities + parser.str_litlist + parser.str_nonlits)))
+char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_allchar)))
 
 assert(len(char_table) <= 256)
 
@@ -11,6 +11,8 @@ with open(sys.argv[2], 'rb') as file:
 
 if 'u' in sys.argv[1]:
 	code = code.decode()
+	for char in code:
+		assert(char in char_table)
 else:
 	code = ''.join([char_table[i] for i in code])
 
