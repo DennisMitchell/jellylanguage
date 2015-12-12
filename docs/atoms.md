@@ -4,8 +4,6 @@ Atoms are Jelly's built-in links. **z** will denote the only argument of a monad
 
 Symbol|Arity|Function|Note
 ------|-----|--------|----
-`Ȧ` - `Ḣ`|1|Call he link defined on the first to eight line, monadically.|This feature will change soon.
-`ȧ` - `ḣ`|2|Call he link defined on the first to eight line, dyadically.|This feature will change soon.
 `A`|1|Absolute value.
 `a`|2|Logical AND.
 `B`|1|Convert from integer to binary.
@@ -33,9 +31,9 @@ Symbol|Arity|Function|Note
 `U`|1|Upend, reverse an array.
 `x`|2|Times; repeat the elements of **x** **y** times.
 `!`|1|Factorial or Pi function.
-`<`|2|Less than.
-`=`|2|Equals.
-`>`|2|Greater than.
+`<`|2|Less than.|Returns **1** or **0**.
+`=`|2|Equals.|Returns **1** or **0**.
+`>`|2|Greater than.|Returns **1** or **0**.
 `:`|2|Integer division.
 `;`|2|Concatenate.
 `+`|2|Addition.
