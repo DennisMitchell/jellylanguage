@@ -24,7 +24,7 @@ Symbol|Arity|Function|Note
 `O`|1|Ones; return the index of each **n** n times.
 `o`|2|Logical OR.
 `P`|1|Product of a list.
-`R`|1|Inclusive range.|Starts at `1`. `-1R` gives `[-1, 0, 1]`.
+`R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
 `r`|2|Inclusive range.|Descending if **x > y**.
 `S`|1|Sum of a list.
 `Ṡ`|1|Sign of `z`.
@@ -67,7 +67,7 @@ Symbol|Arity|Function|Note
 `ÆN`|1|Generate the **z**<sup>th</sup> prime.
 `Æn`|1|Next; generate the closest prime strictly greater than **z**.
 `ÆP`|1|Test if **z** is a prime.|Returns **1** or **0**.
-`Æp`|1|Previous; generate the closest prime strictly lesser than **z**.
+`Æp`|1|Previous; generate the closest prime strictly less than **z**.
 `ÆR`|1|Range; generate all primes between **2** and **z**.
 `ÆT`|1|Totient function.
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
