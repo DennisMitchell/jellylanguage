@@ -129,6 +129,9 @@ def dyadic_chain(chain, args):
 		elif arities(chain[0:2]) == [2, 0]:
 			ret = dyadic_link(chain[0], (ret, niladic_link(chain[1])))
 			chain = chain[2:]
+		elif arities(chain[0:2]) == [0, 2]:
+			ret = dyadic_link(chain[1], (ret, niladic_link(chain[0])))
+			chain = chain[2:]
 		elif chain[0].arity == 2:
 			ret = dyadic_link(chain[0], (ret, rarg))
 			chain = chain[1:]
