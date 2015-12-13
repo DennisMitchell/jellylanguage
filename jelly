@@ -6,15 +6,27 @@ char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_all
 
 assert(len(char_table) <= 256)
 
-with open(sys.argv[2], 'rb') as file:
-	code = file.read()
+for char in sys.argv[1]:
+	if char == 'f':
+		flag_file = True
+		flag_utf8 = False
+	elif char == 'u':
+		flag_file = True
+		flag_utf8 = True
+	elif char == 'e':
+		flag_file = False
 
-if 'u' in sys.argv[1]:
-	code = code.decode()
-	for char in code:
-		assert(char in char_table)
+if flag_file:
+	with open(sys.argv[2], 'rb') as file:
+		code = file.read()
+	if flag_utf8:
+		code = code.decode()
+		for char in code:
+			assert(char in char_table)
+	else:
+		code = ''.join([char_table[i] for i in code])
 else:
-	code = ''.join([char_table[i] for i in code])
+	code = sys.argv[2]
 
 args = tuple(map(parser.jelly.ast.literal_eval, sys.argv[3:]))
 
