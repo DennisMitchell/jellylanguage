@@ -110,6 +110,7 @@ def dyadic_link(link, args):
 	return [dyadic_link(link, z) for z in zip(*args)]
 
 def dyadic_chain(chain, args):
+	print(chain, args)
 	larg, rarg = args
 	for link in chain:
 		if link.arity == -1:
@@ -549,7 +550,7 @@ actors = {
 		arity = 1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: monadic_chain(links[(index + 1) % len(links)], (x, y))
+		call = lambda x, y: dyadic_chain(links[(index + 1) % len(links)], (x, y))
 	)
 }
 
@@ -571,19 +572,24 @@ hypers = {
 		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
 	),
 	'£': lambda index, links: attrdict(
-		arity = 0,
-		call = lambda: niladic_chain(links[index.call() % len(links)])
-	),
-	'Ŀ': lambda index, links: attrdict(
-		arity = 1,
+		arity = index.arity,
 		depth = -1,
-		call = lambda z: monadic_chain(links[index.call() % len(links)], z)
-	),
-	'ŀ': lambda index, links: attrdict(
-		arity = 1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: monadic_chain(links[index.call() % len(links)], (x, y))
+		call = lambda x = None, y = None: niladic_chain(links[variadic_link(index, (x, y)) % len(links)])
+	),
+	'Ŀ': lambda index, links: attrdict(
+		arity = max(1, index.arity),
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y = None: monadic_chain(links[variadic_link(index, (x, y)) % len(links)], x)
+	),
+	'ŀ': lambda index, links: attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: dyadic_chain(links[dyadic_link(index, (x, y)) % len(links)], (x, y))
 	)
 }
 
