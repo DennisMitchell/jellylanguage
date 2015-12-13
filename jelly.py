@@ -110,7 +110,6 @@ def dyadic_link(link, args):
 	return [dyadic_link(link, z) for z in zip(*args)]
 
 def dyadic_chain(chain, args):
-	print(chain, args)
 	larg, rarg = args
 	for link in chain:
 		if link.arity == -1:
