@@ -34,7 +34,9 @@ def isqrt(number):
 def ntimes(link, repetitions, args):
 	ret, rarg = args
 	for _ in range(jelly.variadic_link(repetitions, args)):
-		ret = jelly.variadic_link(link, (ret, rarg))
+		larg = ret
+		ret = jelly.variadic_link(link, (larg, rarg))
+		rarg = larg
 	return ret
 
 def pi(number):

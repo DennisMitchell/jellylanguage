@@ -73,7 +73,14 @@ def monadic_link(link, arg):
 	return [monadic_link(link, z) for z in arg]
 
 def monadic_chain(chain, arg):
-	ret = arg
+	for link in chain:
+		if link.arity == -1:
+			link.arity = 1
+	if chain and arities(chain) < [0, 2] * len(chain):
+		ret = niladic_link(chain[0])
+		chain = chain[1:]
+	else:
+		ret = arg
 	while chain:
 		if arities(chain[0:3]) == [2, 2, 0]:
 			ret = dyadic_link(chain[0], (ret, dyadic_link(chain[1], (arg, niladic_link(chain[2])))))
@@ -90,9 +97,11 @@ def monadic_chain(chain, arg):
 		elif chain[0].arity == 2:
 			ret = dyadic_link(chain[0], (ret, arg))
 			chain = chain[1:]
-		else:
+		elif chain[0].arity == 1:
 			ret = monadic_link(chain[0], ret)
 			chain = chain[1:]
+		else:
+			raise hell # unimplemented
 	return ret
 
 def dyadic_link(link, args):
@@ -114,7 +123,10 @@ def dyadic_chain(chain, args):
 	for link in chain:
 		if link.arity == -1:
 			link.arity = 2
-	if chain and chain[0].arity == 2:
+	if chain and chain[0].arity == 0:
+		ret = niladic_link(chain[0])
+		chain = chain[1:]
+	elif chain and arities(chain) < [0, 2] * len(chain):
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
 	else:
@@ -143,6 +155,34 @@ def dyadic_chain(chain, args):
 	return ret
 
 atoms = {
+	'³': attrdict(
+		arity = 0,
+		call = lambda: 65536
+	),
+	'⁴': attrdict(
+		arity = 0,
+		call = lambda: 256
+	),
+	'⁵': attrdict(
+		arity = 0,
+		call = lambda: 32
+	),
+	'⁶': attrdict(
+		arity = 0,
+		call = lambda: 16
+	),
+	'⁷': attrdict(
+		arity = 0,
+		call = lambda: 10
+	),
+	'⁸': attrdict(
+		arity = 0,
+		call = lambda: ' '
+	),
+	'⁹': attrdict(
+		arity = 0,
+		call = lambda: '\n'
+	),
 	'A': attrdict(
 		arity = 1,
 		depth = 0,
@@ -202,6 +242,10 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = fractions.gcd
+	),
+	'Ɠ': attrdict(
+		arity = 0,
+		call = lambda: ast.literal_eval(input())
 	),
 	'H': attrdict(
 		arity = 1,

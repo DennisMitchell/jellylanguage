@@ -30,4 +30,7 @@ else:
 
 args = tuple(map(parser.jelly.ast.literal_eval, sys.argv[3:]))
 
+for index in range(min(5, len(args))):
+	parser.jelly.atoms['³⁴⁵⁶⁷⁸⁹'[index]].call = lambda literal = args[index]: literal
+
 print(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args), end = '')
