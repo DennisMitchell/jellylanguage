@@ -157,29 +157,21 @@ def dyadic_chain(chain, args):
 atoms = {
 	'³': attrdict(
 		arity = 0,
-		call = lambda: 65536
+		call = lambda: 256
 	),
 	'⁴': attrdict(
 		arity = 0,
-		call = lambda: 256
+		call = lambda: 16
 	),
 	'⁵': attrdict(
 		arity = 0,
-		call = lambda: 32
+		call = lambda: 10
 	),
 	'⁶': attrdict(
 		arity = 0,
-		call = lambda: 16
-	),
-	'⁷': attrdict(
-		arity = 0,
-		call = lambda: 10
-	),
-	'⁸': attrdict(
-		arity = 0,
 		call = lambda: ' '
 	),
-	'⁹': attrdict(
+	'⁷': attrdict(
 		arity = 0,
 		call = lambda: '\n'
 	),
@@ -261,6 +253,12 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: helper.div(1, z)
+	),
+	'ị': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = -1,
+		call = lambda x, y: y[(x - 1) % len(y)]
 	),
 	'L': attrdict(
 		arity = 1,
@@ -619,20 +617,20 @@ hypers = {
 		depth = -1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x = None, y = None: niladic_chain(links[variadic_link(index, (x, y)) % len(links)])
+		call = lambda x = None, y = None: niladic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)])
 	),
 	'Ŀ': lambda index, links: attrdict(
 		arity = max(1, index.arity),
 		depth = -1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y = None: monadic_chain(links[variadic_link(index, (x, y)) % len(links)], x)
+		call = lambda x, y = None: monadic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)], x)
 	),
 	'ŀ': lambda index, links: attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: dyadic_chain(links[dyadic_link(index, (x, y)) % len(links)], (x, y))
+		call = lambda x, y: dyadic_chain(links[(dyadic_link(index, (x, y)) - 1) % (len(links) - 1)], (x, y))
 	)
 }
 
