@@ -229,6 +229,11 @@ atoms = {
 		depth = 0,
 		call = lambda z: helper.from_base(z, 10)
 	),
+	'Ḋ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: z[1:]
+	),
 	'g': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -248,6 +253,17 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: z * 2
+	),
+	'Ḣ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: z.pop(0)
+	),
+	'ḣ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: x[:y]
 	),
 	'I': attrdict(
 		arity = 1,
@@ -292,6 +308,11 @@ atoms = {
 		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['×'], (x, y)), z, 1)
 	),
+	'Ṗ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: z[:-1]
+	),
 	'R': attrdict(
 		arity = 1,
 		depth = 0,
@@ -312,6 +333,17 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: (z > 0) - (z < 0)
+	),
+	'Ṫ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: z.pop()
+	),
+	'ṫ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: x[y:]
 	),
 	'U': attrdict(
 		arity = 1,
