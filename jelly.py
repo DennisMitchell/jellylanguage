@@ -263,7 +263,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: x[:y]
+		call = lambda x, y: x[: y - 1]
 	),
 	'I': attrdict(
 		arity = 1,
@@ -343,7 +343,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: x[y:]
+		call = lambda x, y: x[y - 1 :]
 	),
 	'U': attrdict(
 		arity = 1,
