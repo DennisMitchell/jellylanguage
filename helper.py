@@ -1,4 +1,4 @@
-import ast, functools, jelly, math, operator, sympy
+import ast, cmath, functools, jelly, math, operator, sympy
 
 inf = float('inf')
 
@@ -14,11 +14,6 @@ def from_exponents(exponents):
 		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
 
-def detuple(iterable):
-	if not type(iterable) in (int, str):
-		iterable = list(map(detuple, iterable))
-	return iterable
-
 def div(dividend, divisor, floor = False):
 	if divisor == 0:
 		return inf
@@ -29,7 +24,7 @@ def div(dividend, divisor, floor = False):
 	return dividend / divisor
 
 def eval(string):
-	return detuple(ast.literal_eval(string))
+	return listify(ast.literal_eval(string))
 
 def isqrt(number):
 	a = number
@@ -39,6 +34,11 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return a
 
+def listify(iterable):
+	if not type(iterable) in (int, float, complex, str):
+		iterable = list(map(listify, iterable))
+	return iterable
+
 def ntimes(link, repetitions, args):
 	ret, rarg = args
 	for _ in range(jelly.variadic_link(repetitions, args)):
@@ -47,7 +47,16 @@ def ntimes(link, repetitions, args):
 		rarg = larg
 	return ret
 
-def pi(number):
+def overload(operators, *args):
+	for operator in operators:
+		try:
+			ret = operator(*args)
+		except:
+			pass
+		else:
+			return ret
+
+def Pi(number):
 	if type(number) == int:
 		return inf if number < 0 else math.factorial(number)
 	return math.gamma(number + 1)

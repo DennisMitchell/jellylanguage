@@ -1,4 +1,4 @@
-import fractions, functools, helper, itertools, math, operator, sympy
+import fractions, functools, helper, itertools, operator, sympy
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -217,7 +217,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.div(helper.pi(x), helper.pi(x - y) * helper.pi(y))
+		call = lambda x, y: helper.div(helper.Pi(x), helper.Pi(x - y) * helper.Pi(y))
 	),
 	'D': attrdict(
 		arity = 1,
@@ -285,7 +285,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = math.log
+		call = lambda x, y: helper.overload((helper.math.log, helper.cmath.log), x, y)
 	),
 	'N': attrdict(
 		arity = 1,
@@ -359,18 +359,18 @@ atoms = {
 	'Z': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: helper.detuple(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(*z)))
+		call = lambda z: helper.listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(*z)))
 	),
 	'z': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: helper.detuple(itertools.zip_longest(*x, fillvalue = y))
+		call = lambda x, y: helper.listify(itertools.zip_longest(*x, fillvalue = y))
 	),
 	'!': attrdict(
 		arity = 1,
 		depth = 0,
-		call = helper.pi
+		call = helper.Pi
 	),
 	'<': attrdict(
 		arity = 2,
@@ -475,7 +475,12 @@ atoms = {
 	'½': attrdict(
 		arity = 1,
 		depth = 0,
-		call = lambda z: z ** 0.5
+		call = lambda z: helper.overload((helper.math.sqrt, helper.cmath.sqrt), z)
+	),
+	'°': attrdict(
+		arity = 1,
+		depth = 0,
+		call = helper.math.radians
 	),
 	'¬': attrdict(
 		arity = 1,
@@ -529,6 +534,16 @@ atoms = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: y
+	),
+	'ÆA': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.cos, helper.cmath.cos), z)
+	),
+	'ÆẠ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.acos, helper.cmath.acos), z)
 	),
 	'ÆC': attrdict(
 		arity = 1,
@@ -588,7 +603,27 @@ atoms = {
 	'ÆT': attrdict(
 		arity = 1,
 		depth = 0,
+		call = lambda z: helper.overload((helper.math.tan, helper.cmath.tan), z)
+	),
+	'ÆṬ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.atan, helper.cmath.atan), z)
+	),
+	'ÆṪ': attrdict(
+		arity = 1,
+		depth = 0,
 		call = sympy.ntheory.factor_.totient
+	),
+	'ÆS': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.sin, helper.cmath.sin), z)
+	),
+	'ÆṢ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.asin, helper.cmath.asin), z)
 	),
 	'Æ²': attrdict(
 		arity = 1,
@@ -599,6 +634,17 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = helper.isqrt
+	),
+	'Æ°': attrdict(
+		arity = 1,
+		depth = 0,
+		call = helper.math.degrees
+	),
+	'æA': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = helper.math.atan2
 	),
 	'æ%': attrdict(
 		arity = 2,
@@ -686,7 +732,7 @@ hypers = {
 joints = {
 	'¤': lambda links: attrdict(
 		arity = 0,
-		call = lambda z: niladic_chain(links)
+		call = lambda: niladic_chain(links)
 	),
 	'$': lambda links: attrdict(
 		arity = 1,
