@@ -1,4 +1,4 @@
-import ast, fractions, functools, helper, itertools, math, operator, sympy
+import fractions, functools, helper, itertools, math, operator, sympy
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -20,7 +20,7 @@ def create_chain(chain, arity, depth = -1, ldepth = -1, rdepth = -1):
 def create_literal(string):
 	return attrdict(
 		arity = 0,
-		call = lambda: ast.literal_eval(string)
+		call = lambda: helper.eval(string)
 	)
 
 def copy(value):
@@ -116,7 +116,7 @@ def dyadic_link(link, args):
 		return [dyadic_link(link, (larg, y)) for y in rarg]
 	if depth(larg) - depth(rarg) > link.ldepth - link.rdepth:
 		return [dyadic_link(link, (x, rarg)) for x in larg]
-	return [dyadic_link(link, z) for z in zip(*args)]
+	return [x if y == None else y if x == None else dyadic_link(link, (x, y)) for x, y in itertools.zip_longest(*args)]
 
 def dyadic_chain(chain, args):
 	larg, rarg = args
@@ -242,7 +242,7 @@ atoms = {
 	),
 	'Ɠ': attrdict(
 		arity = 0,
-		call = lambda: ast.literal_eval(input())
+		call = lambda: helper.eval(input())
 	),
 	'H': attrdict(
 		arity = 1,
@@ -356,6 +356,17 @@ atoms = {
 		rdepth = 1,
 		call = lambda x, y: helper.rld(zip(x, y))
 	),
+	'Z': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: helper.detuple(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(*z)))
+	),
+	'z': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.detuple(itertools.zip_longest(*x, fillvalue = y))
+	),
 	'!': attrdict(
 		arity = 1,
 		depth = 0,
@@ -384,6 +395,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: helper.div(x, y, True)
+	),
+	',': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: [x, y]
 	),
 	';': attrdict(
 		arity = 2,

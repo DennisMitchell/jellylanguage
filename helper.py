@@ -1,4 +1,4 @@
-import functools, jelly, math, operator, sympy
+import ast, functools, jelly, math, operator, sympy
 
 inf = float('inf')
 
@@ -14,6 +14,11 @@ def from_exponents(exponents):
 		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
 
+def detuple(iterable):
+	if not type(iterable) in (int, str):
+		iterable = list(map(detuple, iterable))
+	return iterable
+
 def div(dividend, divisor, floor = False):
 	if divisor == 0:
 		return inf
@@ -22,6 +27,9 @@ def div(dividend, divisor, floor = False):
 	if floor or (type(dividend) == int and type(divisor) == int and not dividend % divisor):
 		return dividend // divisor
 	return dividend / divisor
+
+def eval(string):
+	return detuple(ast.literal_eval(string))
 
 def isqrt(number):
 	a = number
