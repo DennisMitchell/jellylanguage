@@ -112,9 +112,9 @@ def dyadic_link(link, args):
 		return dyadic_link(link, ([larg], rarg))
 	if depth(rarg) < link.rdepth:
 		return dyadic_link(link, (larg, [rarg]))
-	if depth(larg) - depth(rarg) < link.ldepth - link.rdepth:
+	if (link.rdepth > -1 and depth(larg) - depth(rarg) < link.ldepth - link.rdepth) or link.ldepth < 0:
 		return [dyadic_link(link, (larg, y)) for y in rarg]
-	if depth(larg) - depth(rarg) > link.ldepth - link.rdepth:
+	if (link.ldepth > -1 and depth(larg) - depth(rarg) > link.ldepth - link.rdepth) or link.rdepth < 0:
 		return [dyadic_link(link, (x, rarg)) for x in larg]
 	return [x if y == None else y if x == None else dyadic_link(link, (x, y)) for x, y in itertools.zip_longest(*args)]
 
