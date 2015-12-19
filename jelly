@@ -28,7 +28,7 @@ if flag_file:
 else:
 	code = sys.argv[2]
 
-args = tuple(map(parser.jelly.helper.eval, sys.argv[3:]))
+args = tuple(map(parser.jelly.helper.try_eval, sys.argv[3:]))
 
 for index in range(min(5, len(args))):
 	parser.jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal

@@ -68,6 +68,12 @@ def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
 
+def try_eval(string):
+	try:
+		return eval(string)
+	except:
+		return string
+
 def to_base(integer, base):
 	digits = []
 	integer = abs(integer)
