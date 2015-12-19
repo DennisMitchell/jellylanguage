@@ -7,7 +7,7 @@ str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_complex + ')'
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
-str_nonlits = '|'.join(map(re.escape, list(jelly.atoms.keys()) + list(jelly.actors.keys()) + list(jelly.hypers.keys()) + list(jelly.joints.keys())))
+str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.actors) + list(jelly.hypers) + list(jelly.joints) + list(jelly.nexus)))
 str_allchar = str_arities + str_litlist + str_nonlits + '¶'
 
 regex_chain = re.compile('(?:^|[' + str_arities + '])[^' + str_arities + ']+')
@@ -33,6 +33,11 @@ def parse_code(code):
 					y = chain.pop() if chain else chains.pop()
 					x = chain.pop() if chain else chains.pop()
 					chain.append(jelly.joints[token]((x, y)))
+				elif token in jelly.nexus:
+					z = chain.pop() if chain else chains.pop()
+					y = chain.pop() if chain else chains.pop()
+					x = chain.pop() if chain else chains.pop()
+					chain.append(jelly.nexus[token]((x, y, z)))
 				else:
 					chain.append(jelly.create_literal(regex_liter.sub(parse_literal, token)))
 			chains.append(jelly.create_chain(chain, arity))

@@ -1,4 +1,4 @@
-import ast, cmath, functools, jelly, math, operator, sympy
+import ast, cmath, functools, itertools, jelly, math, sympy
 
 inf = float('inf')
 
@@ -62,7 +62,7 @@ def Pi(number):
 	return math.gamma(number + 1)
 
 def rld(runs):
-	return functools.reduce(operator.add, [[u] * v for u, v in runs])
+	return list(itertools.chain(*[[u] * v for u, v in runs]))
 
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)

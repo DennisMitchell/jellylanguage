@@ -244,6 +244,10 @@ atoms = {
 		arity = 0,
 		call = lambda: helper.eval(input())
 	),
+	'ɠ': attrdict(
+		arity = 0,
+		call = input
+	),
 	'H': attrdict(
 		arity = 1,
 		depth = 0,
@@ -751,5 +755,15 @@ joints = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x = None, y = None: helper.ntimes(links[0], links[1], (x, y))
+	)
+}
+
+nexus = {
+	'?': lambda links: attrdict(
+		arity = max(links[0].arity, links[1].arity, links[2].arity),
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
 	)
 }
