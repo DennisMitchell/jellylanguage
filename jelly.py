@@ -226,7 +226,7 @@ atoms = {
 	),
 	'Ḍ': attrdict(
 		arity = 1,
-		depth = 0,
+		depth = 1,
 		call = lambda z: helper.from_base(z, 10)
 	),
 	'Ḋ': attrdict(
