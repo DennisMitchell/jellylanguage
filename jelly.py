@@ -676,7 +676,7 @@ actors = {
 		call = lambda z: monadic_chain(links[index - 1], z)
 	),
 	'ç': lambda index, links: attrdict(
-		arity = 1,
+		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: monadic_chain(links[index - 1], (x, y))
@@ -687,7 +687,7 @@ actors = {
 		call = lambda z: monadic_chain(links[(index + 1) % len(links)], z)
 	),
 	'ñ': lambda index, links: attrdict(
-		arity = 1,
+		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(links[(index + 1) % len(links)], (x, y))
@@ -729,7 +729,7 @@ hypers = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: dyadic_chain(links[(dyadic_link(index, (x, y)) - 1) % (len(links) - 1)], (x, y))
+		call = lambda x, y: dyadic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)], (x, y))
 	)
 }
 
