@@ -234,6 +234,12 @@ atoms = {
 		depth = -1,
 		call = lambda z: z[1:]
 	),
+	'f': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: [_ for _ in x if _ in y]
+	),
 	'g': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -337,6 +343,12 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: (z > 0) - (z < 0)
+	),
+	'ṡ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: [x[i : i + y] for i in range(len(x) - y + 1)]
 	),
 	'Ṫ': attrdict(
 		arity = 1,
