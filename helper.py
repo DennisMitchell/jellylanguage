@@ -1,4 +1,4 @@
-import ast, cmath, functools, itertools, jelly, math, sympy, sys
+import ast, cmath, functools, itertools, jelly, math, sympy
 
 inf = float('inf')
 

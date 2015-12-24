@@ -30,7 +30,9 @@ def copy(value):
 def depth(link):
 	if type(link) != list and type(link) != tuple:
 		return 0
-	return 1 + depth(link[0])
+	if not link:
+		return 1
+	return 1 + min(map(depth, link))
 
 def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
