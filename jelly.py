@@ -302,10 +302,20 @@ atoms = {
 		depth = 0,
 		call = lambda z: -z
 	),
+	'Ṅ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: print(z) or z
+	),
 	'O': attrdict(
 		arity = 1,
 		depth = 1,
 		call = lambda z: functools.reduce(operator.add, [[u + 1] * v for u, v in enumerate(z)])
+	),
+	'Ȯ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: print(z, end = '') or z
 	),
 	'o': attrdict(
 		arity = 2,
