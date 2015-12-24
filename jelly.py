@@ -1,4 +1,4 @@
-import fractions, functools, helper, itertools, operator, sympy
+import fractions, functools, helper, itertools, operator, sympy, sys
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -218,6 +218,10 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: helper.div(helper.Pi(x), helper.Pi(x - y) * helper.Pi(y))
+	),
+	'ƈ': attrdict(
+		arity = 0,
+		call = lambda: sys.stdin.read(1)
 	),
 	'D': attrdict(
 		arity = 1,

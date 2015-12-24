@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 
-import parser, sys
+import parser
 
 char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_allchar)))
 
 assert(len(char_table) <= 256)
 
-for char in sys.argv[1]:
+for char in parser.jelly.sys.argv[1]:
+	mode_read = 'args'
 	if char == 'f':
 		flag_file = True
 		flag_utf8 = False
@@ -15,22 +16,34 @@ for char in sys.argv[1]:
 		flag_utf8 = True
 	elif char == 'e':
 		flag_file = False
+	if char == 'c':
+		mode_read = 'char'
+		flag_iout = True
 
 if flag_file:
-	with open(sys.argv[2], 'rb') as file:
+	with open(parser.jelly.sys.argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = code.decode()
+		code = code.decode('utf-8')
 		for char in code:
 			assert(char in char_table)
 	else:
 		code = ''.join([char_table[i] for i in code])
 else:
-	code = sys.argv[2]
+	code = parser.jelly.sys.argv[2]
 
-args = tuple(map(parser.jelly.helper.try_eval, sys.argv[3:]))
+args = tuple(map(parser.jelly.helper.try_eval, parser.jelly.sys.argv[3:]))
 
 for index in range(min(5, len(args))):
 	parser.jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
 
-print(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args), end = '')
+if mode_read == 'char':
+	while True:
+		char = parser.jelly.sys.stdin.read(1)
+		if char == '':
+			break
+		output = parser.jelly.variadic_chain(parser.parse_code(code)[-1], char)
+		if flag_iout:
+			print(output, end = '')
+else:
+	print(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args), end = '')
