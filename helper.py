@@ -26,6 +26,12 @@ def div(dividend, divisor, floor = False):
 def eval(string):
 	return listify(ast.literal_eval(string))
 
+def index(haystack, needle):
+	for index, item in enumerate(haystack):
+		if item == needle:
+			return 1 + index
+	return 0
+
 def isqrt(number):
 	a = number
 	b = (a + 1) // 2

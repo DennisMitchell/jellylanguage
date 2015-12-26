@@ -286,6 +286,12 @@ atoms = {
 		depth = 0,
 		call = lambda z: helper.div(1, z)
 	),
+	'i': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 0,
+		call = helper.index
+	),
 	'ị': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -302,6 +308,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: helper.overload((helper.math.log, helper.cmath.log), x, y)
+	),
+	'm': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: x[::y]
 	),
 	'N': attrdict(
 		arity = 1,
@@ -359,6 +371,12 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: (z > 0) - (z < 0)
+	),
+	's': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: [x[i : i + y] for i in range(0, len(x), y)]
 	),
 	'ṡ': attrdict(
 		arity = 2,
