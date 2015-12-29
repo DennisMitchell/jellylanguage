@@ -2,21 +2,21 @@
 
 import parser
 
-char_table = ''.join(sorted(set(''.join(map(chr,range(0, 128))) + parser.str_allchar)))
+code_page = '''
+¡¢£¤¥¦©¬®µ½¿€ÆÇÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶''' + \
+'°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'
 
-assert(len(char_table) <= 256)
+flag_utf8 = False
+mode_read = 'args'
 
 for char in parser.jelly.sys.argv[1]:
-	mode_read = 'args'
 	if char == 'f':
 		flag_file = True
-		flag_utf8 = False
 	elif char == 'u':
-		flag_file = True
 		flag_utf8 = True
 	elif char == 'e':
 		flag_file = False
-	if char == 'c':
+	elif char == 'c':
 		mode_read = 'char'
 		flag_iout = True
 
@@ -24,13 +24,15 @@ if flag_file:
 	with open(parser.jelly.sys.argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = code.decode('utf-8')
-		for char in code:
-			assert(char in char_table)
+		code = ''.join([char for char in code.decode('utf-8') if char in code_page])
 	else:
-		code = ''.join([char_table[i] for i in code])
+		code = ''.join([code_page[i] for i in code])
 else:
 	code = parser.jelly.sys.argv[2]
+	if flag_utf8:
+		code = ''.join([char for char in code if char in code_page])
+	else:
+		code = ''.join([code_page[ord(i)] for i in code])
 
 args = tuple(map(parser.jelly.helper.try_eval, parser.jelly.sys.argv[3:]))
 
