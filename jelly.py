@@ -122,7 +122,7 @@ def dyadic_chain(chain, args):
 	for link in chain:
 		if link.arity == -1:
 			link.arity = 2
-	if chain and chain[0].arity == 2:
+	if chain and arities(chain[0:3]) == [2, 2, 2]:
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
 	elif chain and arities(chain) < [0, 2] * len(chain):
@@ -131,17 +131,14 @@ def dyadic_chain(chain, args):
 	else:
 		ret = larg
 	while chain:
-		if arities(chain[0:3]) == [2, 2, 0]:
-			ret = dyadic_link(chain[1], (dyadic_link(chain[0], (ret, rarg)), niladic_link(chain[2])))
-			chain = chain[3:]
-		elif arities(chain[0:2]) == [2, 2]:
+		if arities(chain[0:2]) == [2, 2]:
 			ret = dyadic_link(chain[0], (ret, dyadic_link(chain[1], args)))
 			chain = chain[2:]
 		elif arities(chain[0:2]) == [2, 0]:
 			ret = dyadic_link(chain[0], (ret, niladic_link(chain[1])))
 			chain = chain[2:]
 		elif arities(chain[0:2]) == [0, 2]:
-			ret = dyadic_link(chain[1], (ret, niladic_link(chain[0])))
+			ret = dyadic_link(chain[1], (niladic_link(chain[0]), ret))
 			chain = chain[2:]
 		elif chain[0].arity == 2:
 			ret = dyadic_link(chain[0], (ret, rarg))
@@ -660,7 +657,7 @@ atoms = {
 	'ÆṪ': attrdict(
 		arity = 1,
 		depth = 0,
-		call = sympy.ntheory.factor_.totient
+		call = lambda z: sympy.ntheory.factor_.totient(z) if z > 0 else 0
 	),
 	'ÆS': attrdict(
 		arity = 1,
