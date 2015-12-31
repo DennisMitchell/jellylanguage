@@ -3,6 +3,26 @@ import ast, cmath, functools, itertools, jelly, math, sympy
 inf = float('inf')
 nan = float('nan')
 
+def conv_dyadic_integer(link, larg, rarg):
+	try:
+		iconv_larg = int(larg)
+		try:
+			iconv_rarg = int(rarg)
+			return link(iconv_larg, iconv_rarg)
+		except:
+			return iconv_larg
+	except:
+		try:
+			return int(rarg)
+		except:
+			return 0
+
+def conv_monadic_integer(link, arg):
+	try:
+		return link(int(arg))
+	except:
+		return 0
+
 def from_base(digits, base):
 	integer = 0
 	for digit in digits:

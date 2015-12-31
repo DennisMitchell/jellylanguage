@@ -69,6 +69,8 @@ def niladic_chain(chain):
 
 def monadic_link(link, arg):
 	if depth_match(link.depth, arg):
+		if hasattr(link, 'conv'):
+			return link.conv(link.call, arg)
 		return link.call(arg)
 	if depth(arg) < link.depth:
 		return monadic_link(link, [arg])
@@ -106,6 +108,8 @@ def monadic_chain(chain, arg):
 def dyadic_link(link, args):
 	larg, rarg = args
 	if depth_match(link.ldepth, larg) and depth_match(link.rdepth, rarg):
+		if hasattr(link, 'conv'):
+			return link.conv(link.call, larg, rarg)
 		return link.call(larg, rarg)
 	if depth(larg) < link.ldepth:
 		return dyadic_link(link, ([larg], rarg))
@@ -507,23 +511,27 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
+		conv = helper.conv_dyadic_integer,
 		call = operator.and_
 	),
 	'^': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
+		conv = helper.conv_dyadic_integer,
 		call = operator.xor
 	),
 	'|': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
+		conv = helper.conv_dyadic_integer,
 		call = operator.or_
 	),
 	'~': attrdict(
 		arity = 1,
 		depth = 0,
+		conv = helper.conv_monadic_integer,
 		call = lambda z: ~z
 	),
 	'²': attrdict(
