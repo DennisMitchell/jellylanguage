@@ -209,6 +209,11 @@ atoms = {
 		depth = 0,
 		call = lambda z: 1 - z
 	),
+	'Ċ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.ceil, helper.identity), z)
+	),
 	'c': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -233,6 +238,11 @@ atoms = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: z[1:]
+	),
+	'Ḟ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.floor, helper.identity), z)
 	),
 	'f': attrdict(
 		arity = 2,
@@ -276,6 +286,11 @@ atoms = {
 		call = lambda x, y: x[:y]
 	),
 	'I': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.div(1, z)
+	),
+	'İ': attrdict(
 		arity = 1,
 		depth = 0,
 		call = lambda z: helper.div(1, z)
@@ -571,7 +586,7 @@ atoms = {
 	'¹': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: z
+		call = helper.identity
 	),
 	'}': attrdict(
 		arity = 2,

@@ -1,6 +1,7 @@
 import ast, cmath, functools, itertools, jelly, math, sympy
 
 inf = float('inf')
+nan = float('nan')
 
 def from_base(digits, base):
 	integer = 0
@@ -16,15 +17,18 @@ def from_exponents(exponents):
 
 def div(dividend, divisor, floor = False):
 	if divisor == 0:
-		return inf
+		return nan if dividend == 0 else inf
 	if divisor == inf:
 		return 0
 	if floor or (type(dividend) == int and type(divisor) == int and not dividend % divisor):
-		return dividend // divisor
+		return int(dividend // divisor)
 	return dividend / divisor
 
 def eval(string):
 	return listify(ast.literal_eval(string))
+
+def identity(argument):
+	return argument
 
 def index(haystack, needle):
 	for index, item in enumerate(haystack):
@@ -38,7 +42,7 @@ def isqrt(number):
 	while b < a:
 		a = b
 		b = (a + number // a) // 2
-	return a
+	return int(a)
 
 def listify(iterable):
 	if not type(iterable) in (int, float, complex, str):
