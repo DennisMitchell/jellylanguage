@@ -4,72 +4,108 @@ Atoms are Jelly's built-in links. **z** will denote the only argument of a monad
 
 Symbol|Arity|Function|Note
 ------|-----|--------|----
-`A`|1|Absolute value.
-`a`|2|Logical AND.
-`B`|1|Convert from integer to binary.
-`Ḅ`|1|Convert from binary to integer.
-`b`|2|Convert from integer to base **y**.
-`ḅ`|2|Convert from base **y** to integer.
-`C`|1|Complement; compute **1 - z**.
-`c`|2|Combinations; compute xCy.
-`D`|1|Convert from integer to decimal.
-`Ḍ`|1|Convert from decimal to integer.
-`g`|2|Greatest common divisor.
-`H`|1|Halve; compute **z ÷ 2**.
-`Ḥ`|1|Double; compute **2z**.
-`I`|1|Inverse; compute **1 ÷ z**.
-`L`|1|Length.
-`l`|2|Logarithm with base **y**.
-`N`|1|Negative; compute **-z**.
-`O`|1|Ones; return the index of each **n** n times.
-`o`|2|Logical OR.
-`P`|1|Product of a list.
-`R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
-`r`|2|Inclusive range.|Descending if **x > y**.
-`S`|1|Sum of a list.
-`Ṡ`|1|Sign of `z`.
-`U`|1|Upend, reverse an array.
-`x`|2|Times; repeat the elements of **x** **y** times.
+`©`|1|Copy; save **z** in the register.
+`¬`|1|Logical NOT.|Returns **1** or **0**.
+`®`|0|Restore; retrieve the value of the register.
+`½`|1|Square root.
+`×`|2|Multiplication.
+`÷`|2|Floating point division.
 `!`|1|Factorial or Pi function.
+`%`|2|Modulus.
+`&`|2|Bitwise AND.
+`*`|2|Exponentiation with base **x**.
+`+`|2|Addition.
+`,`|2|Pair; return `[x, y]`.
+`:`|2|Integer division.
+`;`|2|Concatenate.
 `<`|2|Less than.|Returns **1** or **0**.
 `=`|2|Equals.|Returns **1** or **0**.
 `>`|2|Greater than.|Returns **1** or **0**.
-`:`|2|Integer division.
-`;`|2|Concatenate.
-`+`|2|Addition.
-`_`|2|Subtraction.
-`×`|2|Multiplication.
-`÷`|2|Floating point division.
-`%`|2|Modulus.
-`*`|2|Exponentiation with base **x**.
-`&`|2|Bitwise AND.
+`A`|1|Absolute value.
+`B`|1|Convert from integer to binary.
+`C`|1|Complement; compute **1 - z**.
+`D`|1|Convert from integer to decimal.
+`H`|1|Halve; compute **z ÷ 2**.
+`L`|1|Length.
+`N`|1|Negative; compute **-z**.
+`O`|1|Ones; return the index of each **n** n times.
+`P`|1|Product of a list.
+`R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
+`S`|1|Sum of a list.
+`U`|1|Upend, reverse an array.
+`Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
+`_`|2|Subtraction.
+`a`|2|Logical AND.
+`b`|2|Convert from integer to base **y**.
+`c`|2|Combinations; compute xCy.
+`f`|2|Filter; remove the elements from **x** that are not in **y**.
+`g`|2|Greatest common divisor.
+`i`|2|Find the index of **y** in **x**.|Indices are 1-based.
+`l`|2|Logarithm with base **y**.
+`m`|2|Modular; return every **y** th element of **x**.
+`o`|2|Logical OR.
+`r`|2|Inclusive range.|Descending if **x > y**.
+`s`|2|Split **x** into slices of length **y**.
+`x`|2|Times; repeat the elements of **x** **y** times.
+`z`|2|Zip; transpose **x** with filler **y**.
+`{`|2|Left argument; return **x**.
 `|`|2|Bitwise OR.
-`~`|2|Bitwise NOT.
+`}`|2|Right argument; return **y**.
+` ~ `|2|Bitwise NOT.
+`°`|1|Convert **z** from degrees to radians.
+`¹`|1|Identity; return **z**.
 `²`|1|Square.
-`½`|1|Square root.
-`¬`|1|Logical NOT.
-`‘`|1|Increment; compute **z + 1**.
-`’`|1|Decrement; compute **z - 1**.
+`³`|0|Return third command line argument (first input) or 256.
+`⁴`|0|Return fourth command line argument (second input) or 16.
+`⁵`|0|Return fifth command line argument (third input) or 10.
+`⁶`|0|Return sixth command line argument (fourth input) or ' '.
+`⁷`|0|Return seventh command line argument (fifth input) or '\n'.
+`Ɠ`|0|Read and evaluate a single line from STDIN.
+`ƈ`|0|Read a single character from STDIN.
+`ɠ`|0|Read a single line from STDIN.
+`Ḅ`|1|Convert from binary to integer.
+`Ḍ`|1|Convert from decimal to integer.
+`Ḥ`|1|Double; compute **2z**.
+`Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
+`Ḋ`|1|Dequeue; return `z[1:]`.
+`Ḟ`|1|Floor; round **z** down to the nearest integer.|Returns **z** for non-real **z**.
+`Ḣ`|1|Head; pop and return the first element of **z**.|Modifies **z**.
+`İ`|1|Inverse; compute **1 ÷ z**.
+`Ṅ`|1|Print **z** and a linefeed.|Returns **z**.
+`Ȯ`|1|Print **z**.|Returns **z**.
+`Ṗ`|1|Pop; return `z[:-1]`.
+`Ṡ`|1|Sign of **z**.
+`Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
+`ḅ`|2|Convert from base **y** to integer.
+`ị`|2|Return the element of **x** at index **y**.|Indices are 1-based.
+`ḣ`|2|Head; return `x[:y]`.
+`ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
+`ṫ`|2|Tail; return `x[y - 1:]`.
 `«`|2|Minimum of **x** and **y**.
 `»`|2|Maximum of **x** and **y**.
-`©`|1|Copy; save **z** in a special variable.
-`®`|0|Restore; retrieve the value of the special variable.
-`{`|2|Left argument; return **x**.
-`¹`|1|Identity; retutrn **z**.
-`}`|2|Right argument; return **y**.
+`‘`|1|Increment; compute **z + 1**.
+`’`|1|Decrement; compute **z - 1**.
+`Æ½`|1|Compute the integer square root of **z**.
+`ÆA`|1|Arccosine.
 `ÆC`|1|Count the primes less or equal to **z**.
 `ÆD`|1|Compute the array of **z**'s divisors.
 `ÆE`|1|Compute the array of exponents of **z**'s prime factorization.|Includes zero exponents.
-`ÆẸ`|1|Inverse of `ÆE`.
 `ÆF`|1|Compute **z**'s prime factorization as **[prime, exponent]** pairs.
-`Æf`|1|Compute the array of primes whose product is **z**.
 `ÆN`|1|Generate the **z**<sup>th</sup> prime.
-`Æn`|1|Next; generate the closest prime strictly greater than **z**.
 `ÆP`|1|Test if **z** is a prime.|Returns **1** or **0**.
-`Æp`|1|Previous; generate the closest prime strictly less than **z**.
 `ÆR`|1|Range; generate all primes between **2** and **z**.
-`ÆT`|1|Totient function.
+`ÆS`|1|Sine.
+`ÆT`|1|Tangent.
+`Æf`|1|Compute the array of primes whose product is **z**.
+`Æn`|1|Next; generate the closest prime strictly greater than **z**.
+`Æp`|1|Previous; generate the closest prime strictly less than **z**.
+`ÆẠ`|1|Cosine.
+`ÆẸ`|1|Inverse of `ÆE`.
+`ÆṢ`|1|Arcsine.
+`ÆṬ`|1|Arctangent.
+`ÆṪ`|1|Totient function.
+`Æ°`|1|Convert **z** from radians to degrees.
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
-`Æ½`|1|Compute the integer square root of **z**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
+`æA`|2|Arctangent with two arguments, i.e., `atan2()`.

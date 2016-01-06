@@ -289,11 +289,6 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: x[:y]
 	),
-	'I': attrdict(
-		arity = 1,
-		depth = 0,
-		call = lambda z: helper.div(1, z)
-	),
 	'İ': attrdict(
 		arity = 1,
 		depth = 0,
