@@ -2,9 +2,8 @@
 
 import parser
 
-code_page = '''
-¡¢£¤¥¦©¬®µ½¿€ÆÇÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶''' + \
-'°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'
+code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
+code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
 flag_utf8 = False
 mode_read = 'args'
@@ -24,13 +23,13 @@ if flag_file:
 	with open(parser.jelly.sys.argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = ''.join([char for char in code.decode('utf-8') if char in code_page])
+		code = ''.join([char for char in code.decode('utf-8').replace('\n', '¶') if char in code_page])
 	else:
 		code = ''.join([code_page[i] for i in code])
 else:
 	code = parser.jelly.sys.argv[2]
 	if flag_utf8:
-		code = ''.join([char for char in code if char in code_page])
+		code = ''.join([char for char in code.replace('\n', '¶') if char in code_page])
 	else:
 		code = ''.join([code_page[ord(i)] for i in code])
 

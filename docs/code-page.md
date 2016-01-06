@@ -1,8 +1,10 @@
-Jelly programs consist of up to 256 different Unicode characters, which are encoded using either UTF-8 or the Jelly code page. All characters have been chosen so that they can be typed on an US keyboard with international layout.
+Jelly programs consist of up to 257 different Unicode characters, which are encoded using either UTF-8 or the Jelly code page. All characters have been chosen so that they can be typed on an US keyboard with international layout.
+
+The character `¶` and the linfeed character can be used interchangeably, although it is advised to use a linefeed to separate links, and a pilcrow inside string literals.
 
    |\_0|\_1|\_2|\_3|\_4|\_5|\_6|\_7|\_8|\_9|\_A|\_B|\_C|\_D|\_E|\_F
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
-**0\_**|LF|`¡`|`¢`|`£`|`¤`|`¥`|`¦`|`©`|`¬`|`®`|`µ`|`½`|`¿`|`€`|`Æ`|`Ç`
+**0\_**|`¡`|`¢`|`£`|`¤`|`¥`|`¦`|`©`|`¬`|`®`|`µ`|`½`|`¿`|`€`|`Æ`|`Ç`|`Ð`
 **1\_**|`Ñ`|`×`|`Ø`|`Œ`|`Þ`|`ß`|`æ`|`ç`|`ð`|`ı`|`ȷ`|`ñ`|`÷`|`ø`|`œ`|`þ`
 **2\_**|SP|`!`|`"`|`#`|`$`|`%`|`&`|`'`|`(`|`)`|`*`|`+`|`,`|`-`|`.`|`/`
 **3\_**|`0`|`1`|`2`|`3`|`4`|`5`|`6`|`7`|`8`|`9`|`:`|`;`|`<`|`=`|`>`|`?`
