@@ -331,7 +331,7 @@ atoms = {
 	'Ṅ': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: print(z) or z
+		call = lambda z: print(helper.stringify(z)) or z
 	),
 	'O': attrdict(
 		arity = 1,
@@ -341,7 +341,7 @@ atoms = {
 	'Ȯ': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: print(z, end = '') or z
+		call = lambda z: print(helper.stringify(z), end = '') or z
 	),
 	'o': attrdict(
 		arity = 2,

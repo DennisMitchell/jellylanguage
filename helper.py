@@ -65,9 +65,9 @@ def isqrt(number):
 	return int(a)
 
 def listify(iterable):
-	if not type(iterable) in (int, float, complex, str):
-		iterable = list(map(listify, iterable))
-	return iterable
+	if type(iterable) in (int, float, complex) or (type(iterable) == str and len(iterable) == 1):
+		return iterable
+	return list(map(listify, iterable))
 
 def ntimes(link, repetitions, args):
 	ret, rarg = args
@@ -93,6 +93,14 @@ def Pi(number):
 
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
+
+def stringify(iterable, recurse = True):
+	if type(iterable) != list:
+		return iterable
+	if str in map(type, iterable) and not list in map(type, iterable):
+		return ''.join(map(str, iterable))
+	iterable = [stringify(item) for item in iterable]
+	return stringify(iterable, False) if recurse else iterable
 
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
