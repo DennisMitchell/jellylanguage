@@ -47,4 +47,4 @@ if mode_read == 'char':
 		if flag_iout:
 			print(output, end = '')
 else:
-	print(parser.jelly.helper.stringify(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args)), end = '')
+	print(parser.jelly.helper.stringify(parser.jelly.variadic_chain(parser.parse_code(code)[-1], args[:2])), end = '')
