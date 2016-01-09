@@ -737,7 +737,7 @@ actors = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: monadic_chain(links[index - 1], (x, y))
+		call = lambda x, y: dyadic_chain(links[index - 1], (x, y))
 	),
 	'Ñ': lambda index, links: attrdict(
 		arity = 1,
