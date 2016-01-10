@@ -50,6 +50,9 @@ def eval(string):
 def identity(argument):
 	return argument
 
+def iterable(argument):
+	return argument if type(argument) == list else [argument]
+
 def index(haystack, needle):
 	for index, item in enumerate(haystack):
 		if item == needle:

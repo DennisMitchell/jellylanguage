@@ -408,6 +408,11 @@ atoms = {
 		depth = 1,
 		call = lambda z: z[::-1]
 	),
+	'W': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: [z]
+	),
 	'x': attrdict(
 		arity = 2,
 		ldepth = 1,
@@ -417,13 +422,19 @@ atoms = {
 	'Z': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: helper.listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(*z)))
+		call = lambda z: helper.listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(helper.iterable, z))))
 	),
 	'z': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: helper.listify(itertools.zip_longest(*x, fillvalue = y))
+		call = lambda x, y: helper.listify(itertools.zip_longest(*map(helper.iterable, x), fillvalue = y))
+	),
+	'ż': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(helper.iterable(x), helper.iterable(y))))
 	),
 	'!': attrdict(
 		arity = 1,
@@ -768,6 +779,11 @@ hypers = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
+	),
+	'€': lambda link, none = None: attrdict(
+		arity = link.arity,
+		depth = -1,
+		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in helper.iterable(x)]
 	),
 	'£': lambda index, links: attrdict(
 		arity = index.arity,
