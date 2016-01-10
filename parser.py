@@ -72,7 +72,6 @@ def parse_literal(literal_match):
 def sss(compressed):
 	decompressed = ''
 	integer = jelly.helper.from_base([code_page.find(char) + 1 for char in compressed], 250)
-	print(len(dictionary.short))
 	while integer:
 		integer, mode = divmod(integer, 3)
 		if mode == 0:
