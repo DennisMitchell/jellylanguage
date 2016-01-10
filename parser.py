@@ -1,7 +1,10 @@
-import re, jelly
+import dictionary, jelly, re
+
+code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
+code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
 str_arities = 'øµð'
-str_strings = '“[^”]*”?'
+str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_realdec = '(?:0|-?\d+(?:\.\d*)?|-?\d*\.\d+|-)'
 str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
@@ -12,7 +15,7 @@ str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.actors) + l
 regex_chain = re.compile('(?:^|[' + str_arities + '])[^' + str_arities + ']+')
 regex_liter = re.compile(str_literal)
 regex_token = re.compile(str_nonlits + '|' + str_litlist)
-regex_flink = re.compile('[^¶]*¶|[^¶]+¶?')
+regex_flink = re.compile('(?=.)(?:' + str_nonlits + '|' + str_litlist + ')*¶?')
 
 def parse_code(code):
 	lines = regex_flink.findall(code)
@@ -45,9 +48,18 @@ def parse_code(code):
 	return links
 
 def parse_literal(literal_match):
-	literal = literal_match.group(0).replace('¶', '\n')
+	literal = literal_match.group(0)
 	if '“' in literal:
-		parsed = literal.rstrip('”').split('“')[1:]
+		if literal[-1] in '«»‘’”':
+			mode = literal[-1]
+			literal = literal[:-1]
+		else:
+			mode = ''
+		parsed = literal.split('“')[1:]
+		if mode == '»':
+			parsed = [sss(string) for string in parsed]
+		else:
+			parsed = [string.replace('¶', '\n') for string in parsed]
 		if len(parsed) == 1:
 			parsed = parsed[0]
 	else:
@@ -56,3 +68,30 @@ def parse_literal(literal_match):
 			for index, component in enumerate(literal.split('ı'))
 		]))
 	return repr(parsed) + ' '
+
+def sss(compressed):
+	decompressed = ''
+	integer = jelly.helper.from_base([code_page.find(char) + 1 for char in compressed], 250)
+	print(len(dictionary.short))
+	while integer:
+		integer, mode = divmod(integer, 3)
+		if mode == 0:
+			integer, code = divmod(integer, 96)
+			decompressed += code_page[code + 32]
+		else:
+			flag_swap = False
+			flag_space = decompressed != ''
+			if mode == 2:
+				integer, flag = divmod(integer, 3)
+				flag_swap = flag != 1
+				flag_space ^= flag != 0
+			integer, short = divmod(integer, 2)
+			the_dictionary = (dictionary.long, dictionary.short)[short]
+			integer, index = divmod(integer, len(the_dictionary))
+			word = the_dictionary[index]
+			if flag_swap:
+				word = word[0].swapcase() + word[1:]
+			if flag_space:
+				word = ' ' + word
+			decompressed += word
+	return decompressed
