@@ -783,6 +783,8 @@ hypers = {
 	'€': lambda link, none = None: attrdict(
 		arity = link.arity,
 		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in helper.iterable(x)]
 	),
 	'£': lambda index, links: attrdict(
