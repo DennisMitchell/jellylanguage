@@ -306,6 +306,12 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: y[(x - 1) % len(y)]
 	),
+	'j': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: sum(([t, y] for t in x), [])[:-1]
+	),
 	'L': attrdict(
 		arity = 1,
 		depth = -1,
