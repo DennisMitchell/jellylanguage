@@ -113,7 +113,7 @@ def try_eval(string):
 	try:
 		return eval(string)
 	except:
-		return string
+		return listify(string)
 
 def to_base(integer, base):
 	digits = []

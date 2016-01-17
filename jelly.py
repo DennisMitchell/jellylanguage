@@ -130,7 +130,7 @@ def dyadic_chain(chain, args):
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
 	elif chain and arities(chain) < [0, 2] * len(chain):
-		ret = dyadic_link(chain[0], args)
+		ret = niladic_link(chain[0])
 		chain = chain[1:]
 	else:
 		ret = larg
@@ -266,7 +266,7 @@ atoms = {
 	),
 	'ɠ': attrdict(
 		arity = 0,
-		call = input
+		call = lambda: helper.listify(input())
 	),
 	'H': attrdict(
 		arity = 1,
