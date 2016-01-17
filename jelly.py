@@ -649,10 +649,20 @@ atoms = {
 		depth = 0,
 		call = lambda z: [[x, y] for x, y in sympy.ntheory.factor_.factorint(z).items()]
 	),
+	'Æe': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.exp, helper.cmath.exp), z)
+	),
 	'Æf': attrdict(
 		arity = 1,
 		depth = 0,
 		call = lambda z: helper.rld(sympy.ntheory.factor_.factorint(z).items())
+	),
+	'Æl': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: helper.overload((helper.math.log, helper.cmath.log), z)
 	),
 	'ÆN': attrdict(
 		arity = 1,
@@ -731,6 +741,14 @@ atoms = {
 		rdepth = 0,
 		call = helper.symmetric_mod
 	),
+	'ØP': attrdict(
+		arity = 0,
+		call = lambda: helper.math.pi
+	),
+	'Øe': attrdict(
+		arity = 0,
+		call = lambda: helper.math.e
+	)
 }
 
 actors = {
