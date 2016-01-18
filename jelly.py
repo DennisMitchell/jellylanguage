@@ -47,7 +47,6 @@ def variadic_link(link, args):
 		return monadic_link(link, args[0])
 	if link.arity == 2:
 		return dyadic_link(link, args)
-	raise hell # unimplemented
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
@@ -57,7 +56,6 @@ def variadic_chain(chain, args):
 		return monadic_chain(chain, args[0])
 	if len(args) == 2:
 		return dyadic_chain(chain, args)
-	raise hell # unimplemented
 
 def niladic_link(link):
 	return link.call()
@@ -102,7 +100,8 @@ def monadic_chain(chain, arg):
 			ret = monadic_link(chain[0], ret)
 			chain = chain[1:]
 		else:
-			raise hell # unimplemented
+			print('Skipped atom:', chain[0], file = sys.stderr)
+			chain = chain[1:]
 	return ret
 
 def dyadic_link(link, args):
@@ -151,7 +150,8 @@ def dyadic_chain(chain, args):
 			ret = monadic_link(chain[0], ret)
 			chain = chain[1:]
 		else:
-			raise hell # unimplemented
+			print('Skipped atom:', chain[0], file = sys.stderr)
+			chain = chain[1:]
 	return ret
 
 atoms = {
@@ -358,7 +358,7 @@ atoms = {
 	'P': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['×'], (x, y)), z, 1)
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['×'], (x, y)), z, 1) if type(z) == list else z
 	),
 	'Ṗ': attrdict(
 		arity = 1,
@@ -379,7 +379,7 @@ atoms = {
 	'S': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['+'], (x, y)), z, 0)
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['+'], (x, y)), z, 0) if type(z) == list else z
 	),
 	'Ṡ': attrdict(
 		arity = 1,
@@ -595,7 +595,8 @@ atoms = {
 	),
 	'®': attrdict(
 		arity = 0,
-		depth = -1
+		depth = -1,
+		call = lambda: 0
 	),
 	'{': attrdict(
 		arity = 2,

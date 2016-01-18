@@ -125,6 +125,8 @@ def to_base(integer, base):
 	return digits[::-1] or [0]
 
 def to_exponents(integer):
+	if integer == 1:
+		return []
 	pairs = sympy.ntheory.factor_.factorint(integer)
 	exponents = []
 	for prime in sympy.ntheory.generate.primerange(2, max(pairs.keys()) + 1):
