@@ -119,6 +119,10 @@ def to_base(integer, base):
 	digits = []
 	integer = abs(integer)
 	base = abs(base)
+	if base == 1:
+		return [integer]
+	if base == 1:
+		return [1] * integer
 	while integer:
 		digits.append(integer % base)
 		integer //= base
