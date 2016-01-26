@@ -252,7 +252,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: [_ for _ in x if _ in y]
+		call = lambda x, y: [t for t in x if t in y]
 	),
 	'g': attrdict(
 		arity = 2,
@@ -323,6 +323,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: helper.overload((helper.math.log, helper.cmath.log), x, y)
 	),
+	'ḷ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: x
+	),
 	'm': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -376,6 +382,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: list(range(int(x), int(y) + 1) or range(int(x), int(y) - 1, -1))
 	),
+	'ṛ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: y
+	),
 	'S': attrdict(
 		arity = 1,
 		depth = -1,
@@ -397,6 +409,12 @@ atoms = {
 		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: [x[i : i + y] for i in range(len(x) - y + 1)]
+	),
+	'ṣ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.listify(helper.split_at(x, y))
 	),
 	'Ṫ': attrdict(
 		arity = 1,
@@ -424,6 +442,12 @@ atoms = {
 		ldepth = 1,
 		rdepth = 1,
 		call = lambda x, y: helper.rld(zip(x, y))
+	),
+	'ẋ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: (x if depth(x) else [x]) * y
 	),
 	'Z': attrdict(
 		arity = 1,
@@ -598,22 +622,10 @@ atoms = {
 		depth = -1,
 		call = lambda: 0
 	),
-	'{': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: x
-	),
 	'¹': attrdict(
 		arity = 1,
 		depth = -1,
 		call = helper.identity
-	),
-	'}': attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: y
 	),
 	'ÆA': attrdict(
 		arity = 1,
@@ -789,6 +801,19 @@ actors = {
 }
 
 hypers = {
+	'"': lambda link, none = None: attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.listify(link.call(t, u) for t, u in zip(x, y))
+	),
+	"'": lambda link, none = None: attrdict(
+		arity = link.arity,
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x = None, y = None: link.call(x, y)
+	),
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
 		ldepth = link.rdepth,
@@ -804,6 +829,18 @@ hypers = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
+	),
+	'{': lambda link, none = None: attrdict(
+		arity = 2,
+		ldepth = link.depth,
+		rdepth = -1,
+		call = lambda x, y: link.call(x)
+	),
+	'}': lambda link, none = None: attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = link.depth,
+		call = lambda x, y: link.call(y)
 	),
 	'€': lambda link, none = None: attrdict(
 		arity = link.arity,

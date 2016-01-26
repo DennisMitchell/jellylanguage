@@ -97,6 +97,16 @@ def Pi(number):
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
 
+def split_at(iterable, needle):
+	chunk = []
+	for element in iterable:
+		if element == needle:
+			yield chunk
+			chunk = []
+		else:
+			chunk.append(element)
+	yield chunk
+
 def stringify(iterable, recurse = True):
 	if type(iterable) != list:
 		return iterable
