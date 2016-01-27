@@ -398,6 +398,11 @@ atoms = {
 		depth = 0,
 		call = lambda z: (z > 0) - (z < 0)
 	),
+	'Ṣ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = sorted
+	),
 	's': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -431,6 +436,11 @@ atoms = {
 		arity = 1,
 		depth = 1,
 		call = lambda z: z[::-1]
+	),
+	'Ụ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: sorted(range(1, len(z) + 1), key = lambda t: z[t - 1])
 	),
 	'W': attrdict(
 		arity = 1,
