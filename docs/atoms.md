@@ -28,10 +28,11 @@ Symbol|Arity|Function|Note
 `H`|1|Halve; compute **z ÷ 2**.
 `L`|1|Length.
 `N`|1|Negative; compute **-z**.
-`O`|1|Ones; return the index of each **n** n times.
+`O`|1|Ones; return each index **n** `z[n]` times.
 `P`|1|Product of a list.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
 `S`|1|Sum of a list.
+`T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.
 `W`|1|Wrap; return `[z]`.
 `Z`|1|Zip; push the array of all columns of **z**.
@@ -77,6 +78,7 @@ Symbol|Arity|Function|Note
 `Ṅ`|1|Print **z** and a linefeed.|Returns **z**.
 `Ȯ`|1|Print **z**.|Returns **z**.
 `Ṗ`|1|Pop; return `z[:-1]`.
+`Q`|1|Return the unique elements of **z**, sorted by first appearance.
 `Ṡ`|1|Sign of **z**.
 `Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
 `ḅ`|2|Convert from base **y** to integer.
@@ -84,6 +86,7 @@ Symbol|Arity|Function|Note
 `ḷ`|2|Left argument; return **x**.
 `ṛ`|2|Right argument; return **y**.
 `ṣ`|2|Split list **x** at occurrences of **y**.
+`ḟ`|2|Filter; remove the elements from **x** that are in **y**.
 `ḣ`|2|Head; return `x[:y]`.
 `ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
 `ṫ`|2|Tail; return `x[y - 1:]`.

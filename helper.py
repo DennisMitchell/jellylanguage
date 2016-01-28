@@ -149,3 +149,10 @@ def to_exponents(integer):
 		else:
 			exponents.append(0)
 	return exponents
+
+def unique(iterable):
+	result = []
+	for element in iterable:
+		if not element in result:
+			result.append(element)
+	return result

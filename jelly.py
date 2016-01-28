@@ -254,6 +254,12 @@ atoms = {
 		rdepth = -1,
 		call = lambda x, y: [t for t in x if t in y]
 	),
+	'ḟ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: [t for t in x if not t in y]
+	),
 	'g': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -371,6 +377,11 @@ atoms = {
 		depth = -1,
 		call = lambda z: z[:-1]
 	),
+	'Q': attrdict(
+		arity = 1,
+		depth = -1,
+		call = helper.unique
+	),
 	'R': attrdict(
 		arity = 1,
 		depth = 0,
@@ -420,6 +431,11 @@ atoms = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: helper.listify(helper.split_at(x, y))
+	),
+	'T': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: [u + 1 for u, v in enumerate(z) if v]
 	),
 	'Ṫ': attrdict(
 		arity = 1,
