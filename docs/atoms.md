@@ -6,7 +6,7 @@ Symbol|Arity|Function|Note
 ------|-----|--------|----
 `©`|1|Copy; save **z** in the register.
 `¬`|1|Logical NOT.|Returns **1** or **0**.
-`®`|0|Restore; retrieve the value of the register.
+`®`|0|Restore; retrieve the value of the register.|Initially 0.
 `½`|1|Square root.
 `×`|2|Multiplication.
 `÷`|2|Floating point division.
@@ -32,7 +32,8 @@ Symbol|Arity|Function|Note
 `P`|1|Product of a list.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
 `S`|1|Sum of a list.
-`U`|1|Upend, reverse an array.
+`U`|1|Upend; reverse an array.
+`W`|1|Wrap; return `[z]`.
 `Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
 `_`|2|Subtraction.
@@ -42,6 +43,7 @@ Symbol|Arity|Function|Note
 `f`|2|Filter; remove the elements from **x** that are not in **y**.
 `g`|2|Greatest common divisor.
 `i`|2|Find the index of **y** in **x**.|Indices are 1-based.
+`j`|2|Join list **x** with serparator **y**.
 `l`|2|Logarithm with base **y**.
 `m`|2|Modular; return every **y** th element of **x**.
 `o`|2|Logical OR.
@@ -49,9 +51,7 @@ Symbol|Arity|Function|Note
 `s`|2|Split **x** into slices of length **y**.
 `x`|2|Times; repeat the elements of **x** **y** times.
 `z`|2|Zip; transpose **x** with filler **y**.
-`{`|2|Left argument; return **x**.
 `|`|2|Bitwise OR.
-`}`|2|Right argument; return **y**.
 ` ~ `|2|Bitwise NOT.
 `°`|1|Convert **z** from degrees to radians.
 `¹`|1|Identity; return **z**.
@@ -67,6 +67,8 @@ Symbol|Arity|Function|Note
 `Ḅ`|1|Convert from binary to integer.
 `Ḍ`|1|Convert from decimal to integer.
 `Ḥ`|1|Double; compute **2z**.
+`Ṣ`|1|Sort the list **z**.
+`Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.
 `Ḟ`|1|Floor; round **z** down to the nearest integer.|Returns **z** for non-real **z**.
@@ -79,9 +81,14 @@ Symbol|Arity|Function|Note
 `Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
 `ḅ`|2|Convert from base **y** to integer.
 `ị`|2|Return the element of **x** at index **y**.|Indices are 1-based.
+`ḷ`|2|Left argument; return **x**.
+`ṛ`|2|Right argument; return **y**.
+`ṣ`|2|Split list **x** at occurrences of **y**.
 `ḣ`|2|Head; return `x[:y]`.
 `ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
 `ṫ`|2|Tail; return `x[y - 1:]`.
+`ẋ`|2|Repeat list **x** **y** times.
+`ż`|2|Zip; interleave **x** and **y**.
 `«`|2|Minimum of **x** and **y**.
 `»`|2|Maximum of **x** and **y**.
 `‘`|1|Increment; compute **z + 1**.
@@ -97,7 +104,9 @@ Symbol|Arity|Function|Note
 `ÆR`|1|Range; generate all primes between **2** and **z**.
 `ÆS`|1|Sine.
 `ÆT`|1|Tangent.
+`Æe`|1|Exponential function.
 `Æf`|1|Compute the array of primes whose product is **z**.
+`Æl`|1|Natural logarithm.
 `Æn`|1|Next; generate the closest prime strictly greater than **z**.
 `Æp`|1|Previous; generate the closest prime strictly less than **z**.
 `ÆẠ`|1|Cosine.
@@ -109,3 +118,5 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
+`ØP`|0|Pi
+`Øe`|0|Euler's number
