@@ -72,6 +72,28 @@ def listify(iterable):
 		return iterable
 	return list(map(listify, iterable))
 
+def multiset_difference(left, right):
+	result = iterable(left)[::-1]
+	for element in iterable(right):
+		if element in result:
+			result.remove(element)
+	return result[::-1]
+
+def multiset_intersect(left, right):
+	right = iterable(right)[:]
+	result = []
+	for element in iterable(left):
+		if element in right:
+			result.append(element)
+			right.remove(element)
+	return result
+
+def multiset_symdif(left, right):
+	return multiset_union(multiset_difference(left, right), multiset_difference(right, left))
+
+def multiset_union(left, right):
+	return left + multiset_difference(right, left)
+
 def ntimes(link, repetitions, args):
 	ret, rarg = args
 	for _ in range(jelly.variadic_link(repetitions, args)):

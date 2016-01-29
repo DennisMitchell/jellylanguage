@@ -186,6 +186,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: x and y
 	),
+	'ạ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: abs(x, y)
+	),
 	'B': attrdict(
 		arity = 1,
 		depth = 0,
@@ -252,13 +258,13 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: [t for t in x if t in y]
+		call = lambda x, y: [t for t in helper.iterable(x) if t in helper.iterable(y)]
 	),
 	'ḟ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: [t for t in x if not t in y]
+		call = lambda x, y: [t for t in helper.iterable(x) if not t in helper.iterable(y)]
 	),
 	'g': attrdict(
 		arity = 2,
@@ -294,6 +300,11 @@ atoms = {
 		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: x[:y]
+	),
+	'I': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: [z[i] - z[i - 1] for i in range(1, len(z))]
 	),
 	'İ': attrdict(
 		arity = 1,
@@ -779,6 +790,30 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = helper.symmetric_mod
+	),
+	'Œ&': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = helper.multiset_intersect
+	),
+	'Œ-': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = helper.multiset_difference
+	),
+	'Œ^': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = helper.multiset_symdif
+	),
+	'Œ|': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = helper.multiset_union
 	),
 	'ØP': attrdict(
 		arity = 0,

@@ -26,6 +26,7 @@ Symbol|Arity|Function|Note
 `C`|1|Complement; compute **1 - z**.
 `D`|1|Convert from integer to decimal.
 `H`|1|Halve; compute **z ÷ 2**.
+`I`|1|Increments; compute the deltas of consecutive elements of **z**.
 `L`|1|Length.
 `N`|1|Negative; compute **-z**.
 `O`|1|Ones; return each index **n** `z[n]` times.
@@ -81,6 +82,7 @@ Symbol|Arity|Function|Note
 `Q`|1|Return the unique elements of **z**, sorted by first appearance.
 `Ṡ`|1|Sign of **z**.
 `Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
+`ạ`|2|Absolute difference.
 `ḅ`|2|Convert from base **y** to integer.
 `ị`|2|Return the element of **x** at index **y**.|Indices are 1-based.
 `ḷ`|2|Left argument; return **x**.
@@ -121,5 +123,9 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
+`Œ&`|2|Multiset intersection.
+`Œ-`|2|Multiset difference.
+`Œ^`|2|Multiset symmetric difference.
+`Œ|`|2|Multiset union.
 `ØP`|0|Pi
 `Øe`|0|Euler's number
