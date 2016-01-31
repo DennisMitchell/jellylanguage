@@ -404,6 +404,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: list(range(int(x), int(y) + 1) or range(int(x), int(y) - 1, -1))
 	),
+	'ṙ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = helper.rotate_left
+	),
 	'ṛ': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -484,7 +490,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: (x if depth(x) else [x]) * y
+		call = lambda x, y: helper.iterable(x) * int(y)
 	),
 	'Z': attrdict(
 		arity = 1,

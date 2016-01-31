@@ -119,6 +119,11 @@ def Pi(number):
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
 
+def rotate_left(array, units):
+	array = iterable(array)
+	length = len(array)
+	return array[units % length :] + array[: units % length] if length else []
+
 def split_at(iterable, needle):
 	chunk = []
 	for element in iterable:

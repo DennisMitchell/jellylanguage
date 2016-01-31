@@ -90,6 +90,7 @@ Symbol|Arity|Function|Note
 `ṣ`|2|Split list **x** at occurrences of **y**.
 `ḟ`|2|Filter; remove the elements from **x** that are in **y**.
 `ḣ`|2|Head; return `x[:y]`.
+`ṙ`|2|Rotate **x** **y** units to the left.
 `ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
 `ṫ`|2|Tail; return `x[y - 1:]`.
 `ẋ`|2|Repeat list **x** **y** times.
