@@ -6,7 +6,7 @@ code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲ
 str_arities = 'øµð'
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
-str_realdec = '(?:0|-?\d+(?:\.\d*)?|-?\d*\.\d+|-)'
+str_realdec = '(?:0|-?\d*\.\d*|-?\d+|-)'
 str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_charlit + '|' + str_complex + ')'
@@ -67,7 +67,8 @@ def parse_literal(literal_match):
 			parsed = parsed[0]
 	else:
 		parsed = eval('+ 1j *'.join([
-			repr(eval('* 10 **'.join(['-1' if part == '-' else part or repr(2 * index + 1) for index, part in enumerate(component.split('ȷ'))])) if component else index)
+			repr(eval('* 10 **'.join(['-1' if part == '-' else (part + '5' if part[-1:] == '.' else part) or repr(2 * index + 1)
+			for index, part in enumerate(component.split('ȷ'))])) if component else index)
 			for index, component in enumerate(literal.split('ı'))
 		]))
 	return repr(parsed) + ' '

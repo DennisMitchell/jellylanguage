@@ -115,11 +115,13 @@ Symbol|Arity|Function|Note
 `Æl`|1|Natural logarithm.
 `Æn`|1|Next; generate the closest prime strictly greater than **z**.
 `Æp`|1|Previous; generate the closest prime strictly less than **z**.
+`Ær`|1|Find the roots of a polynomial.|**z** is list of coefficients.
 `ÆẠ`|1|Cosine.
 `ÆẸ`|1|Inverse of `ÆE`.
 `ÆṢ`|1|Arcsine.
 `ÆṬ`|1|Arctangent.
 `ÆṪ`|1|Totient function.
+`Ær`|1|Construct the polynomial with roots **z**.|Returns list of coefficients.
 `Æ°`|1|Convert **z** from radians to degrees.
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.

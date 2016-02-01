@@ -1,4 +1,4 @@
-import fractions, functools, helper, itertools, operator, sympy, sys
+import fractions, functools, helper, itertools, numpy, operator, sympy, sys
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -744,6 +744,16 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
+	),
+	'Ær': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: list(numpy.roots(z[::-1]))
+	),
+	'Æṛ': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: list(numpy.poly(z))[::-1]
 	),
 	'ÆT': attrdict(
 		arity = 1,
