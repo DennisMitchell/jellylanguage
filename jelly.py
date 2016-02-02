@@ -970,6 +970,13 @@ joints = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x = None, y = None: helper.ntimes(links[0], links[1], (x, y))
+	),
+	'¿': lambda links: attrdict(
+		arity = max(links[0].arity, links[1].arity),
+		depth = -1,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y))
 	)
 }
 

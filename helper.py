@@ -183,3 +183,11 @@ def unique(iterable):
 		if not element in result:
 			result.append(element)
 	return result
+
+def while_loop(link, condition, args):
+	ret, rarg = args
+	while jelly.variadic_link(condition, (ret, rarg)):
+		larg = ret
+		ret = jelly.variadic_link(link, (larg, rarg))
+		rarg = larg
+	return ret
