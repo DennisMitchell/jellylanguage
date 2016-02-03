@@ -37,6 +37,9 @@ def depth(link):
 def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
 
+def leading_constant(chain):
+	return chain and arities(chain) + [1] < [0, 2] * len(chain)
+
 def variadic_link(link, args):
 	if link.arity < 0:
 		args = list(filter(None.__ne__, args))
@@ -61,8 +64,8 @@ def niladic_link(link):
 	return link.call()
 
 def niladic_chain(chain):
-	if len(chain) > 1 and chain[1].arity == 0:
-		return dyadic_chain(chain[2:], (chain[0].call(), chain[1].call()))
+	if not chain or chain[0].arity > 0:
+		return monadic_chain(chain[1:], 0)
 	return monadic_chain(chain[1:], chain[0].call())
 
 def monadic_link(link, arg):
@@ -78,13 +81,13 @@ def monadic_chain(chain, arg):
 	for link in chain:
 		if link.arity == -1:
 			link.arity = 1
-	if chain and arities(chain) + [1] < [0, 2] * len(chain):
+	if leading_constant(chain):
 		ret = niladic_link(chain[0])
 		chain = chain[1:]
 	else:
 		ret = arg
 	while chain:
-		if arities(chain[0:3]) == [2, 2, 0] and arities(chain[2:]) + [1] < [0, 2] * len(chain):
+		if arities(chain[0:3]) == [2, 2, 0] and leading_constant(chain[2:]):
 			ret = dyadic_link(chain[0], (ret, dyadic_link(chain[1], (arg, niladic_link(chain[2])))))
 			chain = chain[3:]
 		elif arities(chain[0:2]) == [2, 1]:
@@ -131,13 +134,13 @@ def dyadic_chain(chain, args):
 	if chain and arities(chain[0:3]) == [2, 2, 2]:
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
-	elif chain and arities(chain) + [1] < [0, 2] * len(chain):
+	elif leading_constant(chain):
 		ret = niladic_link(chain[0])
 		chain = chain[1:]
 	else:
 		ret = larg
 	while chain:
-		if arities(chain[0:3]) == [2, 2, 0] and arities(chain[2:]) + [1] < [0, 2] * len(chain):
+		if arities(chain[0:3]) == [2, 2, 0] and leading_constant(chain[2:]):
 			ret = dyadic_link(chain[1], (dyadic_link(chain[0], (ret, rarg)), niladic_link(chain[2])))
 			chain = chain[3:]
 		elif arities(chain[0:2]) == [2, 2]:
