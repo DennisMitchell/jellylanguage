@@ -47,6 +47,15 @@ def div(dividend, divisor, floor = False):
 def eval(string):
 	return listify(ast.literal_eval(string))
 
+def flatten(argument):
+	flat = []
+	if type(argument) == list:
+		for item in argument:
+			flat += flatten(item)
+	else:
+		flat.append(argument)
+	return flat
+
 def identity(argument):
 	return argument
 
@@ -137,7 +146,7 @@ def split_at(iterable, needle):
 def stringify(iterable, recurse = True):
 	if type(iterable) != list:
 		return iterable
-	if str in map(type, iterable) and not list in map(type, iterable):
+	if str in map(type, iterable):
 		return ''.join(map(str, iterable))
 	iterable = [stringify(item) for item in iterable]
 	return stringify(iterable, False) if recurse else iterable

@@ -25,6 +25,7 @@ Symbol|Arity|Function|Note
 `B`|1|Convert from integer to binary.
 `C`|1|Complement; compute **1 - z**.
 `D`|1|Convert from integer to decimal.
+`F`|1|Flatten list.
 `H`|1|Halve; compute **z ÷ 2**.
 `I`|1|Increments; compute the deltas of consecutive elements of **z**.
 `L`|1|Length.
@@ -32,6 +33,7 @@ Symbol|Arity|Function|Note
 `O`|1|Ones; return each index **n** `z[n]` times.
 `P`|1|Product of a list.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
+`Ṙ`|1|Python's string representation.
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.

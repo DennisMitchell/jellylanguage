@@ -258,6 +258,11 @@ atoms = {
 		depth = -1,
 		call = lambda z: z[1:]
 	),
+	'F': attrdict(
+		arity = 1,
+		depth = -1,
+		call = helper.flatten
+	),
 	'Ḟ': attrdict(
 		arity = 1,
 		depth = 0,
@@ -406,6 +411,11 @@ atoms = {
 		arity = 1,
 		depth = 0,
 		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
+	),
+	'Ṙ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = repr
 	),
 	'r': attrdict(
 		arity = 2,
