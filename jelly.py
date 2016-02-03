@@ -87,10 +87,7 @@ def monadic_chain(chain, arg):
 	else:
 		ret = arg
 	while chain:
-		if arities(chain[0:3]) == [2, 2, 0] and leading_constant(chain[2:]):
-			ret = dyadic_link(chain[0], (ret, dyadic_link(chain[1], (arg, niladic_link(chain[2])))))
-			chain = chain[3:]
-		elif arities(chain[0:2]) == [2, 1]:
+		if arities(chain[0:2]) == [2, 1]:
 			ret = dyadic_link(chain[0], (ret, monadic_link(chain[1], arg)))
 			chain = chain[2:]
 		elif arities(chain[0:2]) == [2, 0]:
