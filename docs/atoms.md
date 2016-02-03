@@ -33,7 +33,6 @@ Symbol|Arity|Function|Note
 `O`|1|Ones; return each index **n** `z[n]` times.
 `P`|1|Product of a list.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
-`Ṙ`|1|Python's string representation.
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.
@@ -101,6 +100,8 @@ Symbol|Arity|Function|Note
 `»`|2|Maximum of **x** and **y**.
 `‘`|1|Increment; compute **z + 1**.
 `’`|1|Decrement; compute **z - 1**.
+`ØP`|0|Pi
+`Øe`|0|Euler's number
 `Æ½`|1|Compute the integer square root of **z**.
 `ÆA`|1|Arccosine.
 `ÆC`|1|Count the primes less or equal to **z**.
@@ -128,9 +129,8 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
-`Œ&`|2|Multiset intersection.
-`Œ-`|2|Multiset difference.
-`Œ^`|2|Multiset symmetric difference.
-`Œ|`|2|Multiset union.
-`ØP`|0|Pi
-`Øe`|0|Euler's number
+`ŒṘ`|1|Python's string representation.
+`œ&`|2|Multiset intersection.
+`œ-`|2|Multiset difference.
+`œ^`|2|Multiset symmetric difference.
+`œ|`|2|Multiset union.

@@ -412,11 +412,6 @@ atoms = {
 		depth = 0,
 		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
 	),
-	'Ṙ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = repr
-	),
 	'r': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -826,25 +821,30 @@ atoms = {
 		rdepth = 0,
 		call = helper.symmetric_mod
 	),
-	'Œ&': attrdict(
+	'ŒṘ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: helper.listify(repr(z))
+	),
+	'œ&': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = helper.multiset_intersect
 	),
-	'Œ-': attrdict(
+	'œ-': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = helper.multiset_difference
 	),
-	'Œ^': attrdict(
+	'œ^': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
 		call = helper.multiset_symdif
 	),
-	'Œ|': attrdict(
+	'œ|': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
