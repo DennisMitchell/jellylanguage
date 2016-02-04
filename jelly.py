@@ -65,7 +65,7 @@ def niladic_link(link):
 
 def niladic_chain(chain):
 	if not chain or chain[0].arity > 0:
-		return monadic_chain(chain[1:], 0)
+		return monadic_chain(chain, 0)
 	return monadic_chain(chain[1:], chain[0].call())
 
 def monadic_link(link, arg):
