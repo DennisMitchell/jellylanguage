@@ -494,8 +494,8 @@ atoms = {
 	'x': attrdict(
 		arity = 2,
 		ldepth = 1,
-		rdepth = 1,
-		call = lambda x, y: helper.rld(zip(x, y))
+		rdepth = -1,
+		call = lambda x, y: helper.rld(zip(x, y if depth(y) else [y]*len(x)))
 	),
 	'ẋ': attrdict(
 		arity = 2,
