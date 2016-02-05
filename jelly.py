@@ -857,6 +857,33 @@ atoms = {
 	)
 }
 
+quicks = {
+	'¤': attrdict(
+		condition = lambda links: len(links) > 1 and links[0].arity == 0,
+		quicklink = lambda links, index: attrdict(
+			arity = 0,
+			call = lambda: niladic_chain(links)
+		)
+	),
+	'$': attrdict(
+		condition = lambda links: len(links) > 1 and not leading_constant(links),
+		quicklink = lambda links, index: attrdict(
+			arity = 1,
+			depth = -1,
+			call = lambda z: monadic_chain(links, z)
+		)
+	),
+	'¥': attrdict(
+		condition = lambda links: len(links) > 1 and not leading_constant(links),
+		quicklink = lambda links, index: attrdict(
+			arity = 2,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x, y: dyadic_chain(links, (x, y))
+		)
+	)
+}
+
 actors = {
 	'ß': lambda index, links: attrdict(
 		arity = -1,
@@ -965,21 +992,6 @@ hypers = {
 }
 
 joints = {
-	'¤': lambda links: attrdict(
-		arity = 0,
-		call = lambda: niladic_chain(links)
-	),
-	'$': lambda links: attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: monadic_chain(links, z)
-	),
-	'¥': lambda links: attrdict(
-		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: dyadic_chain(links, (x, y))
-	),
 	'¡': lambda links: attrdict(
 		arity = max(links[0].arity, links[1].arity),
 		depth = -1,
