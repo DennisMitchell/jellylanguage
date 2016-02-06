@@ -46,7 +46,7 @@ Symbol|Arity|Function|Note
 `f`|2|Filter; remove the elements from **x** that are not in **y**.
 `g`|2|Greatest common divisor.
 `i`|2|Find the index of **y** in **x**.|Indices are 1-based.
-`j`|2|Join list **x** with serparator **y**.
+`j`|2|Join list **x** with separator **y**.
 `l`|2|Logarithm with base **y**.
 `m`|2|Modular; return every **y** th element of **x**.
 `o`|2|Logical OR.

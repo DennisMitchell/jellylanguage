@@ -103,13 +103,16 @@ def multiset_symdif(left, right):
 def multiset_union(left, right):
 	return left + multiset_difference(right, left)
 
-def ntimes(link, repetitions, args):
+def ntimes(link, repetitions, args, cumulative = False):
 	ret, rarg = args
+	cumret = []
 	for _ in range(jelly.variadic_link(repetitions, args)):
+		if cumulative:
+			cumret.append(ret)
 		larg = ret
 		ret = jelly.variadic_link(link, (larg, rarg))
 		rarg = larg
-	return ret
+	return cumret + [ret] if cumulative else ret
 
 def overload(operators, *args):
 	for operator in operators:
