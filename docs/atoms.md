@@ -43,6 +43,7 @@ Symbol|Arity|Function|Note
 `a`|2|Logical AND.
 `b`|2|Convert from integer to base **y**.
 `c`|2|Combinations; compute xCy.
+`e`|2|Exists; return `x in y`.|Returns **1** or **0**.
 `f`|2|Filter; remove the elements from **x** that are not in **y**.
 `g`|2|Greatest common divisor.
 `i`|2|Find the index of **y** in **x**.|Indices are 1-based.
@@ -89,6 +90,7 @@ Symbol|Arity|Function|Note
 `ḷ`|2|Left argument; return **x**.
 `ṛ`|2|Right argument; return **y**.
 `ṣ`|2|Split list **x** at occurrences of **y**.
+`ċ`|2|Count the occurrences of **y** in **x**.
 `ḟ`|2|Filter; remove the elements from **x** that are in **y**.
 `ḣ`|2|Head; return `x[:y]`.
 `ṙ`|2|Rotate **x** **y** units to the left.

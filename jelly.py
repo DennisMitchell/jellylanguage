@@ -236,6 +236,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: helper.div(helper.Pi(x), helper.Pi(x - y) * helper.Pi(y))
 	),
+	'ċ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.iterable(x).count(y)
+	),
 	'ƈ': attrdict(
 		arity = 0,
 		call = lambda: sys.stdin.read(1)
@@ -254,6 +260,12 @@ atoms = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: z[1:]
+	),
+	'e': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: int(x in helper.iterable(y))
 	),
 	'F': attrdict(
 		arity = 1,
@@ -332,7 +344,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = -1,
-		call = lambda x, y: y[(x - 1) % len(y)]
+		call = lambda x, y: y[(int(x) - 1) % len(y)] if int(x) == x else [y[(helper.math.floor(x) - 1) % len(y)], y[(helper.math.ceil(x) - 1) % len(y)]]
 	),
 	'j': attrdict(
 		arity = 2,
