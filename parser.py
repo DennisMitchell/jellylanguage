@@ -68,6 +68,7 @@ def parse_literal(literal_match):
 			parsed = [sss(string).replace('¶', '\n') for string in parsed]
 		else:
 			parsed = [string.replace('¶', '\n') for string in parsed]
+		parsed = [string if len(string) > 1 else [string] for string in parsed]
 		if len(parsed) == 1:
 			parsed = parsed[0]
 	else:

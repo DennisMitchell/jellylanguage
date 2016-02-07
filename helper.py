@@ -44,8 +44,8 @@ def div(dividend, divisor, floor = False):
 		return int(dividend // divisor)
 	return dividend / divisor
 
-def eval(string):
-	return listify(ast.literal_eval(string))
+def eval(string, dirty = True):
+	return listify(ast.literal_eval(string), dirty)
 
 def flatten(argument):
 	flat = []
@@ -76,10 +76,12 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return int(a)
 
-def listify(iterable):
+def listify(iterable, dirty = False):
+	if type(iterable) == str and dirty:
+		return list(iterable)
 	if type(iterable) in (int, float, complex) or (type(iterable) == str and len(iterable) == 1):
 		return iterable
-	return list(map(listify, iterable))
+	return list(listify(item, dirty) for item in iterable)
 
 def multiset_difference(left, right):
 	result = iterable(left)[::-1]
@@ -162,7 +164,7 @@ def try_eval(string):
 	try:
 		return eval(string)
 	except:
-		return listify(string)
+		return listify(string, True)
 
 def to_base(integer, base):
 	digits = []

@@ -20,7 +20,7 @@ def create_chain(chain, arity, depth = -1, ldepth = -1, rdepth = -1):
 def create_literal(string):
 	return attrdict(
 		arity = 0,
-		call = lambda: helper.eval(string)
+		call = lambda: helper.eval(string, False)
 	)
 
 def copy(value):
@@ -289,7 +289,7 @@ atoms = {
 	),
 	'ɠ': attrdict(
 		arity = 0,
-		call = lambda: helper.listify(input())
+		call = lambda: helper.listify(input(), True)
 	),
 	'H': attrdict(
 		arity = 1,
@@ -361,7 +361,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: x[::y]
+		call = lambda x, y: helper.iterable(x)[::y] if y else helper.iterable(x) + helper.iterable(x)[::-1]
 	),
 	'N': attrdict(
 		arity = 1,
@@ -943,12 +943,12 @@ hypers = {
 	'/': lambda link, none = None: attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), z)
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), helper.iterable(z))
 	),
 	'\\': lambda link, none = None: attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: list(itertools.accumulate(z, lambda x, y: dyadic_link(link, (x, y))))
+		call = lambda z: list(itertools.accumulate(helper.iterable(z), lambda x, y: dyadic_link(link, (x, y))))
 	),
 	'{': lambda link, none = None: attrdict(
 		arity = 2,
