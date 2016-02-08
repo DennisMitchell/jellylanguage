@@ -203,10 +203,13 @@ def unique(iterable):
 			result.append(element)
 	return result
 
-def while_loop(link, condition, args):
+def while_loop(link, condition, args, cumulative = False):
 	ret, rarg = args
+	cumret = []
 	while jelly.variadic_link(condition, (ret, rarg)):
+		if cumulative:
+			cumret.append(ret)
 		larg = ret
 		ret = jelly.variadic_link(link, (larg, rarg))
 		rarg = larg
-	return ret
+	return cumret + [ret] if cumulative else ret

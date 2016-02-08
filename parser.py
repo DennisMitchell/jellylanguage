@@ -11,7 +11,7 @@ str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_charlit + '|' + str_complex + ')'
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
-str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.quicks) + list(jelly.actors) + list(jelly.hypers)))
+str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.quicks) + list(jelly.hypers)))
 
 regex_chain = re.compile('(?:^|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )+')
 regex_liter = re.compile(str_literal)
@@ -33,9 +33,7 @@ def parse_code(code):
 					popped = []
 					while not jelly.quicks[token].condition(popped) and (chain or chains):
 						popped.insert(0, chain.pop() if chain else chains.pop())
-					chain += jelly.quicks[token].quicklink(popped, index)
-				elif token in jelly.actors:
-					chain.append(jelly.actors[token](index, links))
+					chain += jelly.quicks[token].quicklink(popped, links, index)
 				elif token in jelly.hypers:
 					x = chain.pop() if chain else chains.pop()
 					chain.append(jelly.hypers[token](x, links))
