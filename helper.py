@@ -76,6 +76,11 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return int(a)
 
+def last_input():
+	if len(jelly.sys.argv) > 3:
+		return eval(jelly.sys.argv[-1])
+	return eval(input())
+
 def listify(iterable, dirty = False):
 	if type(iterable) == str and dirty:
 		return list(iterable)
@@ -105,14 +110,14 @@ def multiset_symdif(left, right):
 def multiset_union(left, right):
 	return left + multiset_difference(right, left)
 
-def ntimes(link, repetitions, args, cumulative = False):
+def ntimes(links, args, cumulative = False):
 	ret, rarg = args
 	cumret = []
-	for _ in range(jelly.variadic_link(repetitions, args)):
+	for _ in range(jelly.variadic_link(links[1], args) if len(links) == 2 else last_input()):
 		if cumulative:
 			cumret.append(ret)
 		larg = ret
-		ret = jelly.variadic_link(link, (larg, rarg))
+		ret = jelly.variadic_link(links[0], (larg, rarg))
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
 

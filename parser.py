@@ -11,7 +11,7 @@ str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
 str_literal = '(?:' + str_strings + '|' + str_charlit + '|' + str_complex + ')'
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
-str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.quicks) + list(jelly.actors) + list(jelly.hypers) + list(jelly.joints) + list(jelly.nexus)))
+str_nonlits = '|'.join(map(re.escape, list(jelly.atoms) + list(jelly.quicks) + list(jelly.actors) + list(jelly.hypers)))
 
 regex_chain = re.compile('(?:^|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )+')
 regex_liter = re.compile(str_literal)
@@ -31,23 +31,14 @@ def parse_code(code):
 					chain.append(jelly.atoms[token])
 				elif token in jelly.quicks:
 					popped = []
-					while not jelly.quicks[token].condition(popped):
+					while not jelly.quicks[token].condition(popped) and (chain or chains):
 						popped.insert(0, chain.pop() if chain else chains.pop())
-					chain.append(jelly.quicks[token].quicklink(popped, index))
+					chain += jelly.quicks[token].quicklink(popped, index)
 				elif token in jelly.actors:
 					chain.append(jelly.actors[token](index, links))
 				elif token in jelly.hypers:
 					x = chain.pop() if chain else chains.pop()
 					chain.append(jelly.hypers[token](x, links))
-				elif token in jelly.joints:
-					y = chain.pop() if chain else chains.pop()
-					x = chain.pop() if chain else chains.pop()
-					chain.append(jelly.joints[token]((x, y)))
-				elif token in jelly.nexus:
-					z = chain.pop() if chain else chains.pop()
-					y = chain.pop() if chain else chains.pop()
-					x = chain.pop() if chain else chains.pop()
-					chain.append(jelly.nexus[token]((x, y, z)))
 				else:
 					chain.append(jelly.create_literal(regex_liter.sub(parse_literal, token)))
 			chains.append(jelly.create_chain(chain, arity))
@@ -68,7 +59,7 @@ def parse_literal(literal_match):
 			parsed = [sss(string).replace('¶', '\n') for string in parsed]
 		else:
 			parsed = [string.replace('¶', '\n') for string in parsed]
-		parsed = [string if len(string) > 1 else [string] for string in parsed]
+		parsed = [[string] if len(string) == 1 else string for string in parsed]
 		if len(parsed) == 1:
 			parsed = parsed[0]
 	else:

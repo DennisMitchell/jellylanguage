@@ -870,29 +870,69 @@ atoms = {
 }
 
 quicks = {
+	'¡': attrdict(
+		condition = lambda links: len(links) == 2,
+		quicklink = lambda links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
+			arity = max(link.arity for link in links),
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x = None, y = None: helper.ntimes(links, (x, y))
+		)]
+	),
+	'¿': attrdict(
+		condition = lambda links: len(links) == 2,
+		quicklink = lambda links, index: [attrdict(
+			arity = max(link.arity for link in links),
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y))
+		)]
+	),
 	'¤': attrdict(
 		condition = lambda links: len(links) > 1 and links[0].arity == 0,
-		quicklink = lambda links, index: attrdict(
+		quicklink = lambda links, index: [attrdict(
 			arity = 0,
 			call = lambda: niladic_chain(links)
-		)
+		)]
 	),
 	'$': attrdict(
 		condition = lambda links: len(links) > 1 and not leading_constant(links),
-		quicklink = lambda links, index: attrdict(
+		quicklink = lambda links, index: [attrdict(
 			arity = 1,
 			depth = -1,
 			call = lambda z: monadic_chain(links, z)
-		)
+		)]
 	),
 	'¥': attrdict(
 		condition = lambda links: len(links) > 1 and not leading_constant(links),
-		quicklink = lambda links, index: attrdict(
+		quicklink = lambda links, index: [attrdict(
 			arity = 2,
 			ldepth = -1,
 			rdepth = -1,
 			call = lambda x, y: dyadic_chain(links, (x, y))
-		)
+		)]
+	),
+	'?': attrdict(
+		condition = lambda links: len(links) == 3,
+		quicklink = lambda links, index: [attrdict(
+			arity = max(links[0].arity, links[1].arity, links[2].arity),
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
+		)]
+	),
+	'Ð¡': attrdict(
+		condition = lambda links: len(links) == 2,
+		quicklink = lambda links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
+			arity = max(link.arity for link in links),
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x = None, y = None: helper.ntimes(links, (x, y), True)
+		)]
 	)
 }
 
@@ -937,7 +977,7 @@ hypers = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: helper.listify(link.call(t, u) for t, u in zip(x, y))
+		call = lambda x, y: helper.listify(link.call(t, u) if u != None else t for t, u in itertools.zip_longest(x, y))
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
@@ -1000,39 +1040,5 @@ hypers = {
 		ldepth = -1,
 		rdepth = -1,
 		call = lambda x, y: dyadic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)], (x, y))
-	)
-}
-
-joints = {
-	'¡': lambda links: attrdict(
-		arity = max(links[0].arity, links[1].arity),
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x = None, y = None: helper.ntimes(links[0], links[1], (x, y))
-	),
-	'¿': lambda links: attrdict(
-		arity = max(links[0].arity, links[1].arity),
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y))
-	),
-	'Ð¡': lambda links: attrdict(
-		arity = max(links[0].arity, links[1].arity),
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x = None, y = None: helper.ntimes(links[0], links[1], (x, y), True)
-	),
-}
-
-nexus = {
-	'?': lambda links: attrdict(
-		arity = max(links[0].arity, links[1].arity, links[2].arity),
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
 	)
 }
