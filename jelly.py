@@ -32,7 +32,7 @@ def depth(link):
 		return 0
 	if not link:
 		return 1
-	return 1 + min(map(depth, link))
+	return 1 + max(map(depth, link))
 
 def depth_match(link_depth, arg):
 	return link_depth == -1 or link_depth == depth(arg)
@@ -261,6 +261,17 @@ atoms = {
 		depth = -1,
 		call = lambda z: z[1:]
 	),
+	'd': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: list(divmod(x, y))
+	),
+	'Ė': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: [[t + 1, u] for t, u in enumerate(helper.iterable(z))]
+	),
 	'e': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -336,8 +347,8 @@ atoms = {
 	),
 	'i': attrdict(
 		arity = 2,
-		ldepth = 1,
-		rdepth = 0,
+		ldepth = -1,
+		rdepth = -1,
 		call = helper.index
 	),
 	'ị': attrdict(
@@ -410,6 +421,18 @@ atoms = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: z[:-1]
+	),
+	'p': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.listify(itertools.product(helper.iterable(x), helper.iterable(y)))
+	),
+	'ṗ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: helper.listify(itertools.product(*([x if depth(x) else atoms['R'].call(x)] * y)))
 	),
 	'Q': attrdict(
 		arity = 1,
@@ -824,16 +847,32 @@ atoms = {
 		rdepth = 0,
 		call = helper.math.atan2
 	),
+	'ŒḊ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = depth
+	),
+	'Œp': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: helper.listify(itertools.product(*z))
+	),
+	'ŒṘ': attrdict(
+		arity = 1,
+		depth = -1,
+		call = lambda z: helper.listify(repr(z))
+	),
 	'æ%': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
 		call = helper.symmetric_mod
 	),
-	'ŒṘ': attrdict(
-		arity = 1,
-		depth = -1,
-		call = lambda z: helper.listify(repr(z))
+	'œc': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = 0,
+		call = lambda x, y: helper.listify(itertools.combinations(x if depth(x) else atoms['R'].call(x), y))
 	),
 	'œ&': attrdict(
 		arity = 2,

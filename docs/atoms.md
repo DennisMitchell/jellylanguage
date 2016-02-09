@@ -43,6 +43,7 @@ Symbol|Arity|Function|Note
 `a`|2|Logical AND.
 `b`|2|Convert from integer to base **y**.
 `c`|2|Combinations; compute xCy.
+`d`|2|Divmod.
 `e`|2|Exists; return `x in y`.|Returns **1** or **0**.
 `f`|2|Filter; remove the elements from **x** that are not in **y**.
 `g`|2|Greatest common divisor.
@@ -51,6 +52,7 @@ Symbol|Arity|Function|Note
 `l`|2|Logarithm with base **y**.
 `m`|2|Modular; return every **y** th element of **x**.
 `o`|2|Logical OR.
+`p`|2|Cartesian product.
 `r`|2|Inclusive range.|Descending if **x > y**.
 `s`|2|Split **x** into slices of length **y**.
 `x`|2|Times; repeat the elements of **x** **y** times.
@@ -75,6 +77,7 @@ Symbol|Arity|Function|Note
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.
+`Ė`|1|Enumerate.
 `Ḟ`|1|Floor; round **z** down to the nearest integer.|Returns **z** for non-real **z**.
 `Ḣ`|1|Head; pop and return the first element of **z**.|Modifies **z**.
 `İ`|1|Inverse; compute **1 ÷ z**.
@@ -94,6 +97,7 @@ Symbol|Arity|Function|Note
 `ḟ`|2|Filter; remove the elements from **x** that are in **y**.
 `ḣ`|2|Head; return `x[:y]`.
 `ṙ`|2|Rotate **x** **y** units to the left.
+`ṗ`|2|Cartesian power.
 `ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
 `ṫ`|2|Tail; return `x[y - 1:]`.
 `ẋ`|2|Repeat list **x** **y** times.
@@ -131,7 +135,10 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
+`Œp`|1|Cartesian product of **z**'s items.
+`ŒṘ`|1|Depth.
 `ŒṘ`|1|Python's string representation.
+`œc`|2|Combinations without replacement.
 `œ&`|2|Multiset intersection.
 `œ-`|2|Multiset difference.
 `œ^`|2|Multiset symmetric difference.
