@@ -30,7 +30,7 @@ else:
 	else:
 		code = ''.join([parser.code_page[ord(i)] for i in code])
 
-args = tuple(map(parser.jelly.helper.try_eval, parser.jelly.sys.argv[3:]))
+args = tuple(map(parser.jelly.try_eval, parser.jelly.sys.argv[3:]))
 
 for index in range(min(5, len(args))):
 	parser.jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
@@ -44,4 +44,4 @@ if mode_read == 'char':
 		if flag_iout:
 			print(output, end = '')
 else:
-	print(parser.jelly.helper.stringify(parser.jelly.variadic_chain((parser.parse_code(code) or [''])[-1], args[:2])), end = '')
+	print(parser.jelly.stringify(parser.jelly.variadic_chain((parser.parse_code(code) or [''])[-1], args[:2])), end = '')

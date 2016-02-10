@@ -1,167 +1,6 @@
-import fractions, functools, helper, itertools, numpy, operator, sympy, sys
+import fractions, numpy, operator
 
-class attrdict(dict):
-	def __init__(self, *args, **kwargs):
-		dict.__init__(self, *args, **kwargs)
-		self.__dict__ = self
-
-def arities(links):
-	return [link.arity for link in links]
-
-def create_chain(chain, arity, depth = -1, ldepth = -1, rdepth = -1):
-	return attrdict(
-		arity = arity,
-		depth = depth,
-		ldepth = ldepth,
-		rdepth = rdepth,
-		call = lambda x = None, y = None: variadic_chain(chain, (x, y))
-	)
-
-def create_literal(string):
-	return attrdict(
-		arity = 0,
-		call = lambda: helper.eval(string, False)
-	)
-
-def copy(value):
-	atoms['®'].call = lambda: value
-	return value
-
-def depth(link):
-	if type(link) != list and type(link) != tuple:
-		return 0
-	if not link:
-		return 1
-	return 1 + max(map(depth, link))
-
-def depth_match(link_depth, arg):
-	return link_depth == -1 or link_depth == depth(arg)
-
-def leading_constant(chain):
-	return chain and arities(chain) + [1] < [0, 2] * len(chain)
-
-def max_arity(links):
-	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
-
-def variadic_link(link, args, flat = False):
-	if link.arity < 0:
-		args = list(filter(None.__ne__, args))
-		link.arity = len(args)
-	if link.arity == 0:
-		return niladic_link(link)
-	if link.arity == 1:
-		return monadic_link(link, args[0], flat)
-	if link.arity == 2:
-		return dyadic_link(link, args, flat)
-
-def variadic_chain(chain, args):
-	args = list(filter(None.__ne__, args))
-	if len(args) == 0:
-		return niladic_chain(chain)
-	if len(args) == 1:
-		return monadic_chain(chain, args[0])
-	if len(args) == 2:
-		return dyadic_chain(chain, args)
-
-def niladic_link(link):
-	return link.call()
-
-def niladic_chain(chain):
-	if not chain or chain[0].arity > 0:
-		return monadic_chain(chain, 0)
-	return monadic_chain(chain[1:], chain[0].call())
-
-def monadic_link(link, arg, flat = False):
-	if depth_match(link.depth, arg) or flat:
-		if hasattr(link, 'conv'):
-			return link.conv(link.call, arg)
-		return link.call(arg)
-	if depth(arg) < link.depth:
-		return monadic_link(link, [arg])
-	return [monadic_link(link, z) for z in arg]
-
-def monadic_chain(chain, arg):
-	for link in chain:
-		if link.arity < 0:
-			link.arity = max(1, link.arity)
-	if leading_constant(chain):
-		ret = niladic_link(chain[0])
-		chain = chain[1:]
-	else:
-		ret = arg
-	while chain:
-		if arities(chain[0:2]) == [2, 1]:
-			ret = dyadic_link(chain[0], (ret, monadic_link(chain[1], arg)))
-			chain = chain[2:]
-		elif arities(chain[0:2]) == [2, 0]:
-			ret = dyadic_link(chain[0], (ret, niladic_link(chain[1])))
-			chain = chain[2:]
-		elif arities(chain[0:2]) == [0, 2]:
-			ret = dyadic_link(chain[1], (niladic_link(chain[0]), ret))
-			chain = chain[2:]
-		elif chain[0].arity == 2:
-			ret = dyadic_link(chain[0], (ret, arg))
-			chain = chain[1:]
-		elif chain[0].arity == 1:
-			ret = monadic_link(chain[0], ret)
-			chain = chain[1:]
-		else:
-			print('Skipped atom:', chain[0], file = sys.stderr)
-			chain = chain[1:]
-	return ret
-
-def dyadic_link(link, args, flat = False):
-	larg, rarg = args
-	if (depth_match(link.ldepth, larg) and depth_match(link.rdepth, rarg)) or flat:
-		if hasattr(link, 'conv'):
-			return link.conv(link.call, larg, rarg)
-		return link.call(larg, rarg)
-	if depth(larg) < link.ldepth:
-		return dyadic_link(link, ([larg], rarg))
-	if depth(rarg) < link.rdepth:
-		return dyadic_link(link, (larg, [rarg]))
-	if (link.rdepth > -1 and depth(larg) - depth(rarg) < link.ldepth - link.rdepth) or link.ldepth < 0:
-		return [dyadic_link(link, (larg, y)) for y in rarg]
-	if (link.ldepth > -1 and depth(larg) - depth(rarg) > link.ldepth - link.rdepth) or link.rdepth < 0:
-		return [dyadic_link(link, (x, rarg)) for x in larg]
-	return [x if y == None else y if x == None else dyadic_link(link, (x, y)) for x, y in itertools.zip_longest(*args)]
-
-def dyadic_chain(chain, args):
-	larg, rarg = args
-	for link in chain:
-		if link.arity < 0:
-			link.arity = 2
-	if chain and arities(chain[0:3]) == [2, 2, 2]:
-		ret = dyadic_link(chain[0], args)
-		chain = chain[1:]
-	elif leading_constant(chain):
-		ret = niladic_link(chain[0])
-		chain = chain[1:]
-	else:
-		ret = larg
-	while chain:
-		if arities(chain[0:3]) == [2, 2, 0] and leading_constant(chain[2:]):
-			ret = dyadic_link(chain[1], (dyadic_link(chain[0], (ret, rarg)), niladic_link(chain[2])))
-			chain = chain[3:]
-		elif arities(chain[0:2]) == [2, 2]:
-			ret = dyadic_link(chain[0], (ret, dyadic_link(chain[1], args)))
-			chain = chain[2:]
-		elif arities(chain[0:2]) == [2, 0]:
-			ret = dyadic_link(chain[0], (ret, niladic_link(chain[1])))
-			chain = chain[2:]
-		elif arities(chain[0:2]) == [0, 2]:
-			ret = dyadic_link(chain[1], (niladic_link(chain[0]), ret))
-			chain = chain[2:]
-		elif chain[0].arity == 2:
-			ret = dyadic_link(chain[0], (ret, rarg))
-			chain = chain[1:]
-		elif chain[0].arity == 1:
-			ret = monadic_link(chain[0], ret)
-			chain = chain[1:]
-		else:
-			print('Skipped atom:', chain[0], file = sys.stderr)
-			chain = chain[1:]
-	return ret
+from helper import *
 
 atoms = {
 	'³': attrdict(
@@ -186,7 +25,7 @@ atoms = {
 	),
 	'A': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = abs
 	),
 	'a': attrdict(
@@ -197,8 +36,6 @@ atoms = {
 	),
 	'ȧ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: x and y
 	),
 	'ạ': attrdict(
@@ -209,47 +46,45 @@ atoms = {
 	),
 	'B': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.to_base(z, 2)
+		ldepth = 0,
+		call = lambda z: to_base(z, 2)
 	),
 	'Ḅ': attrdict(
 		arity = 1,
-		depth = 1,
-		call = lambda z: helper.from_base(z, 2)
+		ldepth = 1,
+		call = lambda z: from_base(z, 2)
 	),
 	'b': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.to_base(x, y)
+		call = lambda x, y: to_base(x, y)
 	),
 	'ḅ': attrdict(
 		arity = 2,
 		ldepth = 1,
 		rdepth = 0,
-		call = lambda x, y: helper.from_base(x, y)
+		call = lambda x, y: from_base(x, y)
 	),
 	'C': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: 1 - z
 	),
 	'Ċ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.ceil, helper.identity), z)
+		ldepth = 0,
+		call = lambda z: overload((math.ceil, identity), z)
 	),
 	'c': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.div(helper.Pi(x), helper.Pi(x - y) * helper.Pi(y))
+		call = lambda x, y: div(Pi(x), Pi(x - y) * Pi(y))
 	),
 	'ċ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.iterable(x).count(y)
+		call = lambda x, y: iterable(x).count(y)
 	),
 	'ƈ': attrdict(
 		arity = 0,
@@ -257,17 +92,16 @@ atoms = {
 	),
 	'D': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.to_base(z, 10)
+		ldepth = 0,
+		call = lambda z: to_base(z, 10)
 	),
 	'Ḍ': attrdict(
 		arity = 1,
-		depth = 1,
-		call = lambda z: helper.from_base(z, 10)
+		ldepth = 1,
+		call = lambda z: from_base(z, 10)
 	),
 	'Ḋ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: z[1:]
 	),
 	'd': attrdict(
@@ -278,36 +112,28 @@ atoms = {
 	),
 	'Ė': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: [[t + 1, u] for t, u in enumerate(helper.iterable(z))]
+		call = lambda z: [[t + 1, u] for t, u in enumerate(iterable(z))]
 	),
 	'e': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: int(x in helper.iterable(y))
+		call = lambda x, y: int(x in iterable(y))
 	),
 	'F': attrdict(
 		arity = 1,
-		depth = -1,
-		call = helper.flatten
+		call = flatten
 	),
 	'Ḟ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.floor, helper.identity), z)
+		ldepth = 0,
+		call = lambda z: overload((math.floor, identity), z)
 	),
 	'f': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: [t for t in helper.iterable(x) if t in helper.iterable(y)]
+		call = lambda x, y: [t for t in iterable(x) if t in iterable(y)]
 	),
 	'ḟ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: [t for t in helper.iterable(x) if not t in helper.iterable(y)]
+		call = lambda x, y: [t for t in iterable(x) if not t in iterable(y)]
 	),
 	'g': attrdict(
 		arity = 2,
@@ -317,108 +143,95 @@ atoms = {
 	),
 	'Ɠ': attrdict(
 		arity = 0,
-		call = lambda: helper.eval(input())
+		call = lambda: eval(input())
 	),
 	'ɠ': attrdict(
 		arity = 0,
-		call = lambda: helper.listify(input(), dirty = True)
+		call = lambda: listify(input(), dirty = True)
 	),
 	'H': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.div(z, 2)
+		ldepth = 0,
+		call = lambda z: div(z, 2)
 	),
 	'Ḥ': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: z * 2
 	),
 	'Ḣ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: z.pop(0)
 	),
 	'ḣ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: x[:y]
 	),
 	'I': attrdict(
 		arity = 1,
-		depth = 1,
+		ldepth = 1,
 		call = lambda z: [z[i] - z[i - 1] for i in range(1, len(z))]
 	),
 	'İ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.div(1, z)
+		ldepth = 0,
+		call = lambda z: div(1, z)
 	),
 	'i': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = helper.index
+		call = index
 	),
 	'ị': attrdict(
 		arity = 2,
 		ldepth = 0,
-		rdepth = -1,
-		call = lambda x, y: y[(int(x) - 1) % len(y)] if int(x) == x else [y[(helper.math.floor(x) - 1) % len(y)], y[(helper.math.ceil(x) - 1) % len(y)]]
+		call = lambda x, y: y[(int(x) - 1) % len(y)] if int(x) == x else [y[(math.floor(x) - 1) % len(y)], y[(math.ceil(x) - 1) % len(y)]]
 	),
 	'j': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: sum(([t, y] for t in x), [])[:-1]
 	),
 	'L': attrdict(
 		arity = 1,
-		depth = -1,
 		call = len
 	),
 	'l': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.overload((helper.math.log, helper.cmath.log), x, y)
+		call = lambda x, y: overload((math.log, cmath.log), x, y)
 	),
 	'ḷ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: x
 	),
 	'm': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.iterable(x)[::y] if y else helper.iterable(x) + helper.iterable(x)[::-1]
+		call = lambda x, y: iterable(x)[::y] if y else iterable(x) + iterable(x)[::-1]
 	),
 	'N': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: -z
 	),
 	'Ṅ': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: print(helper.stringify(z)) or z
+		call = lambda z: print(stringify(z)) or z
 	),
 	'O': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: ord(z) if type(z) == str else z
 	),
 	'Ọ': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: chr(int(z)) if type(z) != str else z
 	),
 	'Ȯ': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: print(helper.stringify(z), end = '') or z
+		call = lambda z: print(stringify(z), end = '') or z
 	),
 	'o': attrdict(
 		arity = 2,
@@ -428,40 +241,32 @@ atoms = {
 	),
 	'ȯ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: x or y
 	),
 	'P': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['×'], (x, y)), z, 1) if type(z) == list else z
 	),
 	'Ṗ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: z[:-1]
 	),
 	'p': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.listify(itertools.product(helper.iterable(x, range = True), helper.iterable(y, range = True)))
+		call = lambda x, y: listify(itertools.product(iterable(x, range = True), iterable(y, range = True)))
 	),
 	'ṗ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.listify(itertools.product(*([helper.iterable(x, range = True)] * y)))
+		call = lambda x, y: listify(itertools.product(*([iterable(x, range = True)] * y)))
 	),
 	'Q': attrdict(
 		arity = 1,
-		depth = -1,
-		call = helper.unique
+		call = unique
 	),
 	'R': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
 	),
 	'r': attrdict(
@@ -472,124 +277,101 @@ atoms = {
 	),
 	'ṙ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
-		call = helper.rotate_left
+		call = rotate_left
 	),
 	'ṛ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: y
 	),
 	'S': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: functools.reduce(lambda x, y: dyadic_link(atoms['+'], (x, y)), z, 0) if type(z) == list else z
 	),
 	'Ṡ': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: (z > 0) - (z < 0)
 	),
 	'Ṣ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = sorted
 	),
 	's': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: [x[i : i + y] for i in range(0, len(x), y)]
 	),
 	'ṡ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: [x[i : i + y] for i in range(len(x) - y + 1)]
 	),
 	'ṣ': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.listify(helper.split_at(x, y))
+		call = lambda x, y: listify(split_at(x, y))
 	),
 	'T': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: [u + 1 for u, v in enumerate(z) if v]
 	),
 	'Ṭ': attrdict(
 		arity = 1,
-		depth = 1,
-		call = lambda z: [int(t + 1 in helper.iterable(z)) for t in range(max(helper.iterable(z)))]
+		ldepth = 1,
+		call = lambda z: [int(t + 1 in iterable(z)) for t in range(max(iterable(z)))]
 	),
 	'Ṫ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: z.pop()
 	),
 	't': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.trim(x, helper.iterable(y), left = True, right = True)
+		call = lambda x, y: trim(x, iterable(y), left = True, right = True)
 	),
 	'ṫ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
 		call = lambda x, y: x[y - 1 :]
 	),
 	'U': attrdict(
 		arity = 1,
-		depth = 1,
+		ldepth = 1,
 		call = lambda z: z[::-1]
 	),
 	'Ụ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: sorted(range(1, len(z) + 1), key = lambda t: z[t - 1])
 	),
 	'W': attrdict(
 		arity = 1,
-		depth = -1,
 		call = lambda z: [z]
 	),
 	'x': attrdict(
 		arity = 2,
 		ldepth = 1,
-		rdepth = -1,
-		call = lambda x, y: helper.rld(zip(x, y if depth(y) else [y]*len(x)))
+		call = lambda x, y: rld(zip(x, y if depth(y) else [y] * len(x)))
 	),
 	'ẋ': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.iterable(x) * int(y)
+		call = lambda x, y: iterable(x) * int(y)
 	),
 	'Z': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: helper.listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(helper.iterable, z))))
+		call = lambda z: listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(iterable, z))))
 	),
 	'z': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.listify(itertools.zip_longest(*map(helper.iterable, x), fillvalue = y))
+		call = lambda x, y: listify(itertools.zip_longest(*map(iterable, x), fillvalue = y))
 	),
 	'ż': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(helper.iterable(x), helper.iterable(y))))
+		call = lambda x, y: listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(iterable(x), iterable(y))))
 	),
 	'!': attrdict(
 		arity = 1,
-		depth = 0,
-		call = helper.Pi
+		ldepth = 0,
+		call = Pi
 	),
 	'<': attrdict(
 		arity = 2,
@@ -613,19 +395,15 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.div(x, y, floor = True)
+		call = lambda x, y: div(x, y, floor = True)
 	),
 	',': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: [x, y]
 	),
 	';': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.iterable(x) + helper.iterable(y)
+		call = lambda x, y: iterable(x) + iterable(y)
 	),
 	'+': attrdict(
 		arity = 2,
@@ -649,7 +427,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = helper.div
+		call = div
 	),
 	'%': attrdict(
 		arity = 2,
@@ -667,57 +445,57 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		conv = helper.conv_dyadic_integer,
+		conv = conv_dyadic_integer,
 		call = operator.and_
 	),
 	'^': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		conv = helper.conv_dyadic_integer,
+		conv = conv_dyadic_integer,
 		call = operator.xor
 	),
 	'|': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		conv = helper.conv_dyadic_integer,
+		conv = conv_dyadic_integer,
 		call = operator.or_
 	),
 	'~': attrdict(
 		arity = 1,
-		depth = 0,
-		conv = helper.conv_monadic_integer,
+		ldepth = 0,
+		conv = conv_monadic_integer,
 		call = lambda z: ~z
 	),
 	'²': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: z ** 2
 	),
 	'½': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.sqrt, helper.cmath.sqrt), z)
+		ldepth = 0,
+		call = lambda z: overload((math.sqrt, cmath.sqrt), z)
 	),
 	'°': attrdict(
 		arity = 1,
-		depth = 0,
-		call = helper.math.radians
+		ldepth = 0,
+		call = math.radians
 	),
 	'¬': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: int(not z)
 	),
 	'‘': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: z + 1
 	),
 	'’': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: z - 1
 	),
 	'«': attrdict(
@@ -734,220 +512,201 @@ atoms = {
 	),
 	'©': attrdict(
 		arity = 1,
-		depth = -1,
 		call = copy
 	),
 	'®': attrdict(
 		arity = 0,
-		depth = -1,
 		call = lambda: 0
 	),
 	'¹': attrdict(
 		arity = 1,
-		depth = -1,
-		call = helper.identity
+		call = identity
 	),
 	'ÆA': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.cos, helper.cmath.cos), z)
+		ldepth = 0,
+		call = lambda z: overload((math.cos, cmath.cos), z)
 	),
 	'ÆẠ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.acos, helper.cmath.acos), z)
+		ldepth = 0,
+		call = lambda z: overload((math.acos, cmath.acos), z)
 	),
 	'ÆC': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = sympy.ntheory.generate.primepi
 	),
 	'ÆD': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = sympy.ntheory.factor_.divisors
 	),
 	'ÆE': attrdict(
 		arity = 1,
-		depth = 0,
-		call = helper.to_exponents
+		ldepth = 0,
+		call = to_exponents
 	),
 	'ÆẸ': attrdict(
 		arity = 1,
-		depth = 1,
-		call = helper.from_exponents
+		ldepth = 1,
+		call = from_exponents
 	),
 	'ÆF': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: [[x, y] for x, y in sympy.ntheory.factor_.factorint(z).items()]
 	),
 	'Æe': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.exp, helper.cmath.exp), z)
+		ldepth = 0,
+		call = lambda z: overload((math.exp, cmath.exp), z)
 	),
 	'Æf': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.rld(sympy.ntheory.factor_.factorint(z).items())
+		ldepth = 0,
+		call = lambda z: rld(sympy.ntheory.factor_.factorint(z).items())
 	),
 	'Æl': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.log, helper.cmath.log), z)
+		ldepth = 0,
+		call = lambda z: overload((math.log, cmath.log), z)
 	),
 	'ÆN': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = sympy.ntheory.generate.prime
 	),
 	'Æn': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = sympy.ntheory.generate.nextprime
 	),
 	'ÆP': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: int(sympy.primetest.isprime(z))
 	),
 	'Æp': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = sympy.ntheory.generate.prevprime
 	),
 	'ÆR': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
 	),
 	'Ær': attrdict(
 		arity = 1,
-		depth = 1,
+		ldepth = 1,
 		call = lambda z: list(numpy.roots(z[::-1]))
 	),
 	'Æṛ': attrdict(
 		arity = 1,
-		depth = 1,
+		ldepth = 1,
 		call = lambda z: list(numpy.poly(z))[::-1]
 	),
 	'ÆT': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.tan, helper.cmath.tan), z)
+		ldepth = 0,
+		call = lambda z: overload((math.tan, cmath.tan), z)
 	),
 	'ÆṬ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.atan, helper.cmath.atan), z)
+		ldepth = 0,
+		call = lambda z: overload((math.atan, cmath.atan), z)
 	),
 	'ÆṪ': attrdict(
 		arity = 1,
-		depth = 0,
+		ldepth = 0,
 		call = lambda z: sympy.ntheory.factor_.totient(z) if z > 0 else 0
 	),
 	'ÆS': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.sin, helper.cmath.sin), z)
+		ldepth = 0,
+		call = lambda z: overload((math.sin, cmath.sin), z)
 	),
 	'ÆṢ': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: helper.overload((helper.math.asin, helper.cmath.asin), z)
+		ldepth = 0,
+		call = lambda z: overload((math.asin, cmath.asin), z)
 	),
 	'Æ²': attrdict(
 		arity = 1,
-		depth = 0,
-		call = lambda z: int(helper.isqrt(z) ** 2 == z)
+		ldepth = 0,
+		call = lambda z: int(isqrt(z) ** 2 == z)
 	),
 	'Æ½': attrdict(
 		arity = 1,
-		depth = 0,
-		call = helper.isqrt
+		ldepth = 0,
+		call = isqrt
 	),
 	'Æ°': attrdict(
 		arity = 1,
-		depth = 0,
-		call = helper.math.degrees
+		ldepth = 0,
+		call = math.degrees
 	),
 	'æA': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = helper.math.atan2
+		call = math.atan2
 	),
 	'ŒḊ': attrdict(
 		arity = 1,
-		depth = -1,
 		call = depth
 	),
 	'Œp': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: helper.listify(itertools.product(*[helper.iterable(t, range = True) for t in z]))
+		call = lambda z: listify(itertools.product(*[iterable(t, range = True) for t in z]))
 	),
 	'ŒṘ': attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: helper.listify(repr(z))
+		call = lambda z: listify(repr(z))
 	),
 	'æ%': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = helper.symmetric_mod
+		call = symmetric_mod
 	),
 	'œc': attrdict(
 		arity = 2,
-		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.listify(itertools.combinations(helper.iterable(x, range = True)))
+		call = lambda x, y: listify(itertools.combinations(iterable(x, range = True)))
 	),
 	'œl': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.trim(x, helper.iterable(y), left = True)
+		call = lambda x, y: trim(x, iterable(y), left = True)
 	),
 	'œr': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.trim(x, helper.iterable(y), right = True)
+		call = lambda x, y: trim(x, iterable(y), right = True)
 	),
 	'œ&': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = helper.multiset_intersect
+		call = multiset_intersect
 	),
 	'œ-': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = helper.multiset_difference
+		call = multiset_difference
 	),
 	'œ^': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = helper.multiset_symdif
+		call = multiset_symdif
 	),
 	'œ|': attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = helper.multiset_union
+		call = multiset_union
 	),
 	'ØP': attrdict(
 		arity = 0,
-		call = lambda: helper.math.pi
+		call = lambda: math.pi
 	),
 	'Øe': attrdict(
 		arity = 0,
-		call = lambda: helper.math.e
+		call = lambda: math.e
 	)
 }
 
@@ -956,9 +715,6 @@ quicks = {
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = -1,
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
 			call = lambda x = None, y = None: variadic_chain(outmost_links[index], (x, y))
 		)]
 	),
@@ -973,7 +729,6 @@ quicks = {
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 1,
-			depth = -1,
 			call = lambda z: monadic_chain(outmost_links[index - 1], z)
 		)]
 	),
@@ -981,8 +736,6 @@ quicks = {
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 2,
-			ldepth = -1,
-			rdepth = -1,
 			call = lambda x, y: dyadic_chain(outmost_links[index - 1], (x, y))
 		)]
 	),
@@ -990,7 +743,6 @@ quicks = {
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 1,
-			depth = -1,
 			call = lambda z: monadic_chain(outmost_links[(index + 1) % len(outmost_links)], z)
 		)]
 	),
@@ -998,8 +750,6 @@ quicks = {
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 2,
-			ldepth = -1,
-			rdepth = -1,
 			call = lambda x, y: dyadic_chain(outmost_links[(index + 1) % len(outmost_links)], (x, y))
 		)]
 	),
@@ -1007,30 +757,21 @@ quicks = {
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = max_arity(links + [atoms['¹']]),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda x, y = None: helper.sparse(links[0], (x, y), links[1])
+			call = lambda x, y = None: sparse(links[0], (x, y), links[1])
 		)]
 	),
 	'¡': attrdict(
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
 			arity = max_arity(links),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda x = None, y = None: helper.ntimes(links, (x, y))
+			call = lambda x = None, y = None: ntimes(links, (x, y))
 		)]
 	),
 	'¿': attrdict(
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = max(link.arity for link in links),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y))
+			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y))
 		)]
 	),
 	'¤': attrdict(
@@ -1044,7 +785,6 @@ quicks = {
 		condition = lambda links: len(links) > 1 and not leading_constant(links),
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 1,
-			depth = -1,
 			call = lambda z: monadic_chain(links, z)
 		)]
 	),
@@ -1052,8 +792,6 @@ quicks = {
 		condition = lambda links: len(links) > 1 and not leading_constant(links),
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 2,
-			ldepth = -1,
-			rdepth = -1,
 			call = lambda x, y: dyadic_chain(links, (x, y))
 		)]
 	),
@@ -1061,9 +799,6 @@ quicks = {
 		condition = lambda links: len(links) == 3,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = max(link.arity for link in links),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
 			call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
 		)]
 	),
@@ -1071,20 +806,14 @@ quicks = {
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
 			arity = max(link.arity for link in links),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda x = None, y = None: helper.ntimes(links, (x, y), cumulative = True)
+			call = lambda x = None, y = None: ntimes(links, (x, y), cumulative = True)
 		)]
 	),
 	'Ð¿': attrdict(
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = max(link.arity for link in links),
-			depth = -1,
-			ldepth = -1,
-			rdepth = -1,
-			call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y), cumulative = True)
+			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y), cumulative = True)
 		)]
 	)
 }
@@ -1092,15 +821,10 @@ quicks = {
 hypers = {
 	'"': lambda link, none = None: attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y: helper.listify(dyadic_link(link, (t, u)) if u != None else t for t, u in itertools.zip_longest(x, y))
+		call = lambda x, y: listify(dyadic_link(link, (t, u)) if u != None else t for t, u in itertools.zip_longest(iterable(x), iterable(y)))
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x = None, y = None: variadic_link(link, (x, y), flat = True)
 	),
 	'@': lambda link, none = None: attrdict(
@@ -1111,51 +835,36 @@ hypers = {
 	),
 	'/': lambda link, none = None: attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), helper.iterable(z))
+		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), iterable(z))
 	),
 	'\\': lambda link, none = None: attrdict(
 		arity = 1,
-		depth = -1,
-		call = lambda z: list(itertools.accumulate(helper.iterable(z), lambda x, y: dyadic_link(link, (x, y))))
+		call = lambda z: list(itertools.accumulate(iterable(z), lambda x, y: dyadic_link(link, (x, y))))
 	),
 	'{': lambda link, none = None: attrdict(
 		arity = 2,
-		ldepth = link.depth,
-		rdepth = -1,
+		ldepth = link.ldepth,
 		call = lambda x, y: link.call(x)
 	),
 	'}': lambda link, none = None: attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = link.depth,
+		rdepth = link.rdepth,
 		call = lambda x, y: link.call(y)
 	),
 	'€': lambda link, none = None: attrdict(
 		arity = link.arity,
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
-		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in helper.iterable(x)]
+		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x)]
 	),
 	'£': lambda index, links: attrdict(
 		arity = index.arity,
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x = None, y = None: niladic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)])
 	),
 	'Ŀ': lambda index, links: attrdict(
 		arity = max(1, index.arity),
-		depth = -1,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y = None: monadic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)], x)
 	),
 	'ŀ': lambda index, links: attrdict(
 		arity = 2,
-		ldepth = -1,
-		rdepth = -1,
 		call = lambda x, y: dyadic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)], (x, y))
 	)
 }
