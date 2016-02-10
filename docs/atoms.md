@@ -30,7 +30,7 @@ Symbol|Arity|Function|Note
 `I`|1|Increments; compute the deltas of consecutive elements of **z**.
 `L`|1|Length.
 `N`|1|Negative; compute **-z**.
-`O`|1|Ones; return each index **n** `z[n]` times.
+`O`|1|Ord; cast to number.
 `P`|1|Product of a list.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
 `S`|1|Sum of a list.
@@ -40,7 +40,7 @@ Symbol|Arity|Function|Note
 `Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
 `_`|2|Subtraction.
-`a`|2|Logical AND.
+`a`|2|Logical AND.|Vectorizes with depth 0.
 `b`|2|Convert from integer to base **y**.
 `c`|2|Combinations; compute xCy.
 `d`|2|Divmod.
@@ -51,7 +51,7 @@ Symbol|Arity|Function|Note
 `j`|2|Join list **x** with separator **y**.
 `l`|2|Logarithm with base **y**.
 `m`|2|Modular; return every **y** th element of **x**.
-`o`|2|Logical OR.
+`o`|2|Logical OR.|Vectorizes with depth 0.
 `p`|2|Cartesian product.
 `r`|2|Inclusive range.|Descending if **x > y**.
 `s`|2|Split **x** into slices of length **y**.
@@ -73,6 +73,7 @@ Symbol|Arity|Function|Note
 `Ḅ`|1|Convert from binary to integer.
 `Ḍ`|1|Convert from decimal to integer.
 `Ḥ`|1|Double; compute **2z**.
+`Ọ`|1|Chr; cast to character.
 `Ṣ`|1|Sort the list **z**.
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
@@ -93,11 +94,13 @@ Symbol|Arity|Function|Note
 `ḷ`|2|Left argument; return **x**.
 `ṛ`|2|Right argument; return **y**.
 `ṣ`|2|Split list **x** at occurrences of **y**.
+`ȧ`|2|Logical AND.|Flat.
 `ċ`|2|Count the occurrences of **y** in **x**.
 `ḟ`|2|Filter; remove the elements from **x** that are in **y**.
 `ḣ`|2|Head; return `x[:y]`.
-`ṙ`|2|Rotate **x** **y** units to the left.
+`ȯ`|2|Logical OR.|Flat.
 `ṗ`|2|Cartesian power.
+`ṙ`|2|Rotate **x** **y** units to the left.
 `ṡ`|2|Return all (overlapping) slices of length **y** of **x**.
 `ṫ`|2|Tail; return `x[y - 1:]`.
 `ẋ`|2|Repeat list **x** **y** times.
@@ -136,7 +139,7 @@ Symbol|Arity|Function|Note
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
 `Œp`|1|Cartesian product of **z**'s items.
-`ŒṘ`|1|Depth.
+`ŒḊ`|1|Depth.
 `ŒṘ`|1|Python's string representation.
 `œc`|2|Combinations without replacement.
 `œ&`|2|Multiset intersection.

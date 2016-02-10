@@ -40,16 +40,16 @@ def depth_match(link_depth, arg):
 def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
-def variadic_link(link, args):
+def variadic_link(link, args, flat = False):
 	if link.arity < 0:
 		args = list(filter(None.__ne__, args))
 		link.arity = len(args)
 	if link.arity == 0:
 		return niladic_link(link)
 	if link.arity == 1:
-		return monadic_link(link, args[0])
+		return monadic_link(link, args[0], flat)
 	if link.arity == 2:
-		return dyadic_link(link, args)
+		return dyadic_link(link, args, flat)
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
@@ -68,8 +68,8 @@ def niladic_chain(chain):
 		return monadic_chain(chain, 0)
 	return monadic_chain(chain[1:], chain[0].call())
 
-def monadic_link(link, arg):
-	if depth_match(link.depth, arg):
+def monadic_link(link, arg, flat = False):
+	if depth_match(link.depth, arg) or flat:
 		if hasattr(link, 'conv'):
 			return link.conv(link.call, arg)
 		return link.call(arg)
@@ -107,9 +107,9 @@ def monadic_chain(chain, arg):
 			chain = chain[1:]
 	return ret
 
-def dyadic_link(link, args):
+def dyadic_link(link, args, flat = False):
 	larg, rarg = args
-	if depth_match(link.ldepth, larg) and depth_match(link.rdepth, rarg):
+	if (depth_match(link.ldepth, larg) and depth_match(link.rdepth, rarg)) or flat:
 		if hasattr(link, 'conv'):
 			return link.conv(link.call, larg, rarg)
 		return link.call(larg, rarg)
@@ -190,6 +190,12 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
+		call = lambda x, y: x and y
+	),
+	'ȧ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
 		call = lambda x, y: x and y
 	),
 	'ạ': attrdict(
@@ -398,8 +404,13 @@ atoms = {
 	),
 	'O': attrdict(
 		arity = 1,
-		depth = 1,
-		call = lambda z: functools.reduce(operator.add, [[u + 1] * v for u, v in enumerate(z)])
+		depth = 0,
+		call = lambda z: ord(z) if type(z) == str else z
+	),
+	'Ọ': attrdict(
+		arity = 1,
+		depth = 0,
+		call = lambda z: chr(int(z)) if type(z) != str else z
 	),
 	'Ȯ': attrdict(
 		arity = 1,
@@ -410,6 +421,12 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
+		call = lambda x, y: x or y
+	),
+	'ȯ': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
 		call = lambda x, y: x or y
 	),
 	'P': attrdict(
@@ -1041,14 +1058,14 @@ hypers = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: helper.listify(link.call(t, u) if u != None else t for t, u in itertools.zip_longest(x, y))
+		call = lambda x, y: helper.listify(dyadic_link(link, (t, u)) if u != None else t for t, u in itertools.zip_longest(x, y))
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
 		depth = -1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x = None, y = None: link.call(x, y)
+		call = lambda x = None, y = None: variadic_link(link, (x, y), True)
 	),
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
