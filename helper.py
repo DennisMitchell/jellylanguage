@@ -216,7 +216,7 @@ def monadic_link(link, arg, flat = False):
 		if hasattr(link, 'conv'):
 			return link.conv(link.call, arg)
 		return link.call(arg)
-	if depth(arg) < link.depth:
+	if depth(arg) < link.ldepth:
 		return monadic_link(link, [arg])
 	return [monadic_link(link, z) for z in arg]
 
