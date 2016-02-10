@@ -165,6 +165,17 @@ def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
 
+def trim(trimmee, trimmer, left = False, right = False):
+	lindex = 0
+	rindex = len(trimmee)
+	if left:
+		while trimmee[lindex] in trimmer and lindex <= rindex:
+			lindex += 1
+	if right:
+		while trimmee[rindex - 1] in trimmer and lindex <= rindex:
+			rindex -= 1
+	return trimmee[lindex:rindex]
+
 def try_eval(string):
 	try:
 		return eval(string)

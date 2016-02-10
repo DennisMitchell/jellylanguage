@@ -55,6 +55,7 @@ Symbol|Arity|Function|Note
 `p`|2|Cartesian product.
 `r`|2|Inclusive range.|Descending if **x > y**.
 `s`|2|Split **x** into slices of length **y**.
+`t`|2|Trim all elements of **y** from both sides of **x**.
 `x`|2|Times; repeat the elements of **x** **y** times.
 `z`|2|Zip; transpose **x** with filler **y**.
 `|`|2|Bitwise OR.
@@ -142,6 +143,8 @@ Symbol|Arity|Function|Note
 `ŒḊ`|1|Depth.
 `ŒṘ`|1|Python's string representation.
 `œc`|2|Combinations without replacement.
+`œl`|2|Trim all elements of **y** from the left side of **x**.
+`œr`|2|Trim all elements of **y** from the right side of **x**.
 `œ&`|2|Multiset intersection.
 `œ-`|2|Multiset difference.
 `œ^`|2|Multiset symmetric difference.

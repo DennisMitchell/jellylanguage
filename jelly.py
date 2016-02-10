@@ -318,7 +318,7 @@ atoms = {
 	),
 	'ɠ': attrdict(
 		arity = 0,
-		call = lambda: helper.listify(input(), True)
+		call = lambda: helper.listify(input(), dirty = True)
 	),
 	'H': attrdict(
 		arity = 1,
@@ -522,6 +522,12 @@ atoms = {
 		depth = -1,
 		call = lambda z: z.pop()
 	),
+	't': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.trim(x, helper.iterable(y), left = True, right = True)
+	),
 	'ṫ': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -599,7 +605,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: helper.div(x, y, True)
+		call = lambda x, y: helper.div(x, y, floor = True)
 	),
 	',': attrdict(
 		arity = 2,
@@ -891,6 +897,18 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: helper.listify(itertools.combinations(x if depth(x) else atoms['R'].call(x), y))
 	),
+	'œl': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.trim(x, helper.iterable(y), left = True)
+	),
+	'œr': attrdict(
+		arity = 2,
+		ldepth = -1,
+		rdepth = -1,
+		call = lambda x, y: helper.trim(x, helper.iterable(y), right = True)
+	),
 	'œ&': attrdict(
 		arity = 2,
 		ldepth = -1,
@@ -1038,7 +1056,7 @@ quicks = {
 			depth = -1,
 			ldepth = -1,
 			rdepth = -1,
-			call = lambda x = None, y = None: helper.ntimes(links, (x, y), True)
+			call = lambda x = None, y = None: helper.ntimes(links, (x, y), cumulative = True)
 		)]
 	),
 	'Ð¿': attrdict(
@@ -1048,7 +1066,7 @@ quicks = {
 			depth = -1,
 			ldepth = -1,
 			rdepth = -1,
-			call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y), True)
+			call = lambda x = None, y = None: helper.while_loop(links[0], links[1], (x, y), cumulative = True)
 		)]
 	)
 }
@@ -1065,7 +1083,7 @@ hypers = {
 		depth = -1,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x = None, y = None: variadic_link(link, (x, y), True)
+		call = lambda x = None, y = None: variadic_link(link, (x, y), flat = True)
 	),
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
