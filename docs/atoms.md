@@ -76,6 +76,7 @@ Symbol|Arity|Function|Note
 `Ḥ`|1|Double; compute **2z**.
 `Ọ`|1|Chr; cast to character.
 `Ṣ`|1|Sort the list **z**.
+`Ṭ`|1|Return a Boolean array with **1**'s at the indices in **z**.
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.

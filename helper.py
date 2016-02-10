@@ -59,8 +59,8 @@ def flatten(argument):
 def identity(argument):
 	return argument
 
-def iterable(argument):
-	return argument if type(argument) == list else [argument]
+def iterable(argument, range = False):
+	return argument if type(argument) == list else (jelly.atoms['R'].call(argument) if range else [argument])
 
 def index(haystack, needle):
 	for index, item in enumerate(haystack):
@@ -142,6 +142,12 @@ def rotate_left(array, units):
 	array = iterable(array)
 	length = len(array)
 	return array[units % length :] + array[: units % length] if length else []
+
+def sparse(link, args, indices):
+	larg = args[0]
+	indices = [index - 1 if index > 0 else index - 1 + len(larg) for index in iterable(jelly.variadic_link(indices, args))]
+	ret = iterable(jelly.variadic_link(link, args))
+	return [ret[t] if t in indices else u for t, u in enumerate(larg)]
 
 def split_at(iterable, needle):
 	chunk = []

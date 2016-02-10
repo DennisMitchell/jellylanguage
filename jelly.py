@@ -40,6 +40,9 @@ def depth_match(link_depth, arg):
 def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
+def max_arity(links):
+	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
+
 def variadic_link(link, args, flat = False):
 	if link.arity < 0:
 		args = list(filter(None.__ne__, args))
@@ -79,8 +82,8 @@ def monadic_link(link, arg, flat = False):
 
 def monadic_chain(chain, arg):
 	for link in chain:
-		if link.arity == -1:
-			link.arity = 1
+		if link.arity < 0:
+			link.arity = max(1, link.arity)
 	if leading_constant(chain):
 		ret = niladic_link(chain[0])
 		chain = chain[1:]
@@ -126,7 +129,7 @@ def dyadic_link(link, args, flat = False):
 def dyadic_chain(chain, args):
 	larg, rarg = args
 	for link in chain:
-		if link.arity == -1:
+		if link.arity < 0:
 			link.arity = 2
 	if chain and arities(chain[0:3]) == [2, 2, 2]:
 		ret = dyadic_link(chain[0], args)
@@ -443,13 +446,13 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: helper.listify(itertools.product(helper.iterable(x), helper.iterable(y)))
+		call = lambda x, y: helper.listify(itertools.product(helper.iterable(x, range = True), helper.iterable(y, range = True)))
 	),
 	'ṗ': attrdict(
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.listify(itertools.product(*([x if depth(x) else atoms['R'].call(x)] * y)))
+		call = lambda x, y: helper.listify(itertools.product(*([helper.iterable(x, range = True)] * y)))
 	),
 	'Q': attrdict(
 		arity = 1,
@@ -516,6 +519,11 @@ atoms = {
 		arity = 1,
 		depth = -1,
 		call = lambda z: [u + 1 for u, v in enumerate(z) if v]
+	),
+	'Ṭ': attrdict(
+		arity = 1,
+		depth = 1,
+		call = lambda z: [int(t + 1 in helper.iterable(z)) for t in range(max(helper.iterable(z)))]
 	),
 	'Ṫ': attrdict(
 		arity = 1,
@@ -617,7 +625,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = -1,
-		call = lambda x, y: (x if depth(x) else [x]) + (y if depth(y) else [y])
+		call = lambda x, y: helper.iterable(x) + helper.iterable(y)
 	),
 	'+': attrdict(
 		arity = 2,
@@ -878,7 +886,7 @@ atoms = {
 	'Œp': attrdict(
 		arity = 1,
 		depth = -1,
-		call = lambda z: helper.listify(itertools.product(*z))
+		call = lambda z: helper.listify(itertools.product(*[helper.iterable(t, range = True) for t in z]))
 	),
 	'ŒṘ': attrdict(
 		arity = 1,
@@ -895,7 +903,7 @@ atoms = {
 		arity = 2,
 		ldepth = -1,
 		rdepth = 0,
-		call = lambda x, y: helper.listify(itertools.combinations(x if depth(x) else atoms['R'].call(x), y))
+		call = lambda x, y: helper.listify(itertools.combinations(helper.iterable(x, range = True)))
 	),
 	'œl': attrdict(
 		arity = 2,
@@ -995,10 +1003,20 @@ quicks = {
 			call = lambda x, y: dyadic_chain(outmost_links[(index + 1) % len(outmost_links)], (x, y))
 		)]
 	),
+	'¦': attrdict(
+		condition = lambda links: len(links) == 2,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = max_arity(links + [atoms['¹']]),
+			depth = -1,
+			ldepth = -1,
+			rdepth = -1,
+			call = lambda x, y = None: helper.sparse(links[0], (x, y), links[1])
+		)]
+	),
 	'¡': attrdict(
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
-			arity = max(link.arity for link in links),
+			arity = max_arity(links),
 			depth = -1,
 			ldepth = -1,
 			rdepth = -1,
@@ -1042,7 +1060,7 @@ quicks = {
 	'?': attrdict(
 		condition = lambda links: len(links) == 3,
 		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = max(links[0].arity, links[1].arity, links[2].arity),
+			arity = max(link.arity for link in links),
 			depth = -1,
 			ldepth = -1,
 			rdepth = -1,
