@@ -27,16 +27,6 @@ def copy(value):
 	atoms['®'].call = lambda: value
 	return value
 
-def depth(link):
-	if type(link) != list and type(link) != tuple:
-		return 0
-	if not link:
-		return 1
-	return 1 + max(map(depth, link))
-
-def depth_match(link, larg, rarg = None):
-	return not ((hasattr(link, 'ldepth') and link.ldepth != depth(larg)) or (hasattr(link, 'rdepth') and link.rdepth != depth(rarg)))
-
 def conv_dyadic_integer(link, larg, rarg):
 	try:
 		iconv_larg = int(larg)
@@ -65,6 +55,13 @@ def div(dividend, divisor, floor = False):
 	if floor or (type(dividend) == int and type(divisor) == int and not dividend % divisor):
 		return int(dividend // divisor)
 	return dividend / divisor
+
+def depth(link):
+	if type(link) != list:
+		return 0
+	if not link:
+		return 1
+	return 1 + max(map(depth, link))
 
 def dyadic_chain(chain, args):
 	larg, rarg = args
@@ -103,21 +100,26 @@ def dyadic_chain(chain, args):
 			chain = chain[1:]
 	return ret
 
-def dyadic_link(link, args, flat = False):
+def dyadic_link(link, args, flat = False, conv = True):
 	larg, rarg = args
-	if depth_match(link, larg, rarg) or flat:
-		if hasattr(link, 'conv'):
+	lflat = flat or not hasattr(link, 'ldepth')
+	rflat = flat or not hasattr(link, 'rdepth')
+	larg_depth = lflat or depth(larg)
+	rarg_depth = rflat or depth(rarg)
+	if (lflat or link.ldepth == larg_depth) and (rflat or link.rdepth == rarg_depth):
+		if conv and hasattr(link, 'conv'):
 			return link.conv(link.call, larg, rarg)
 		return link.call(larg, rarg)
-	if hasattr(link, 'ldepth') and depth(larg) < link.ldepth:
+	conv = conv and hasattr(link, 'conv')
+	if not lflat and larg_depth < link.ldepth:
 		return dyadic_link(link, ([larg], rarg))
-	if hasattr(link, 'rdepth') and depth(rarg) < link.rdepth:
+	if not rflat and rarg_depth < link.rdepth:
 		return dyadic_link(link, (larg, [rarg]))
-	if (hasattr(link, 'rdepth') and depth(larg) - depth(rarg) < link.ldepth - link.rdepth) or not hasattr(link, 'ldepth'):
+	if (not rflat and lflat or larg_depth - rarg_depth < link.ldepth - link.rdepth):
 		return [dyadic_link(link, (larg, y)) for y in rarg]
-	if (hasattr(link, 'ldepth') and depth(larg) - depth(rarg) > link.ldepth - link.rdepth) or not hasattr(link, 'rdepth'):
+	if (not lflat and larg_depth - rarg_depth > link.ldepth - link.rdepth):
 		return [dyadic_link(link, (x, rarg)) for x in larg]
-	return [x if y == None else y if x == None else dyadic_link(link, (x, y)) for x, y in itertools.zip_longest(*args)]
+	return [dyadic_link(link, (x, y)) for x, y in zip(*args)] + larg[len(rarg) :] + rarg[len(larg) :]
 
 def eval(string, dirty = True):
 	return listify(ast.literal_eval(string), dirty)
@@ -211,14 +213,17 @@ def monadic_chain(chain, arg):
 			chain = chain[1:]
 	return ret
 
-def monadic_link(link, arg, flat = False):
-	if depth_match(link, arg) or flat:
-		if hasattr(link, 'conv'):
+def monadic_link(link, arg, flat = False, conv = True):
+	flat = flat or not hasattr(link, 'ldepth')
+	arg_depth = flat or depth(arg)
+	if flat or link.ldepth == arg_depth:
+		if conv and hasattr(link, 'conv'):
 			return link.conv(link.call, arg)
 		return link.call(arg)
-	if depth(arg) < link.ldepth:
-		return monadic_link(link, [arg])
-	return [monadic_link(link, z) for z in arg]
+	conv = conv and hasattr(link, 'conv')
+	if link.ldepth > arg_depth:
+		return monadic_link(link, [arg], conv = conv)
+	return [monadic_link(link, z, conv = conv) for z in arg]
 
 def multiset_difference(left, right):
 	result = iterable(left)[::-1]
@@ -346,8 +351,8 @@ def to_exponents(integer):
 		return []
 	pairs = sympy.ntheory.factor_.factorint(integer)
 	exponents = []
-	for prime in sympy.ntheory.generate.primerange(2, max(pairs.keys()) + 1):
-		if prime in pairs.keys():
+	for prime in sympy.ntheory.generate.primerange(2, max(pairs) + 1):
+		if prime in pairs:
 			exponents.append(pairs[prime])
 		else:
 			exponents.append(0)
