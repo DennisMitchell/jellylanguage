@@ -100,10 +100,10 @@ def dyadic_chain(chain, args):
 			chain = chain[1:]
 	return ret
 
-def dyadic_link(link, args, flat = False, conv = True):
+def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 	larg, rarg = args
-	lflat = flat or not hasattr(link, 'ldepth')
-	rflat = flat or not hasattr(link, 'rdepth')
+	lflat = lflat or not hasattr(link, 'ldepth')
+	rflat = rflat or not hasattr(link, 'rdepth')
 	larg_depth = lflat or depth(larg)
 	rarg_depth = rflat or depth(rarg)
 	if (lflat or link.ldepth == larg_depth) and (rflat or link.rdepth == rarg_depth):

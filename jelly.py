@@ -825,13 +825,11 @@ hypers = {
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
-		call = lambda x = None, y = None: variadic_link(link, (x, y), flat = True)
+		call = lambda x = None, y = None: variadic_link(link, (x, y), lflat = True, rflat = True)
 	),
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
-		ldepth = link.rdepth,
-		rdepth = link.ldepth,
-		call = lambda x, y: link.call(y, x)
+		call = lambda x, y: dyadic_link(link, (y, x))
 	),
 	'/': lambda link, none = None: attrdict(
 		arity = 1,
@@ -843,13 +841,11 @@ hypers = {
 	),
 	'{': lambda link, none = None: attrdict(
 		arity = 2,
-		ldepth = link.ldepth,
-		call = lambda x, y: link.call(x)
+		call = lambda x, y: monadic_link(link, x)
 	),
 	'}': lambda link, none = None: attrdict(
 		arity = 2,
-		rdepth = link.rdepth,
-		call = lambda x, y: link.call(y)
+		call = lambda x, y: monadic_link(link, y)
 	),
 	'€': lambda link, none = None: attrdict(
 		arity = link.arity,
