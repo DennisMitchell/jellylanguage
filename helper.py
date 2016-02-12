@@ -382,7 +382,7 @@ def variadic_chain(chain, args):
 	if len(args) == 2:
 		return dyadic_chain(chain, args)
 
-def variadic_link(link, args, flat = False):
+def variadic_link(link, args, flat = False, lflat = False, rflat = False):
 	if link.arity < 0:
 		args = list(filter(None.__ne__, args))
 		link.arity = len(args)
@@ -391,7 +391,7 @@ def variadic_link(link, args, flat = False):
 	if link.arity == 1:
 		return monadic_link(link, args[0], flat)
 	if link.arity == 2:
-		return dyadic_link(link, args, flat)
+		return dyadic_link(link, args, lflat, rflat)
 
 def while_loop(link, condition, args, cumulative = False):
 	ret, rarg = args

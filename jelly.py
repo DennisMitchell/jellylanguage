@@ -825,7 +825,7 @@ hypers = {
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
-		call = lambda x = None, y = None: variadic_link(link, (x, y), lflat = True, rflat = True)
+		call = lambda x = None, y = None: variadic_link(link, (x, y), flat = True, lflat = True, rflat = True)
 	),
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
