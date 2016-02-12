@@ -320,10 +320,10 @@ def trim(trimmee, trimmer, left = False, right = False):
 	lindex = 0
 	rindex = len(trimmee)
 	if left:
-		while trimmee[lindex] in trimmer and lindex <= rindex:
+		while lindex < rindex and trimmee[lindex] in trimmer:
 			lindex += 1
 	if right:
-		while trimmee[rindex - 1] in trimmer and lindex <= rindex:
+		while lindex < rindex and trimmee[rindex - 1] in trimmer:
 			rindex -= 1
 	return trimmee[lindex:rindex]
 
@@ -334,17 +334,25 @@ def try_eval(string):
 		return listify(string, True)
 
 def to_base(integer, base):
-	digits = []
-	integer = abs(integer)
-	base = abs(base)
+	if integer == 0:
+		return [0]
 	if base == 0:
 		return [integer]
+	if base == -1:
+		digits = [1, 0] * abs(integer)
+		return digits[:-1] if integer > 0 else digits
+	sign = -1 if integer < 0 and base > 0 else 1
+	integer *= sign
 	if base == 1:
-		return [1] * integer
+		return [sign] * integer
+	digits = []
 	while integer:
-		digits.append(integer % base)
-		integer //= base
-	return digits[::-1] or [0]
+		integer, digit = divmod(integer, base)
+		if digit < 0:
+			integer += 1
+			digit -= base
+		digits.append(sign * digit)
+	return digits[::-1]
 
 def to_exponents(integer):
 	if integer == 1:

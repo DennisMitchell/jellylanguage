@@ -161,7 +161,7 @@ atoms = {
 	),
 	'Ḣ': attrdict(
 		arity = 1,
-		call = lambda z: z.pop(0)
+		call = lambda z: z.pop(0) if z else 0
 	),
 	'ḣ': attrdict(
 		arity = 2,
@@ -322,7 +322,7 @@ atoms = {
 	),
 	'Ṫ': attrdict(
 		arity = 1,
-		call = lambda z: z.pop()
+		call = lambda z: z.pop() if z else 0
 	),
 	't': attrdict(
 		arity = 2,
@@ -821,7 +821,7 @@ quicks = {
 hypers = {
 	'"': lambda link, none = None: attrdict(
 		arity = 2,
-		call = lambda x, y: listify(dyadic_link(link, (t, u)) if u != None else t for t, u in itertools.zip_longest(iterable(x), iterable(y)))
+		call = lambda x, y: [dyadic_link(link, (u, v)) for u, v in zip(iterable(x), iterable(y))] + iterable(x)[len(iterable(y)) :] + iterable(y)[len(iterable(x)) :]
 	),
 	"'": lambda link, none = None: attrdict(
 		arity = link.arity,
