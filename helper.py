@@ -115,9 +115,9 @@ def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 		return dyadic_link(link, ([larg], rarg))
 	if not rflat and rarg_depth < link.rdepth:
 		return dyadic_link(link, (larg, [rarg]))
-	if (not rflat and lflat or larg_depth - rarg_depth < link.ldepth - link.rdepth):
+	if not rflat and (lflat or larg_depth - rarg_depth < link.ldepth - link.rdepth):
 		return [dyadic_link(link, (larg, y)) for y in rarg]
-	if (not lflat and larg_depth - rarg_depth > link.ldepth - link.rdepth):
+	if not lflat and (rflat or larg_depth - rarg_depth > link.ldepth - link.rdepth):
 		return [dyadic_link(link, (x, rarg)) for x in larg]
 	return [dyadic_link(link, (x, y)) for x, y in zip(*args)] + larg[len(rarg) :] + rarg[len(larg) :]
 
