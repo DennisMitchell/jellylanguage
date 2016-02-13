@@ -512,7 +512,7 @@ atoms = {
 	),
 	'©': attrdict(
 		arity = 1,
-		call = copy
+		call = lambda z: copy(atoms['®'], z)
 	),
 	'®': attrdict(
 		arity = 0,

@@ -23,8 +23,8 @@ def create_literal(string):
 		call = lambda: eval(string, False)
 	)
 
-def copy(value):
-	atoms['®'].call = lambda: value
+def copy(atom, value):
+	atom.call = lambda: value
 	return value
 
 def conv_dyadic_integer(link, larg, rarg):
