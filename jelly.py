@@ -42,7 +42,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: abs(x, y)
+		call = lambda x, y: abs(x - y)
 	),
 	'B': attrdict(
 		arity = 1,
