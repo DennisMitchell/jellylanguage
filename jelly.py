@@ -54,6 +54,11 @@ atoms = {
 		ldepth = 1,
 		call = lambda z: from_base(z, 2)
 	),
+	'Ḃ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: z % 2
+	),
 	'b': attrdict(
 		arity = 2,
 		ldepth = 0,
