@@ -515,10 +515,6 @@ atoms = {
 		rdepth = 0,
 		call = max
 	),
-	'©': attrdict(
-		arity = 1,
-		call = lambda z: copy(atoms['®'], z)
-	),
 	'®': attrdict(
 		arity = 0,
 		call = lambda: 0
@@ -716,6 +712,13 @@ atoms = {
 }
 
 quicks = {
+	'©': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x = None, y = None: copy(atoms['®'], variadic_link(links[0], (x, y)))
+		)]
+	),
 	'ß': attrdict(
 		condition = lambda links: True,
 		quicklink = lambda links, outmost_links, index: [attrdict(

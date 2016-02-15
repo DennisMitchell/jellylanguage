@@ -4,7 +4,6 @@ Atoms are Jelly's built-in links. **z** will denote the only argument of a monad
 
 Symbol|Arity|Function|Note
 ------|-----|--------|----
-`©`|1|Copy; save **z** in the register.
 `¬`|1|Logical NOT.|Returns **1** or **0**.
 `®`|0|Restore; retrieve the value of the register.|Initially 0.
 `½`|1|Square root.
@@ -78,6 +77,7 @@ Symbol|Arity|Function|Note
 `Ṣ`|1|Sort the list **z**.
 `Ṭ`|1|Return a Boolean array with **1**'s at the indices in **z**.
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
+`Ḃ`|1|Bit; return `z % 2`.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.
 `Ė`|1|Enumerate.
