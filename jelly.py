@@ -823,7 +823,29 @@ quicks = {
 			arity = max(link.arity for link in links),
 			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y), cumulative = True)
 		)]
-	)
+	),
+	'ÐL': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y))
+		)]
+	),
+	'ÐĿ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_all = True)
+		)]
+	),
+	'ÐḶ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_loop = True)
+		)]
+	),
+
 }
 
 hypers = {

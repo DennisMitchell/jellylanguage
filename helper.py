@@ -180,6 +180,21 @@ def listify(iterable, dirty = False):
 		return iterable
 	return list(listify(item, dirty) for item in iterable)
 
+def loop_until_loop(link, args, return_all = False, return_loop = False):
+	ret, rarg = args
+	cumret = []
+	while True:
+		cumret.append(ret)
+		larg = ret
+		ret = variadic_link(link, (larg, rarg))
+		rarg = larg
+		if ret in cumret:
+			if return_all:
+				return cumret
+			if return_loop:
+				return cumret[index(cumret, ret) - 1 :]
+			return larg
+
 def max_arity(links):
 	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
 
@@ -257,10 +272,12 @@ def niladic_link(link):
 
 def ntimes(links, args, cumulative = False):
 	ret, rarg = args
-	cumret = []
-	for _ in range(variadic_link(links[1], args) if len(links) == 2 else last_input()):
+	repetitions = variadic_link(links[1], args) if len(links) == 2 else last_input()
+	if cumulative:
+		cumret = [0] * repetitions
+	for index in range(repetitions):
 		if cumulative:
-			cumret.append(ret)
+			cumret[index] = ret
 		larg = ret
 		ret = variadic_link(links[0], (larg, rarg))
 		rarg = larg
