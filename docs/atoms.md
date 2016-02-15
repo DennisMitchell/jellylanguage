@@ -28,6 +28,7 @@ Symbol|Arity|Function|Note
 `H`|1|Halve; compute **z ÷ 2**.
 `I`|1|Increments; compute the deltas of consecutive elements of **z**.
 `L`|1|Length.
+`M`|1|Return all indices of **z** that correspond to maximmal elements.|Indices are 1-based.
 `N`|1|Negative; compute **-z**.
 `O`|1|Ord; cast to number.
 `P`|1|Product of a list.
@@ -73,6 +74,7 @@ Symbol|Arity|Function|Note
 `Ḅ`|1|Convert from binary to integer.
 `Ḍ`|1|Convert from decimal to integer.
 `Ḥ`|1|Double; compute **2z**.
+`Ṃ`|1|Minimum.
 `Ọ`|1|Chr; cast to character.
 `Ṣ`|1|Sort the list **z**.
 `Ṭ`|1|Return a Boolean array with **1**'s at the indices in **z**.
@@ -84,6 +86,7 @@ Symbol|Arity|Function|Note
 `Ḟ`|1|Floor; round **z** down to the nearest integer.|Returns **z** for non-real **z**.
 `Ḣ`|1|Head; pop and return the first element of **z**.|Modifies **z**.
 `İ`|1|Inverse; compute **1 ÷ z**.
+`Ṁ`|1|Maximum.
 `Ṅ`|1|Print **z** and a linefeed.|Returns **z**.
 `Ȯ`|1|Print **z**.|Returns **z**.
 `Ṗ`|1|Pop; return `z[:-1]`.

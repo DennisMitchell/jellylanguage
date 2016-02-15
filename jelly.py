@@ -210,6 +210,18 @@ atoms = {
 		arity = 2,
 		call = lambda x, y: x
 	),
+	'M': attrdict(
+		arity = 1,
+		call = lambda z: [u + 1 for u, v in enumerate(z) if v == max(z)]
+	),
+	'Ṃ': attrdict(
+		arity = 1,
+		call = min
+	),
+	'Ṁ': attrdict(
+		arity = 1,
+		call = max
+	),
 	'm': attrdict(
 		arity = 2,
 		rdepth = 0,
