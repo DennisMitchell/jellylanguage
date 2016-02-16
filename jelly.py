@@ -71,6 +71,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: from_base(x, y)
 	),
+	'ḃ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: to_base(x, y, bijective = True)
+	),
 	'C': attrdict(
 		arity = 1,
 		ldepth = 0,

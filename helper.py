@@ -350,9 +350,11 @@ def try_eval(string):
 	except:
 		return listify(string, True)
 
-def to_base(integer, base):
+def to_base(integer, base, bijective = False):
 	if integer == 0:
-		return [0]
+		return [0] * (not bijective)
+	if bijective:
+		base = abs(base)
 	if base == 0:
 		return [integer]
 	if base == -1:
@@ -364,7 +366,9 @@ def to_base(integer, base):
 		return [sign] * integer
 	digits = []
 	while integer:
+		integer -= bijective
 		integer, digit = divmod(integer, base)
+		digit += bijective
 		if digit < 0:
 			integer += 1
 			digit -= base
