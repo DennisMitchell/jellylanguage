@@ -842,6 +842,20 @@ quicks = {
 			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y), cumulative = True)
 		)]
 	),
+	'Ðf': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x, y = None: list(filter(lambda t: variadic_link(links[0], (t, y)), x))
+		)]
+	),
+	'Ðḟ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x, y = None: list(itertools.filterfalse(lambda t: variadic_link(links[0], (t, y)), x))
+		)]
+	),
 	'ÐL': attrdict(
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
@@ -863,7 +877,6 @@ quicks = {
 			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_loop = True)
 		)]
 	),
-
 }
 
 hypers = {
