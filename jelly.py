@@ -821,6 +821,13 @@ quicks = {
 			call = lambda x, y: dyadic_chain(links, (x, y))
 		)]
 	),
+	'#': attrdict(
+		condition = lambda links: len(links) == 2,
+		quicklink = lambda links, outmost_links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
+			arity = max_arity(links),
+			call = lambda x = None, y = None: nfind(links, (x, y))
+		)]
+	),
 	'?': attrdict(
 		condition = lambda links: len(links) == 3,
 		quicklink = lambda links, outmost_links, index: [attrdict(
@@ -876,7 +883,7 @@ quicks = {
 			arity = links[0].arity,
 			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_loop = True)
 		)]
-	),
+	)
 }
 
 hypers = {

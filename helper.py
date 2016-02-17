@@ -195,6 +195,16 @@ def loop_until_loop(link, args, return_all = False, return_loop = False):
 				return cumret[index(cumret, ret) - 1 :]
 			return larg
 
+def nfind(links, args):
+	larg, rarg = args
+	matches = variadic_link(links[1], args) if len(links) == 2 else last_input()
+	found = []
+	while len(found) < matches:
+		if variadic_link(links[0], (larg, rarg)):
+			found.append(larg)
+		larg += 1
+	return found
+
 def max_arity(links):
 	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
 
