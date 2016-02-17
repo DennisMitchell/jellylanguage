@@ -95,6 +95,7 @@ Symbol|Arity|Function|Note
 `Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
 `ạ`|2|Absolute difference.
 `ḅ`|2|Convert from base **y** to integer.
+`ḍ`|2|Check **y** for divisibility by **x**.|Return **1** or **0**.
 `ị`|2|Return the element of **x** at index **y**.|Indices are 1-based.
 `ḷ`|2|Left argument; return **x**.
 `ṛ`|2|Right argument; return **y**.
@@ -143,6 +144,8 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
+`Œ!`|1|All permutations of **z**.|May contain duplicates.
+`ŒP`|1|Powerset of **z**.|May contain duplicates.
 `Œp`|1|Cartesian product of **z**'s items.
 `ŒḊ`|1|Depth.
 `ŒṘ`|1|Python's string representation.

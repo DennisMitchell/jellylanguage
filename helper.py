@@ -307,6 +307,13 @@ def Pi(number):
 		return inf if number < 0 else math.factorial(number)
 	return math.gamma(number + 1)
 
+def powerset(array):
+	array = iterable(array, range = True)
+	ret = []
+	for t in range(len(array) + 1):
+		ret += listify(itertools.combinations(array, t))
+	return ret
+
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
 

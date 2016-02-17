@@ -678,9 +678,17 @@ atoms = {
 		rdepth = 0,
 		call = math.atan2
 	),
+	'Œ!': attrdict(
+		arity = 1,
+		call = lambda z: listify(itertools.permutations(iterable(z, range = True)))
+	),
 	'ŒḊ': attrdict(
 		arity = 1,
 		call = depth
+	),
+	'ŒP': attrdict(
+		arity = 1,
+		call = powerset
 	),
 	'Œp': attrdict(
 		arity = 1,
@@ -699,7 +707,7 @@ atoms = {
 	'œc': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.combinations(iterable(x, range = True)))
+		call = lambda x, y: listify(itertools.combinations(iterable(x, range = True), y))
 	),
 	'œl': attrdict(
 		arity = 2,
