@@ -228,11 +228,11 @@ atoms = {
 	),
 	'Ṃ': attrdict(
 		arity = 1,
-		call = min
+		call = lambda z: min(iterable(z)) if iterable(z) else 0
 	),
 	'Ṁ': attrdict(
 		arity = 1,
-		call = max
+		call = lambda z: max(iterable(z)) if iterable(z) else 0
 	),
 	'm': attrdict(
 		arity = 2,
