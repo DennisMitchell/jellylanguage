@@ -121,6 +121,12 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: list(divmod(x, y))
 	),
+	'ḍ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: int(y % x == 0)
+	),
 	'Ė': attrdict(
 		arity = 1,
 		call = lambda z: [[t + 1, u] for t, u in enumerate(iterable(z))]
