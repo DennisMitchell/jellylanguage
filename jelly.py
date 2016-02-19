@@ -125,7 +125,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: int(y % x == 0)
+		call = lambda x, y: int(y % x == 0 if x else y == 0)
 	),
 	'Ė': attrdict(
 		arity = 1,
