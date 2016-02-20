@@ -113,7 +113,7 @@ atoms = {
 	),
 	'Ḋ': attrdict(
 		arity = 1,
-		call = lambda z: z[1:]
+		call = lambda z: iterable(z)[1:]
 	),
 	'd': attrdict(
 		arity = 2,
@@ -178,7 +178,7 @@ atoms = {
 	),
 	'Ḣ': attrdict(
 		arity = 1,
-		call = lambda z: z.pop(0) if z else 0
+		call = lambda z: iterable(z).pop(0) if iterable(z) else 0
 	),
 	'ḣ': attrdict(
 		arity = 2,
@@ -278,7 +278,7 @@ atoms = {
 	),
 	'Ṗ': attrdict(
 		arity = 1,
-		call = lambda z: z[:-1]
+		call = lambda z: iterable(z)[:-1]
 	),
 	'p': attrdict(
 		arity = 2,
@@ -351,7 +351,7 @@ atoms = {
 	),
 	'Ṫ': attrdict(
 		arity = 1,
-		call = lambda z: z.pop() if z else 0
+		call = lambda z: iterable(z).pop() if iterable(z) else 0
 	),
 	't': attrdict(
 		arity = 2,
