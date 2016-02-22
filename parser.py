@@ -1,8 +1,5 @@
 import dictionary, jelly, re
 
-code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
-code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
-
 str_arities = 'øµð'
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
@@ -70,12 +67,12 @@ def parse_literal(literal_match):
 
 def sss(compressed):
 	decompressed = ''
-	integer = jelly.from_base([code_page.find(char) + 1 for char in compressed], 250)
+	integer = jelly.from_base([jelly.code_page.find(char) + 1 for char in compressed], 250)
 	while integer:
 		integer, mode = divmod(integer, 3)
 		if mode == 0:
 			integer, code = divmod(integer, 96)
-			decompressed += code_page[code + 32]
+			decompressed += jelly.code_page[code + 32]
 		else:
 			flag_swap = False
 			flag_space = decompressed != ''

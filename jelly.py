@@ -246,7 +246,7 @@ atoms = {
 	),
 	'Ṅ': attrdict(
 		arity = 1,
-		call = lambda z: print(stringify(z)) or z
+		call = lambda z: output(z, end = '\n')
 	),
 	'O': attrdict(
 		arity = 1,
@@ -260,7 +260,7 @@ atoms = {
 	),
 	'Ȯ': attrdict(
 		arity = 1,
-		call = lambda z: print(stringify(z), end = '') or z
+		call = output
 	),
 	'o': attrdict(
 		arity = 2,

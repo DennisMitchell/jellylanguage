@@ -1,4 +1,7 @@
-import ast, cmath, functools, itertools, math, operator, sympy, sys
+import ast, cmath, functools, itertools, locale, math, operator, sympy, sys
+
+code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
+code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
 inf = float('inf')
 nan = float('nan')
@@ -173,7 +176,7 @@ def join(array, glue):
 	for item in array:
 		ret += item
 		ret += glue
-	return ret + last
+	return ret + iterable(last)
 
 def last_input():
 	if len(sys.argv) > 3:
@@ -303,6 +306,13 @@ def ntimes(links, args, cumulative = False):
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
 
+def output(argument, end = ''):
+	if locale.getdefaultlocale()[1][0:3] == 'UTF':
+		print(stringify(argument), end = end)
+	else:
+		print(to_jelly(stringify(argument)), end = to_jelly(end))
+	return argument
+
 def overload(operators, *args):
 	for operator in operators:
 		try:
@@ -375,6 +385,13 @@ def trim(trimmee, trimmer, left = False, right = False):
 		while lindex < rindex and trimmee[rindex - 1] in trimmer:
 			rindex -= 1
 	return trimmee[lindex:rindex]
+
+def to_jelly(string):
+	ret = ''
+	for char in str(string).replace('\n', '¶'):
+		if char in code_page:
+			ret += chr(code_page.find(char))
+	return ret
 
 def try_eval(string):
 	try:
