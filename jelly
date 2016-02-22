@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import parser
+import jelly
 
 flag_utf8 = False
 
-for char in parser.jelly.sys.argv[1]:
+for char in jelly.sys.argv[1]:
 	if char == 'f':
 		flag_file = True
 	elif char == 'u':
@@ -13,22 +13,22 @@ for char in parser.jelly.sys.argv[1]:
 		flag_file = False
 
 if flag_file:
-	with open(parser.jelly.sys.argv[2], 'rb') as file:
+	with open(jelly.sys.argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = ''.join(char for char in code.decode('utf-8').replace('\n', '¶') if char in parser.jelly.code_page)
+		code = ''.join(char for char in code.decode('utf-8').replace('\n', '¶') if char in jelly.code_page)
 	else:
-		code = ''.join(parser.jelly.code_page[i] for i in code)
+		code = ''.join(jelly.code_page[i] for i in code)
 else:
-	code = parser.jelly.sys.argv[2]
+	code = jelly.sys.argv[2]
 	if flag_utf8:
-		code = ''.join(char for char in code.replace('\n', '¶') if char in parser.jelly.code_page)
+		code = ''.join(char for char in code.replace('\n', '¶') if char in jelly.code_page)
 	else:
-		code = ''.join(parser.jelly.code_page[ord(i)] for i in code)
+		code = ''.join(jelly.code_page[ord(i)] for i in code)
 
-args = list(map(parser.jelly.try_eval, parser.jelly.sys.argv[3:]))
+args = list(map(jelly.try_eval, jelly.sys.argv[3:]))
 
 for index in range(min(5, len(args))):
-	parser.jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
+	jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
 
-parser.jelly.output(parser.jelly.variadic_chain((parser.parse_code(code) or [''])[-1], args[:2]))
+jelly.output(jelly.jelly_eval(code, args[:2]))
