@@ -28,7 +28,7 @@ Symbol|Arity|Function|Note
 `H`|1|Halve; compute **z ÷ 2**.
 `I`|1|Increments; compute the deltas of consecutive elements of **z**.
 `L`|1|Length.
-`M`|1|Return all indices of **z** that correspond to maximmal elements.|Indices are 1-based.
+`M`|1|Return all indices of **z** that correspond to maximal elements.|Indices are 1-based.
 `N`|1|Negative; compute **-z**.
 `O`|1|Ord; cast to number.
 `P`|1|Product of a list.
@@ -36,6 +36,7 @@ Symbol|Arity|Function|Note
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.
+`V`|1|Eval.
 `W`|1|Wrap; return `[z]`.
 `Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
