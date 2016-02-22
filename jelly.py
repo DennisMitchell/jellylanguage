@@ -1,4 +1,4 @@
-import fractions, numpy, operator
+import fractions, numpy
 
 from helper import *
 
@@ -183,7 +183,7 @@ atoms = {
 	'ḣ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: x[:y]
+		call = lambda x, y: iterable(x)[:y]
 	),
 	'I': attrdict(
 		arity = 1,
@@ -202,11 +202,11 @@ atoms = {
 	'ị': attrdict(
 		arity = 2,
 		ldepth = 0,
-		call = lambda x, y: y[(int(x) - 1) % len(y)] if int(x) == x else [y[(math.floor(x) - 1) % len(y)], y[(math.ceil(x) - 1) % len(y)]]
+		call = lambda x, y, I = iterable: I(y)[(int(x) - 1) % len(I(y))] if int(x) == x else [I(y)[(math.floor(x) - 1) % len(I(y))], I(y)[(math.ceil(x) - 1) % len(I(y))]]
 	),
 	'j': attrdict(
 		arity = 2,
-		call = lambda x, y: sum(([t, y] for t in x), [])[:-1]
+		call = join
 	),
 	'L': attrdict(
 		arity = 1,
@@ -329,12 +329,12 @@ atoms = {
 	's': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: [x[i : i + y] for i in range(0, len(x), y)]
+		call = lambda x, y: [iterable(x)[i : i + y] for i in range(0, len(iterable(x)), y)]
 	),
 	'ṡ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: [x[i : i + y] for i in range(len(x) - y + 1)]
+		call = lambda x, y: [iterable(x)[i : i + y] for i in range(len(iterable(x)) - y + 1)]
 	),
 	'ṣ': attrdict(
 		arity = 2,
@@ -360,7 +360,7 @@ atoms = {
 	'ṫ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: x[y - 1 :]
+		call = lambda x, y: iterable(x)[y - 1 :]
 	),
 	'U': attrdict(
 		arity = 1,
@@ -369,7 +369,7 @@ atoms = {
 	),
 	'Ụ': attrdict(
 		arity = 1,
-		call = lambda z: sorted(range(1, len(z) + 1), key = lambda t: z[t - 1])
+		call = lambda z: sorted(range(1, len(iterable(z)) + 1), key = lambda t: iterable(z)[t - 1])
 	),
 	'W': attrdict(
 		arity = 1,

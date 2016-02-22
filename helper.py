@@ -1,4 +1,4 @@
-import ast, cmath, functools, itertools, math, sympy, sys
+import ast, cmath, functools, itertools, math, operator, sympy, sys
 
 inf = float('inf')
 nan = float('nan')
@@ -165,6 +165,16 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return int(a)
 
+def join(array, glue):
+	array = iterable(array)
+	last = array.pop() if array else []
+	glue = iterable(glue)
+	ret = []
+	for item in array:
+		ret += item
+		ret += glue
+	return ret + last
+
 def last_input():
 	if len(sys.argv) > 3:
 		return eval(sys.argv[-1])
@@ -304,7 +314,12 @@ def overload(operators, *args):
 
 def Pi(number):
 	if type(number) == int:
-		return inf if number < 0 else math.factorial(number)
+		if number < 0:
+			return inf
+		try:
+			return math.factorial(number)
+		except:
+			return functools.reduce(operator.mul, range(1, number + 1), 1)
 	return math.gamma(number + 1)
 
 def powerset(array):
