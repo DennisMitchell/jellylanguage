@@ -165,8 +165,35 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return int(a)
 
+def is_string(iterable):
+	if type(iterable) != list:
+		return False
+	return all(map(lambda t: type(t) == str, iterable))
+
 def jelly_eval(code, arguments):
 	return variadic_chain(parse_code(code)[-1] if code else '', arguments)
+
+def jelly_uneval(argument, top = True):
+	the_type = type(argument)
+	if the_type in (float, int):
+		return jelly_uneval_real(argument)
+	if the_type == complex:
+		return jelly_uneval_real(argument.real) + 'ı' + jelly_uneval_real(argument.imag)
+	if the_type == str:
+		return '”' + argument
+	if all(map(is_string, argument)):
+		strings = [''.join(string) for string in argument]
+		if all(map(lambda t: code_page.find(t) < 250, ''.join(strings))):
+			return '“' + '“'.join(strings) + '”'
+	if is_string(argument):
+		string = ''.join(argument)
+		if all(map(lambda t: code_page.find(t) < 250, string)):
+			return '“' + string + '”'
+	return '[' + ','.join(jelly_uneval(item) for item in argument) + ']'
+
+def jelly_uneval_real(number):
+	string = str(number if number % 1 else int(number))
+	return string.lstrip('0') if number else string
 
 def join(array, glue):
 	array = iterable(array)
@@ -921,6 +948,10 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: jelly_eval(''.join(z), [z])
+	),
+	'Ṿ': attrdict(
+		arity = 1,
+		call = jelly_uneval
 	),
 	'W': attrdict(
 		arity = 1,
