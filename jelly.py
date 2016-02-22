@@ -23,7 +23,7 @@ def create_chain(chain, arity):
 def create_literal(string):
 	return attrdict(
 		arity = 0,
-		call = lambda: eval(string, False)
+		call = lambda: safe_eval(string, False)
 	)
 
 def copy(atom, value):
@@ -124,9 +124,6 @@ def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 		return [dyadic_link(link, (x, rarg)) for x in larg]
 	return [dyadic_link(link, (x, y)) for x, y in zip(*args)] + larg[len(rarg) :] + rarg[len(larg) :]
 
-def eval(string, dirty = True):
-	return listify(ast.literal_eval(string), dirty)
-
 def flatten(argument):
 	flat = []
 	if type(argument) == list:
@@ -177,14 +174,13 @@ def join(array, glue):
 	glue = iterable(glue)
 	ret = []
 	for item in array:
-		ret += item
-		ret += glue
+		ret += iterable(item) + glue
 	return ret + iterable(last)
 
 def last_input():
 	if len(sys.argv) > 3:
-		return eval(sys.argv[-1])
-	return eval(input())
+		return safe_eval(sys.argv[-1])
+	return safe_eval(input())
 
 def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
@@ -400,6 +396,9 @@ def rotate_left(array, units):
 	length = len(array)
 	return array[units % length :] + array[: units % length] if length else []
 
+def safe_eval(string, dirty = True):
+	return listify(ast.literal_eval(string), dirty)
+
 def sparse(link, args, indices):
 	larg = args[0]
 	indices = [index - 1 if index > 0 else index - 1 + len(larg) for index in iterable(variadic_link(indices, args))]
@@ -467,7 +466,7 @@ def trim(trimmee, trimmer, left = False, right = False):
 
 def try_eval(string):
 	try:
-		return eval(string)
+		return safe_eval(string)
 	except:
 		return listify(string, True)
 
@@ -707,7 +706,7 @@ atoms = {
 	),
 	'Ɠ': attrdict(
 		arity = 0,
-		call = lambda: eval(input())
+		call = lambda: safe_eval(input())
 	),
 	'ɠ': attrdict(
 		arity = 0,

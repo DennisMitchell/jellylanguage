@@ -36,7 +36,7 @@ Symbol|Arity|Function|Note
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.
-`V`|1|Eval.
+`V`|1|Eval as Jelly code.
 `W`|1|Wrap; return `[z]`.
 `Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
