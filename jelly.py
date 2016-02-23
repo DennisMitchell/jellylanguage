@@ -99,7 +99,8 @@ def dyadic_chain(chain, args):
 			ret = monadic_link(chain[0], ret)
 			chain = chain[1:]
 		else:
-			print('Skipped atom:', chain[0], file = sys.stderr)
+			output(ret)
+			ret = niladic_link(chain[0])
 			chain = chain[1:]
 	return ret
 
@@ -189,7 +190,8 @@ def jelly_uneval(argument, top = True):
 		string = ''.join(argument)
 		if all(map(lambda t: code_page.find(t) < 250, string)):
 			return '“' + string + '”'
-	return '[' + ','.join(jelly_uneval(item) for item in argument) + ']'
+	middle = ','.join(jelly_uneval(item, top = False) for item in argument)
+	return middle if top else '[' + middle + ']'
 
 def jelly_uneval_real(number):
 	string = str(number if number % 1 else int(number))
@@ -273,7 +275,8 @@ def monadic_chain(chain, arg):
 			ret = monadic_link(chain[0], ret)
 			chain = chain[1:]
 		else:
-			print('Skipped atom:', chain[0], file = sys.stderr)
+			output(ret)
+			ret = niladic_link(chain[0])
 			chain = chain[1:]
 	return ret
 
@@ -331,13 +334,6 @@ def ntimes(links, args, cumulative = False):
 		ret = variadic_link(links[0], (larg, rarg))
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
-
-def output(argument, end = ''):
-	if locale.getdefaultlocale()[1][0:3] == 'UTF':
-		print(stringify(argument), end = end)
-	else:
-		print(unicode_to_jelly(stringify(argument)), end = unicode_to_jelly(end))
-	return argument
 
 def overload(operators, *args):
 	for operator in operators:
@@ -574,6 +570,13 @@ def while_loop(link, condition, args, cumulative = False):
 		ret = variadic_link(link, (larg, rarg))
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
+
+def output(argument, end = '', transform = stringify):
+	if locale.getdefaultlocale()[1][0:3] == 'UTF':
+		print(transform(argument), end = end)
+	else:
+		print(unicode_to_jelly(transform(argument)), end = unicode_to_jelly(end))
+	return argument
 
 atoms = {
 	'³': attrdict(
@@ -871,6 +874,10 @@ atoms = {
 		ldepth = 0,
 		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
 	),
+	'Ṙ': attrdict(
+		arity = 1,
+		call = lambda z: output(z, transform = jelly_uneval)
+	),
 	'r': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -947,11 +954,16 @@ atoms = {
 	'V': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: jelly_eval(''.join(z), [z])
+		call = lambda z: jelly_eval(''.join(z), [])
 	),
 	'Ṿ': attrdict(
 		arity = 1,
 		call = jelly_uneval
+	),
+	'v': attrdict(
+		arity = 2,
+		ldepth = 1,
+		call = lambda x, y: jelly_eval(''.join(x), [y])
 	),
 	'W': attrdict(
 		arity = 1,
@@ -1322,7 +1334,7 @@ atoms = {
 	'Øe': attrdict(
 		arity = 0,
 		call = lambda: math.e
-	)
+	),
 }
 
 quicks = {
