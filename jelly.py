@@ -467,7 +467,7 @@ def sss(compressed):
 def stringify(iterable, recurse = True):
 	if type(iterable) != list:
 		return iterable
-	if str in map(type, iterable) and not list in map(type, iterable):
+	if str in map(type, iterable) and not list in map(type, iterable) or not iterable:
 		return ''.join(map(str, iterable))
 	iterable = [stringify(item) for item in iterable]
 	return stringify(iterable, False) if recurse else iterable
@@ -1280,6 +1280,11 @@ atoms = {
 		arity = 1,
 		call = depth
 	),
+	'Œl': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: z.lower()
+	),
 	'ŒP': attrdict(
 		arity = 1,
 		call = powerset
@@ -1292,11 +1297,32 @@ atoms = {
 		arity = 1,
 		call = lambda z: listify(repr(z))
 	),
+	'Œs': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: z.swapcase()
+	),
+	'Œt': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: z.title()
+	),
+	'Œu': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: z.upper()
+	),
 	'æ%': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
 		call = symmetric_mod
+	),
+	'ær': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = round
 	),
 	'œc': attrdict(
 		arity = 2,
