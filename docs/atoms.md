@@ -146,6 +146,9 @@ Symbol|Arity|Function|Note
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
 `ær`|2|Round **x** to the nearest multiple of **10<sup>-y</sup>**.
+`æp`|2|Precision; round **x** to **y** significant figures.
+`æċ`|2|Ceil **x** to the nearest power of **y**.
+`æḟ`|2|Floor **x** to the nearest power of **y**.
 `Œ!`|1|All permutations of **z**.|May contain duplicates.
 `Œl`|1|Lower case.
 `Œs`|1|Swap case.

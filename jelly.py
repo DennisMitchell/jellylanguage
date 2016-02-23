@@ -1318,11 +1318,29 @@ atoms = {
 		rdepth = 0,
 		call = symmetric_mod
 	),
+	'æċ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: from_base([1] + [0] * len(to_base(x, y)), y)
+	),
+	'æḟ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: from_base([1] + [0] * (len(to_base(x, y)) - 1), y)
+	),
 	'ær': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
 		call = round
+	),
+	'æp': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: float('%%.%dg'%y%x)
 	),
 	'œc': attrdict(
 		arity = 2,
