@@ -3,6 +3,7 @@
 import jelly
 
 flag_utf8 = False
+end = ''
 
 for char in jelly.sys.argv[1]:
 	if char == 'f':
@@ -11,6 +12,8 @@ for char in jelly.sys.argv[1]:
 		flag_utf8 = True
 	elif char == 'e':
 		flag_file = False
+	elif char == 'n':
+		end = '\n'
 
 if flag_file:
 	with open(jelly.sys.argv[2], 'rb') as file:
@@ -31,4 +34,4 @@ args = list(map(jelly.try_eval, jelly.sys.argv[3:]))
 for index in range(min(5, len(args))):
 	jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
 
-jelly.output(jelly.jelly_eval(code, args[:2]))
+jelly.output(jelly.jelly_eval(code, args[:2]), end)

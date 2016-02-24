@@ -149,8 +149,8 @@ def from_exponents(exponents):
 def identity(argument):
 	return argument
 
-def iterable(argument, range = False):
-	return argument if type(argument) == list else (range(1, argument + 1) if range else [argument])
+def iterable(argument, make_range = False):
+	return argument if type(argument) == list else (range(1, argument + 1) if make_range else [argument])
 
 def index(haystack, needle):
 	for index, item in enumerate(haystack):
@@ -405,7 +405,7 @@ def Pi(number):
 	return math.gamma(number + 1)
 
 def powerset(array):
-	array = iterable(array, range = True)
+	array = iterable(array, make_range = True)
 	ret = []
 	for t in range(len(array) + 1):
 		ret += listify(itertools.combinations(array, t))
@@ -858,12 +858,12 @@ atoms = {
 	),
 	'p': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(itertools.product(iterable(x, range = True), iterable(y, range = True)))
+		call = lambda x, y: listify(itertools.product(iterable(x, make_range = True), iterable(y, make_range = True)))
 	),
 	'ṗ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.product(*([iterable(x, range = True)] * y)))
+		call = lambda x, y: listify(itertools.product(*([iterable(x, make_range = True)] * y)))
 	),
 	'Q': attrdict(
 		arity = 1,
@@ -1274,7 +1274,7 @@ atoms = {
 	),
 	'Œ!': attrdict(
 		arity = 1,
-		call = lambda z: listify(itertools.permutations(iterable(z, range = True)))
+		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
 	),
 	'ŒḊ': attrdict(
 		arity = 1,
@@ -1291,7 +1291,7 @@ atoms = {
 	),
 	'Œp': attrdict(
 		arity = 1,
-		call = lambda z: listify(itertools.product(*[iterable(t, range = True) for t in z]))
+		call = lambda z: listify(itertools.product(*[iterable(t, make_range = True) for t in z]))
 	),
 	'ŒṘ': attrdict(
 		arity = 1,
@@ -1345,7 +1345,7 @@ atoms = {
 	'œc': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.combinations(iterable(x, range = True), y))
+		call = lambda x, y: listify(itertools.combinations(iterable(x, make_range = True), y))
 	),
 	'œl': attrdict(
 		arity = 2,
