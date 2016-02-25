@@ -3,6 +3,10 @@ import ast, cmath, dictionary, fractions, functools, itertools, locale, math, nu
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
+str_digit = '0123456789'
+str_lower = 'abcdefghijklmnopqrstuvwxyz'
+str_upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
 inf = float('inf')
 nan = float('nan')
 
@@ -524,13 +528,15 @@ def to_case(argument, lower = False, swap = False, title = False, upper = False)
 	for item in argument:
 		if type(item) == str:
 			if lower:
-				ret += [item.lower()]
+				ret.append(item.lower())
 			elif swap:
-				ret += [item.swapcase()]
+				ret.append(item.swapcase())
 			elif title:
-				ret += [item.upper()] if last_item in ' \n' else [item.lower()]
+				ret.append(item.lower() if type(last_item) == str and last_item in str_upper + str_lower else item.upper())
 			elif upper:
-				ret += [item.upper()]
+				ret.append(item.upper())
+		else:
+			ret.append(item)
 		last_item = item
 	return ret
 
