@@ -518,6 +518,22 @@ def to_base(integer, base, bijective = False):
 		digits.append(sign * digit)
 	return digits[::-1]
 
+def to_case(argument, lower = False, swap = False, title = False, upper = False):
+	ret = []
+	last_item = ''
+	for item in argument:
+		if type(item) == str:
+			if lower:
+				ret += [item.lower()]
+			elif swap:
+				ret += [item.swapcase()]
+			elif title:
+				ret += [item.upper()] if last_item in ' \n' else [item.lower()]
+			elif upper:
+				ret += [item.upper()]
+		last_item = item
+	return ret
+
 def to_exponents(integer):
 	if integer == 1:
 		return []
@@ -1133,6 +1149,10 @@ atoms = {
 		rdepth = 0,
 		call = max
 	),
+	'⁼': attrdict(
+		arity = 2,
+		call = lambda x, y: int(x == y)
+	),
 	'®': attrdict(
 		arity = 0,
 		call = lambda: 0
@@ -1283,7 +1303,7 @@ atoms = {
 	'Œl': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: z.lower()
+		call = lambda z: to_case(z, lower = True)
 	),
 	'ŒP': attrdict(
 		arity = 1,
@@ -1300,17 +1320,17 @@ atoms = {
 	'Œs': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: z.swapcase()
+		call = lambda z: to_case(z, swap = True)
 	),
 	'Œt': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: z.title()
+		call = lambda z: to_case(z, title = True)
 	),
 	'Œu': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: z.upper()
+		call = lambda z: to_case(z, upper = True)
 	),
 	'æ%': attrdict(
 		arity = 2,
