@@ -36,7 +36,7 @@ Symbol|Arity|Function|Note
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
 `U`|1|Upend; reverse an array.
-`V`|1|Eval as Jelly code.
+`V`|1|Eval **z** as Jelly code, with no arguments.
 `W`|1|Wrap; return `[z]`.
 `Z`|1|Zip; push the array of all columns of **z**.
 `^`|2|Bitwise XOR.
@@ -57,6 +57,7 @@ Symbol|Arity|Function|Note
 `r`|2|Inclusive range.|Descending if **x > y**.
 `s`|2|Split **x** into slices of length **y**.
 `t`|2|Trim all elements of **y** from both sides of **x**.
+`v`|1|Eval **x** as Jelly code, with argument **y**.
 `x`|2|Times; repeat the elements of **x** **y** times.
 `z`|2|Zip; transpose **x** with filler **y**.
 `|`|2|Bitwise OR.
@@ -80,6 +81,7 @@ Symbol|Arity|Function|Note
 `Ṣ`|1|Sort the list **z**.
 `Ṭ`|1|Return a Boolean array with **1**'s at the indices in **z**.
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
+`Ṿ`|1|Uneval; right inverse of `V`.
 `Ḃ`|1|Bit; return `z % 2`.
 `Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.
