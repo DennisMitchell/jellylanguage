@@ -153,8 +153,15 @@ def from_exponents(exponents):
 def identity(argument):
 	return argument
 
-def iterable(argument, make_range = False):
-	return argument if type(argument) == list else (range(1, argument + 1) if make_range else [argument])
+def iterable(argument, make_digits = False, make_range = False):
+	the_type = type(argument)
+	if the_type == list:
+		return argument
+	if the_type != str and make_digits:
+		return to_base(argument, 10)
+	if the_type != str and make_range:
+		return range(1, int(argument) + 1)
+	return [argument]
 
 def index(haystack, needle):
 	for index, item in enumerate(haystack):
@@ -896,6 +903,10 @@ atoms = {
 		ldepth = 0,
 		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
 	),
+	'Ṛ': attrdict(
+		arity = 1,
+		call = lambda z: iterable(z, make_digits = True)[::-1]
+	),
 	'Ṙ': attrdict(
 		arity = 1,
 		call = lambda z: output(z, transform = jelly_uneval)
@@ -926,7 +937,7 @@ atoms = {
 	),
 	'Ṣ': attrdict(
 		arity = 1,
-		call = sorted
+		call = lambda z: sorted(iterable(z, make_digits = True))
 	),
 	's': attrdict(
 		arity = 2,
