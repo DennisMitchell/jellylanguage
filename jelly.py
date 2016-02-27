@@ -987,16 +987,16 @@ atoms = {
 	'V': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: jelly_eval(''.join(z), [])
+		call = lambda z: jelly_eval(''.join(map(str, z)), [])
 	),
 	'Ṿ': attrdict(
 		arity = 1,
-		call = jelly_uneval
+		call = lambda z: listify(jelly_uneval(z))
 	),
 	'v': attrdict(
 		arity = 2,
 		ldepth = 1,
-		call = lambda x, y: jelly_eval(''.join(x), [y])
+		call = lambda x, y: jelly_eval(''.join(map(str, x)), [y])
 	),
 	'W': attrdict(
 		arity = 1,
