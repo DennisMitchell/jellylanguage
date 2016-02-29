@@ -160,10 +160,11 @@ Symbol|Arity|Function|Note
 `Œp`|1|Cartesian product of **z**'s items.
 `ŒḊ`|1|Depth.
 `ŒṘ`|1|Python's string representation.
-`œc`|2|Combinations without replacement.
-`œl`|2|Trim all elements of **y** from the left side of **x**.
-`œr`|2|Trim all elements of **y** from the right side of **x**.
 `œ&`|2|Multiset intersection.
 `œ-`|2|Multiset difference.
 `œ^`|2|Multiset symmetric difference.
+`œc`|2|Combinations without replacement.
+`œl`|2|Trim all elements of **y** from the left side of **x**.
+`œr`|2|Trim all elements of **y** from the right side of **x**.
 `œ|`|2|Multiset union.
+`œċ`|2|Combinations without replacement.

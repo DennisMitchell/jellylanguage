@@ -1384,6 +1384,11 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: listify(itertools.combinations(iterable(x, make_range = True), y))
 	),
+	'œċ': attrdict(
+		arity = 2,
+		rdepth = 0,
+		call = lambda x, y: listify(itertools.combinations_with_replacement(iterable(x, make_range = True), y))
+	),
 	'œl': attrdict(
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), left = True)
