@@ -260,6 +260,10 @@ def nfind(links, args):
 def max_arity(links):
 	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
 
+def maximal_indices(iterable):
+	maximum = max(iterable)
+	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
+
 def monadic_chain(chain, arg):
 	for link in chain:
 		if link.arity < 0:
@@ -829,7 +833,7 @@ atoms = {
 	),
 	'M': attrdict(
 		arity = 1,
-		call = lambda z: [u + 1 for u, v in enumerate(z) if v == max(z)]
+		call = maximal_indices
 	),
 	'Ṃ': attrdict(
 		arity = 1,
