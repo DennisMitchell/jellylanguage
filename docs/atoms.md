@@ -61,7 +61,7 @@ Symbol|Arity|Function|Note
 `x`|2|Times; repeat the elements of **x** **y** times.
 `z`|2|Zip; transpose **x** with filler **y**.
 `|`|2|Bitwise OR.
-` ~ `|2|Bitwise NOT.
+` ~ `|1|Bitwise NOT.
 `°`|1|Convert **z** from degrees to radians.
 `¹`|1|Identity; return **z**.
 `²`|1|Square.
@@ -151,6 +151,8 @@ Symbol|Arity|Function|Note
 `æp`|2|Precision; round **x** to **y** significant figures.
 `æċ`|2|Ceil **x** to the nearest power of **y**.
 `æḟ`|2|Floor **x** to the nearest power of **y**.
+`æ«`|2|Bit shift; compute **x × 2<sup>y</sup>**.
+`æ»`|2|Bit shift; compute **x × 2<sup>-y</sup>**.|Returns an integer.
 `Œ!`|1|All permutations of **z**.|May contain duplicates.
 `Œl`|1|Lower case.
 `Œs`|1|Swap case.
@@ -167,4 +169,4 @@ Symbol|Arity|Function|Note
 `œl`|2|Trim all elements of **y** from the left side of **x**.
 `œr`|2|Trim all elements of **y** from the right side of **x**.
 `œ|`|2|Multiset union.
-`œċ`|2|Combinations without replacement.
+`œċ`|2|Combinations with replacement.

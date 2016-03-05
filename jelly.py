@@ -1383,6 +1383,18 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: float('%%.%dg'%y%x)
 	),
+	'æ«': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: x * 2 ** y
+	),
+	'æ»': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: div(x, 2 ** y, floor = True)
+	),
 	'œc': attrdict(
 		arity = 2,
 		rdepth = 0,
