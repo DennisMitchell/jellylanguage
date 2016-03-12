@@ -426,6 +426,26 @@ def powerset(array):
 		ret += listify(itertools.combinations(array, t))
 	return ret
 
+def reduce(links, outmost_links, index):
+	ret = [attrdict(arity = 1)]
+	if len(links) == 1:
+		ret[0].call = lambda z: reduce_simple(z, links[0])
+	else:
+		ret[0].call = lambda z: [reduce_simple(t, links[0]) for t in split_fixed(iterable(z), links[1].call())]
+	return ret
+
+def reduce_simple(array, link):
+	array = iterable(array)
+	return functools.reduce(lambda x, y: dyadic_link(link, (x, y)), array)
+
+def reduce_cumulative(links, outmost_links, index):
+	ret = [attrdict(arity = 1)]
+	if len(links) == 1:
+		ret[0].call = lambda t: list(itertools.accumulate(iterable(t), lambda x, y: dyadic_link(links[0], (x, y))))
+	else:
+		ret[0].call = lambda z: [reduce_simple(t, links[0]) for t in split_rolling(iterable(z), links[1].call())]
+	return ret
+
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
 
@@ -452,6 +472,14 @@ def split_at(iterable, needle):
 		else:
 			chunk.append(element)
 	yield chunk
+
+def split_fixed(array, width):
+	array = iterable(array)
+	return [array[i : i + width] for i in range(0, len(array), width)]
+
+def split_rolling(array, width):
+	array = iterable(array)
+	return [array[i : i + width] for i in range(len(array) - width + 1)]
 
 def sss(compressed):
 	decompressed = ''
@@ -694,7 +722,7 @@ atoms = {
 	'Ċ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: overload((math.ceil, identity), z)
+		call = lambda z: overload((math.ceil, lambda t: t.imag, identity), z)
 	),
 	'c': attrdict(
 		arity = 2,
@@ -751,7 +779,7 @@ atoms = {
 	'Ḟ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: overload((math.floor, identity), z)
+		call = lambda z: overload((math.floor, lambda t: t.real, identity), z)
 	),
 	'f': attrdict(
 		arity = 2,
@@ -937,7 +965,7 @@ atoms = {
 	'Ṡ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: (z > 0) - (z < 0)
+		call = lambda z: overload((lambda t: (t > 0) - (t < 0), lambda t: t.conjugate()), z)
 	),
 	'Ṣ': attrdict(
 		arity = 1,
@@ -946,12 +974,12 @@ atoms = {
 	's': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: [iterable(x)[i : i + y] for i in range(0, len(iterable(x)), y)]
+		call = split_fixed
 	),
 	'ṡ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: [iterable(x)[i : i + y] for i in range(len(iterable(x)) - y + 1)]
+		call = split_rolling
 	),
 	'ṣ': attrdict(
 		arity = 2,
@@ -1185,12 +1213,12 @@ atoms = {
 	'ÆA': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: overload((math.cos, cmath.cos), z)
+		call = lambda z: overload((math.acos, cmath.acos), z)
 	),
 	'ÆẠ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: overload((math.acos, cmath.acos), z)
+		call = lambda z: overload((math.cos, cmath.cos), z)
 	),
 	'ÆC': attrdict(
 		arity = 1,
@@ -1307,12 +1335,6 @@ atoms = {
 		ldepth = 0,
 		call = math.degrees
 	),
-	'æA': attrdict(
-		arity = 2,
-		ldepth = 0,
-		rdepth = 0,
-		call = math.atan2
-	),
 	'Œ!': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
@@ -1359,6 +1381,12 @@ atoms = {
 		rdepth = 0,
 		call = symmetric_mod
 	),
+	'æA': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = math.atan2
+	),
 	'æċ': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -1370,6 +1398,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: from_base([1] + [0] * (len(to_base(x, y)) - 1), y)
+	),
+	'æl': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: x * y // (fractions.gcd(x, y) or 1)
 	),
 	'ær': attrdict(
 		arity = 2,
@@ -1510,6 +1544,14 @@ quicks = {
 			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y))
 		)]
 	),
+	'/': attrdict(
+		condition = lambda links: links and links[0].arity,
+		quicklink = reduce
+	),
+	'\\': attrdict(
+		condition = lambda links: links and links[0].arity,
+		quicklink = reduce_cumulative
+	),
 	'¤': attrdict(
 		condition = lambda links: len(links) > 1 and links[0].arity == 0,
 		quicklink = lambda links, outmost_links, index: [attrdict(
@@ -1544,6 +1586,10 @@ quicks = {
 			arity = max(link.arity for link in links),
 			call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
 		)]
+	),
+	'⁺': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: links * 2
 	),
 	'Ð¡': attrdict(
 		condition = lambda links: len(links) == 2,
@@ -1608,14 +1654,6 @@ hypers = {
 	'@': lambda link, none = None: attrdict(
 		arity = 2,
 		call = lambda x, y: dyadic_link(link, (y, x))
-	),
-	'/': lambda link, none = None: attrdict(
-		arity = 1,
-		call = lambda z: functools.reduce(lambda x, y: dyadic_link(link, (x, y)), iterable(z))
-	),
-	'\\': lambda link, none = None: attrdict(
-		arity = 1,
-		call = lambda z: list(itertools.accumulate(iterable(z), lambda x, y: dyadic_link(link, (x, y))))
 	),
 	'{': lambda link, none = None: attrdict(
 		arity = 2,

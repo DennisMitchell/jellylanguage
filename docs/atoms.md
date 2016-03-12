@@ -32,6 +32,7 @@ Symbol|Arity|Function|Note
 `N`|1|Negative; compute **-z**.
 `O`|1|Ord; cast to number.
 `P`|1|Product of a list.
+`Q`|1|Return the unique elements of **z**, sorted by first appearance.
 `R`|1|Inclusive range.|Starts at `1`.<br>`-1R` gives `[-1, 0, 1]`.
 `S`|1|Sum of a list.
 `T`|1|Return all indices of **z** that correspond to truthy elements.|Indices are 1-based.
@@ -83,18 +84,17 @@ Symbol|Arity|Function|Note
 `Ụ`|1|Grade the list **z** up, i.e., sort its indices by their values.
 `Ṿ`|1|Uneval; right inverse of `V`.
 `Ḃ`|1|Bit; return `z % 2`.
-`Ċ`|1|Ceil; round **z** up to the nearest integer.|Returns **z** for non-real **z**.
+`Ċ`|1|Ceil; round **z** up to the nearest integer.|Imag. part for complex **z**.
 `Ḋ`|1|Dequeue; return `z[1:]`.
 `Ė`|1|Enumerate.
-`Ḟ`|1|Floor; round **z** down to the nearest integer.|Returns **z** for non-real **z**.
+`Ḟ`|1|Floor; round **z** down to the nearest integer.|Real part for complex **z**.
 `Ḣ`|1|Head; pop and return the first element of **z**.|Modifies **z**.
 `İ`|1|Inverse; compute **1 ÷ z**.
 `Ṁ`|1|Maximum.
 `Ṅ`|1|Print **z** and a linefeed.|Returns **z**.
 `Ȯ`|1|Print **z**.|Returns **z**.
 `Ṗ`|1|Pop; return `z[:-1]`.
-`Q`|1|Return the unique elements of **z**, sorted by first appearance.
-`Ṡ`|1|Sign of **z**.
+`Ṡ`|1|Sign of **z**.|Conjugate for complex **z**.
 `Ṫ`|1|Tail; pop and return the last element of **z**.|Modifies **z**.
 `ạ`|2|Absolute difference.
 `ḅ`|2|Convert from base **y** to integer.
@@ -147,6 +147,7 @@ Symbol|Arity|Function|Note
 `Æ²`|1|Test if **z** is a square.|Returns **1** or **0**.
 `æ%`|2|Symmetric modulus; map **x** in the interval **(-y, y]**.
 `æA`|2|Arctangent with two arguments, i.e., `atan2()`.
+`æl`|2|Lowest common multiple.
 `ær`|2|Round **x** to the nearest multiple of **10<sup>-y</sup>**.
 `æp`|2|Precision; round **x** to **y** significant figures.
 `æċ`|2|Ceil **x** to the nearest power of **y**.
