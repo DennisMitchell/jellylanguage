@@ -327,7 +327,7 @@ def multiset_symdif(left, right):
 	return multiset_union(multiset_difference(left, right), multiset_difference(right, left))
 
 def multiset_union(left, right):
-	return left + multiset_difference(right, left)
+	return iterable(left) + multiset_difference(right, left)
 
 def niladic_chain(chain):
 	if not chain or chain[0].arity > 0:
@@ -1243,7 +1243,7 @@ atoms = {
 	'ÆF': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: [[x, y] for x, y in sympy.ntheory.factor_.factorint(z).items()]
+		call = lambda z: [[x, y] for x, y in sorted(sympy.ntheory.factor_.factorint(z).items())]
 	),
 	'Æe': attrdict(
 		arity = 1,
@@ -1253,7 +1253,7 @@ atoms = {
 	'Æf': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: rld(sympy.ntheory.factor_.factorint(z).items())
+		call = lambda z: rld(sorted(sympy.ntheory.factor_.factorint(z).items()))
 	),
 	'Æl': attrdict(
 		arity = 1,
