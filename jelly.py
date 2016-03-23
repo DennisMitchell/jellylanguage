@@ -340,6 +340,10 @@ def niladic_link(link):
 def ntimes(links, args, cumulative = False):
 	ret, rarg = args
 	repetitions = variadic_link(links[1], args) if len(links) == 2 else last_input()
+	try:
+		repetitions = int(repetitions)
+	except:
+		repetitions = bool(repetitions)
 	if cumulative:
 		cumret = [0] * repetitions
 	for index in range(repetitions):
