@@ -80,6 +80,12 @@ def depth(link):
 		return 1
 	return 1 + max(map(depth, link))
 
+def diagonals(matrix):
+	shifted = [None] * len(matrix)
+	for index, row in enumerate(map(iterable, reversed(matrix))):
+		shifted[~index] = index * [None] + row
+	return zip_ragged(shifted)
+
 def dyadic_chain(chain, args):
 	larg, rarg = args
 	for link in chain:
@@ -653,6 +659,9 @@ def output(argument, end = '', transform = stringify):
 		print(unicode_to_jelly(transform(argument)), end = unicode_to_jelly(end))
 	return argument
 
+def zip_ragged(array):
+	return listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(iterable, array))))
+
 atoms = {
 	'³': attrdict(
 		arity = 0,
@@ -1060,7 +1069,7 @@ atoms = {
 	),
 	'Z': attrdict(
 		arity = 1,
-		call = lambda z: listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(iterable, z))))
+		call = zip_ragged
 	),
 	'z': attrdict(
 		arity = 2,
@@ -1068,7 +1077,7 @@ atoms = {
 	),
 	'ż': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(map(lambda z: filter(None.__ne__, z), itertools.zip_longest(iterable(x), iterable(y))))
+		call = lambda x, y: zip_ragged([x, y])
 	),
 	'!': attrdict(
 		arity = 1,
@@ -1352,6 +1361,11 @@ atoms = {
 	'Œ!': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
+	),
+	'ŒD': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = diagonals
 	),
 	'ŒḊ': attrdict(
 		arity = 1,
