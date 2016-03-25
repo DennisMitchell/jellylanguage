@@ -18,6 +18,16 @@ class attrdict(dict):
 def arities(links):
 	return [link.arity for link in links]
 
+def at_index(index, array):
+	array = iterable(array)
+	if not array:
+		return 0
+	low_index = math.floor(index) - 1
+	high_index = math.ceil(index) - 1
+	if low_index == high_index:
+		return array[low_index % len(array)]
+	return [array[low_index % len(array)], array[high_index % len(array)]]
+
 def create_chain(chain, arity):
 	return attrdict(
 		arity = arity,
@@ -160,11 +170,11 @@ def iterable(argument, make_digits = False, make_range = False):
 	if the_type != str and make_digits:
 		return to_base(argument, 10)
 	if the_type != str and make_range:
-		return range(1, int(argument) + 1)
+		return list(range(1, int(argument) + 1))
 	return [argument]
 
 def index(haystack, needle):
-	for index, item in enumerate(haystack):
+	for index, item in enumerate(iterable(haystack)):
 		if item == needle:
 			return 1 + index
 	return 0
@@ -754,7 +764,7 @@ atoms = {
 	),
 	'Ḋ': attrdict(
 		arity = 1,
-		call = lambda z: iterable(z)[1:]
+		call = lambda z: iterable(z, make_range = True)[1:]
 	),
 	'd': attrdict(
 		arity = 2,
@@ -843,7 +853,7 @@ atoms = {
 	'ị': attrdict(
 		arity = 2,
 		ldepth = 0,
-		call = lambda x, y, I = iterable: I(y)[(int(x) - 1) % len(I(y))] if int(x) == x else [I(y)[(math.floor(x) - 1) % len(I(y))], I(y)[(math.ceil(x) - 1) % len(I(y))]]
+		call = at_index
 	),
 	'j': attrdict(
 		arity = 2,
@@ -851,7 +861,7 @@ atoms = {
 	),
 	'L': attrdict(
 		arity = 1,
-		call = len
+		call = lambda z: len(iterable(z))
 	),
 	'l': attrdict(
 		arity = 2,
@@ -919,7 +929,7 @@ atoms = {
 	),
 	'Ṗ': attrdict(
 		arity = 1,
-		call = lambda z: iterable(z)[:-1]
+		call = lambda z: iterable(z, make_range = True)[:-1]
 	),
 	'p': attrdict(
 		arity = 2,
