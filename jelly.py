@@ -956,7 +956,7 @@ atoms = {
 	'R': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: list(range(1, int(z) + 1) or range(int(z), -int(z) + 1))
+		call = lambda z: list(range(1, int(z) + 1))
 	),
 	'Ṛ': attrdict(
 		arity = 1,
@@ -1383,6 +1383,11 @@ atoms = {
 	'Œp': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.product(*[iterable(t, make_range = True) for t in z]))
+	),
+	'ŒR': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: list(range(-abs(int(z)), abs(int(z)) + 1))
 	),
 	'ŒṘ': attrdict(
 		arity = 1,
