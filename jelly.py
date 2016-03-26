@@ -917,6 +917,11 @@ atoms = {
 		ldepth = 0,
 		call = lambda z: div(1, z)
 	),
+	'Ị': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: int(abs(z) <= 1)
+	),
 	'i': attrdict(
 		arity = 2,
 		call = index
@@ -969,6 +974,10 @@ atoms = {
 	'Ṅ': attrdict(
 		arity = 1,
 		call = lambda z: output(z, end = '\n')
+	),
+	'Ṇ': attrdict(
+		arity = 1,
+		call = lambda z: int(not(z))
 	),
 	'O': attrdict(
 		arity = 1,
