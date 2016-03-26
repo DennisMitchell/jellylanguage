@@ -28,9 +28,10 @@ def at_index(index, array):
 		return array[low_index % len(array)]
 	return [array[low_index % len(array)], array[high_index % len(array)]]
 
-def create_chain(chain, arity):
+def create_chain(chain, arity = -1):
 	return attrdict(
 		arity = arity,
+		chain = chain,
 		call = lambda x = None, y = None: variadic_chain(chain, (x, y))
 	)
 
@@ -313,15 +314,18 @@ def maximal_indices(iterable):
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
 
 def monadic_chain(chain, arg):
-	for link in chain:
-		if link.arity < 0:
-			link.arity = max(1, link.arity)
-	if leading_constant(chain):
-		ret = niladic_link(chain[0])
-		chain = chain[1:]
-	else:
-		ret = arg
+	init = True
 	while chain:
+		if init:
+			for link in chain:
+				if link.arity < 0:
+					link.arity = max(1, link.arity)
+			if leading_constant(chain):
+				ret = niladic_link(chain[0])
+				chain = chain[1:]
+			else:
+				ret = arg
+			init = False
 		if arities(chain[0:2]) == [2, 1]:
 			ret = dyadic_link(chain[0], (ret, monadic_link(chain[1], arg)))
 			chain = chain[2:]
@@ -335,8 +339,13 @@ def monadic_chain(chain, arg):
 			ret = dyadic_link(chain[0], (ret, arg))
 			chain = chain[1:]
 		elif chain[0].arity == 1:
-			ret = monadic_link(chain[0], ret)
-			chain = chain[1:]
+			if not chain[1:] and hasattr(chain[0], 'chain'):
+				arg = ret
+				chain = chain[0].chain
+				init = True
+			else:
+				ret = monadic_link(chain[0], ret)
+				chain = chain[1:]
 		else:
 			output(ret)
 			ret = niladic_link(chain[0])
@@ -1596,45 +1605,27 @@ quicks = {
 	),
 	'ß': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = -1,
-			call = lambda x = None, y = None: variadic_chain(outmost_links[index], (x, y))
-		)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[index])]
 	),
 	'¢': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 0,
-			call = lambda: niladic_chain(outmost_links[index - 1])
-		)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[index - 1], 0)]
 	),
 	'Ç': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: monadic_chain(outmost_links[index - 1], z)
-		)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[index - 1], 1)]
 	),
 	'ç': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 2,
-			call = lambda x, y: dyadic_chain(outmost_links[index - 1], (x, y))
-		)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[index - 1], 2)]
 	),
 	'Ñ': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: monadic_chain(outmost_links[(index + 1) % len(outmost_links)], z)
-		)]
+		quicklink = lambda links, outmost_links, index: [create__chain(outmost_links[(index + 1) % len(outmost_links)], 1)]
 	),
 	'ñ': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 2,
-			call = lambda x, y: dyadic_chain(outmost_links[(index + 1) % len(outmost_links)], (x, y))
-		)]
+		quicklink = lambda links, outmost_links, index: [create__chain(outmost_links[(index + 1) % len(outmost_links)], 2)]
 	),
 	'¦': attrdict(
 		condition = lambda links: len(links) == 2,
