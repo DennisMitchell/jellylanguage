@@ -84,7 +84,7 @@ def diagonals(matrix):
 	shifted = [None] * len(matrix)
 	for index, row in enumerate(map(iterable, reversed(matrix))):
 		shifted[~index] = index * [None] + row
-	return zip_ragged(shifted)
+	return rotate_left(zip_ragged(shifted), len(matrix) - 1)
 
 def dyadic_chain(chain, args):
 	larg, rarg = args
@@ -159,6 +159,19 @@ def from_base(digits, base):
 	for digit in digits:
 		integer = base * integer + digit
 	return integer
+
+def from_diagonals(diagonals):
+	upper_right = 1
+	while len(diagonals[upper_right - 1]) > 1:
+		upper_right += 1
+	diagonals = rotate_left(diagonals, upper_right)
+	shift = len(diagonals) - upper_right
+	index = 0
+	while shift:
+		diagonals[index] = shift * [None] + diagonals[index]
+		index += 1
+		shift -= 1
+	return zip_ragged(diagonals)
 
 def from_exponents(exponents):
 	integer = 1
@@ -1366,6 +1379,11 @@ atoms = {
 		arity = 1,
 		ldepth = 2,
 		call = diagonals
+	),
+	'ŒḌ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = from_diagonals
 	),
 	'ŒḊ': attrdict(
 		arity = 1,
