@@ -212,7 +212,7 @@ def is_string(iterable):
 	return all(map(lambda t: type(t) == str, iterable))
 
 def jelly_eval(code, arguments):
-	return variadic_chain(parse_code(code)[-1] if code else '', arguments)
+	return variadic_chain(parse_code(code)[-1] if code else '', arguments, main = True)
 
 def jelly_uneval(argument, top = True):
 	the_type = type(argument)
@@ -634,14 +634,28 @@ def unique(iterable):
 			result.append(element)
 	return result
 
-def variadic_chain(chain, args):
+def variadic_chain(chain, args, main = False):
 	args = list(filter(None.__ne__, args))
 	if len(args) == 0:
 		return niladic_chain(chain)
 	if len(args) == 1:
-		return monadic_chain(chain, args[0])
+		if main:
+			return monadic_chain(chain, args[0])
+		larg_save = atoms['⁸'].call
+		atoms['⁸'].call = lambda literal = args[0]: literal
+		ret = monadic_chain(chain, args[0])
+		atoms['⁸'].call = larg_save
 	if len(args) == 2:
-		return dyadic_chain(chain, args)
+		if main:
+			return dyadic_chain(chain, args)
+		larg_save = atoms['⁸'].call
+		atoms['⁸'].call = lambda literal = args[0]: literal
+		rarg_save = atoms['⁹'].call
+		atoms['⁹'].call = lambda literal = args[1]: literal
+		ret = dyadic_chain(chain, args)
+		atoms['⁸'].call = larg_save
+		atoms['⁹'].call = rarg_save
+	return ret
 
 def variadic_link(link, args, flat = False, lflat = False, rflat = False):
 	if link.arity < 0:
@@ -678,7 +692,7 @@ def zip_ragged(array):
 atoms = {
 	'³': attrdict(
 		arity = 0,
-		call = lambda: 256
+		call = lambda: 100
 	),
 	'⁴': attrdict(
 		arity = 0,
@@ -695,6 +709,14 @@ atoms = {
 	'⁷': attrdict(
 		arity = 0,
 		call = lambda: '\n'
+	),
+	'⁸': attrdict(
+		arity = 0,
+		call = lambda: []
+	),
+	'⁹': attrdict(
+		arity = 0,
+		call = lambda: 256
 	),
 	'A': attrdict(
 		arity = 1,

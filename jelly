@@ -31,7 +31,7 @@ else:
 
 args = list(map(jelly.try_eval, jelly.sys.argv[3:]))
 
-for index in range(min(5, len(args))):
-	jelly.atoms['³⁴⁵⁶⁷'[index]].call = lambda literal = args[index]: literal
+for index in range(min(7, len(args))):
+	jelly.atoms['³⁴⁵⁶⁷⁸⁹'[index]].call = lambda literal = args[index]: literal
 
 jelly.output(jelly.jelly_eval(code, args[:2]), end)
