@@ -145,6 +145,10 @@ def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 		return [dyadic_link(link, (x, rarg)) for x in larg]
 	return [dyadic_link(link, (x, y)) for x, y in zip(*args)] + larg[len(rarg) :] + rarg[len(larg) :]
 
+def equal(array):
+	array = iterable(array)
+	return all(item == array[0] for item in array)
+
 def flatten(argument):
 	flat = []
 	if type(argument) == list:
@@ -178,6 +182,21 @@ def from_exponents(exponents):
 	for index, exponent in enumerate(exponents):
 		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
+
+def grid(array):
+	if depth(array) == 1:
+		return join(array, ' ')
+	if depth(array) == 2 and equal(map(len, array)):
+		array = [[str(entry) for entry in row] for row in array]
+		width = max(max([len(entry) for entry in row]) for row in array)
+		array = [[entry.rjust(width) for entry in row] for row in array]
+		return join([join(row, ' ') for row in array], '\n')
+	if depth(array) == 3 and all(type(item) == str for item in flatten(array)):
+		array = [[''.join(entry) for entry in row] for row in array]
+		width = max(max([len(entry) for entry in row]) for row in array)
+		array = [[entry.ljust(width) for entry in row] for row in array]
+		return join([join(row, ' ') for row in array], '\n')
+	return join(array, '\n')
 
 def identity(argument):
 	return argument
@@ -822,6 +841,10 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: int(y % x == 0 if x else y == 0)
 	),
+	'E': attrdict(
+		arity = 1,
+		call = equal
+	),
 	'Ė': attrdict(
 		arity = 1,
 		call = lambda z: [[t + 1, u] for t, u in enumerate(iterable(z))]
@@ -846,6 +869,10 @@ atoms = {
 	'ḟ': attrdict(
 		arity = 2,
 		call = lambda x, y: [t for t in iterable(x) if not t in iterable(y)]
+	),
+	'G': attrdict(
+		arity = 1,
+		call = grid
 	),
 	'g': attrdict(
 		arity = 2,
@@ -1544,6 +1571,10 @@ atoms = {
 		arity = 0,
 		call = lambda: math.e
 	),
+	'Øp': attrdict(
+		arity = 0,
+		call = lambda: (1 + math.sqrt(5)) / 2
+	)
 }
 
 quicks = {
@@ -1738,7 +1769,7 @@ hypers = {
 	),
 	'€': lambda link, none = None: attrdict(
 		arity = link.arity,
-		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x)]
+		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
 	'£': lambda index, links: attrdict(
 		arity = index.arity,
