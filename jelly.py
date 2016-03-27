@@ -927,7 +927,7 @@ atoms = {
 	),
 	'Ị': attrdict(
 		arity = 1,
-		ldepth = 1,
+		ldepth = 0,
 		call = lambda z: int(abs(z) <= 1)
 	),
 	'i': attrdict(
