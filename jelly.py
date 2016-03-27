@@ -315,6 +315,7 @@ def maximal_indices(iterable):
 
 def monadic_chain(chain, arg):
 	init = True
+	ret = arg
 	while chain:
 		if init:
 			for link in chain:
@@ -323,8 +324,6 @@ def monadic_chain(chain, arg):
 			if leading_constant(chain):
 				ret = niladic_link(chain[0])
 				chain = chain[1:]
-			else:
-				ret = arg
 			init = False
 		if arities(chain[0:2]) == [2, 1]:
 			ret = dyadic_link(chain[0], (ret, monadic_link(chain[1], arg)))
