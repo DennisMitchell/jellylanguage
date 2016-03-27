@@ -274,12 +274,18 @@ def last_input():
 def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
-def listify(iterable, dirty = False):
-	if type(iterable) == str and dirty:
-		return list(iterable)
-	if type(iterable) in (int, float, complex) or (type(iterable) == str and len(iterable) == 1):
-		return iterable
-	return list(listify(item, dirty) for item in iterable)
+def listify(element, dirty = False):
+	if type(element) == str and dirty:
+		return list(element)
+	if type(element) in (int, float, complex) or (type(element) == str and len(element) == 1):
+		return element
+	if type(element) == numpy.int64:
+		return int(element)
+	if type(element) == numpy.float64:
+		return float(element) if element % 1 else int(element)
+	if type(element) == numpy.complex128:
+		return complex(element)
+	return [listify(item, dirty) for item in element]
 
 def loop_until_loop(link, args, return_all = False, return_loop = False):
 	ret, rarg = args
@@ -316,7 +322,7 @@ def maximal_indices(iterable):
 def monadic_chain(chain, arg):
 	init = True
 	ret = arg
-	while chain:
+	while True:
 		if init:
 			for link in chain:
 				if link.arity < 0:
@@ -325,6 +331,8 @@ def monadic_chain(chain, arg):
 				ret = niladic_link(chain[0])
 				chain = chain[1:]
 			init = False
+		if not chain:
+			break
 		if arities(chain[0:2]) == [2, 1]:
 			ret = dyadic_link(chain[0], (ret, monadic_link(chain[1], arg)))
 			chain = chain[2:]
@@ -386,6 +394,8 @@ def multiset_union(left, right):
 	return iterable(left) + multiset_difference(right, left)
 
 def niladic_chain(chain):
+	while len(chain) == 1 and hasattr(chain[0], 'chain'):
+		chain = chain[0].chain
 	if not chain or chain[0].arity > 0:
 		return monadic_chain(chain, 0)
 	return monadic_chain(chain[1:], chain[0].call())
@@ -1390,12 +1400,12 @@ atoms = {
 	'Ær': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: list(numpy.roots(z[::-1]))
+		call = lambda z: listify(numpy.roots(z[::-1]))
 	),
 	'Æṛ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: list(numpy.poly(z))[::-1]
+		call = lambda z: listify(numpy.poly(z))[::-1]
 	),
 	'ÆT': attrdict(
 		arity = 1,
