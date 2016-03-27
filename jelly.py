@@ -202,10 +202,10 @@ def grid(array):
 def identity(argument):
 	return argument
 
-def iterable(argument, make_digits = False, make_range = False):
+def iterable(argument, make_copy = True, make_digits = False, make_range = False):
 	the_type = type(argument)
 	if the_type == list:
-		return argument
+		return argument[:] if make_copy else argument
 	if the_type != str and make_digits:
 		return to_base(argument, 10)
 	if the_type != str and make_range:
@@ -318,6 +318,16 @@ def max_arity(links):
 def maximal_indices(iterable):
 	maximum = max(iterable)
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
+
+def mold(content, shape):
+	for index in range(len(shape)):
+		if type(shape[index]) == list:
+			mold(content, shape[index])
+		else:
+			item = content.pop(0)
+			shape[index] = item
+			content.append(item)
+	return shape
 
 def monadic_chain(chain, arg):
 	init = True
@@ -543,13 +553,24 @@ def split_at(iterable, needle):
 			chunk.append(element)
 	yield chunk
 
+def split_evenly(array, chunks):
+	array = iterable(array)
+	min_width, overflow = divmod(len(array), chunks)
+	ret = []
+	high = 0
+	for index in range(chunks):
+		low = high
+		high = low + min_width + (index < overflow)
+		ret.append(array[low : high])
+	return ret
+
 def split_fixed(array, width):
 	array = iterable(array)
-	return [array[i : i + width] for i in range(0, len(array), width)]
+	return [array[index : index + width] for index in range(0, len(array), width)]
 
 def split_rolling(array, width):
 	array = iterable(array)
-	return [array[i : i + width] for i in range(len(array) - width + 1)]
+	return [array[index : index + width] for i in range(len(array) - width + 1)]
 
 def sss(compressed):
 	decompressed = ''
@@ -984,6 +1005,10 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: iterable(x)[::y] if y else iterable(x) + iterable(x)[::-1]
 	),
+	'ṁ': attrdict(
+		arity = 2,
+		call = lambda x, y: mold(flatten(x), iterable(y, make_copy = True, make_range = True))
+	),
 	'N': attrdict(
 		arity = 1,
 		ldepth = 0,
@@ -1118,6 +1143,10 @@ atoms = {
 		arity = 2,
 		rdepth = 0,
 		call = lambda x, y: iterable(x)[y - 1 :]
+	),
+	'ṭ': attrdict(
+		arity = 2,
+		call = lambda x, y: iterable(y) + [x]
 	),
 	'U': attrdict(
 		arity = 1,
@@ -1573,6 +1602,11 @@ atoms = {
 	'œr': attrdict(
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), right = True)
+	),
+	'œs': attrdict(
+		arity = 2,
+		rdepth = 0,
+		call = split_evenly
 	),
 	'œ&': attrdict(
 		arity = 2,
