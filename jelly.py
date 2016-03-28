@@ -502,7 +502,7 @@ def partition_at(booleans, array):
 			chunk = []
 		chunk.append(array[index])
 		index += 1
-	return chunks[1:] + [chunk]
+	return chunks + [chunk]
 
 def Pi(number):
 	if type(number) == int:
@@ -596,6 +596,11 @@ def split_evenly(array, chunks):
 def split_fixed(array, width):
 	array = iterable(array)
 	return [array[index : index + width] for index in range(0, len(array), width)]
+
+def split_once(array, needle):
+	array = iterable(array, make_digits = True)
+	index = index_of(array, needle) or len(array)
+	return [array[0 : index - 1], array[index :]]
 
 def split_rolling(array, width):
 	array = iterable(array)
@@ -1628,6 +1633,10 @@ atoms = {
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), left = True)
 	),
+	'œṗ': attrdict(
+		arity = 2,
+		call = partition_at
+	),
 	'œr': attrdict(
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), right = True)
@@ -1637,9 +1646,15 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
 	),
+	'œs': attrdict(
+		arity = 2,
+		rdepth = 0,
+		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
+	),
 	'œṡ': attrdict(
 		arity = 2,
-		call = partition_at
+		rdepth = 0,
+		call = split_once
 	),
 	'œṣ': attrdict(
 		arity = 2,
