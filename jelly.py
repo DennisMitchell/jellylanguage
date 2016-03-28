@@ -543,9 +543,23 @@ def sparse(link, args, indices):
 	ret = iterable(variadic_link(link, args))
 	return [ret[t % len(ret)] if t in indices else u for t, u in enumerate(larg)]
 
-def split_at(iterable, needle):
+def split_around(array, needle):
 	chunk = []
-	for element in iterable:
+	window = len(needle)
+	index = 0
+	while index < len(array):
+		if array[index : index + window] == needle:
+			yield chunk
+			chunk = []
+			index += window
+		else:
+			chunk.append(array[index])
+			index += 1
+	yield chunk
+
+def split_at(array, needle):
+	chunk = []
+	for element in array:
 		if element == needle:
 			yield chunk
 			chunk = []
@@ -1111,16 +1125,16 @@ atoms = {
 	's': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = split_fixed
+		call = lambda x, y: split_fixed(iterable(x, make_range = True), y)
 	),
 	'ṡ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = split_rolling
+		call = lambda x, y: split_rolling(iterable(x, make_range = True), y)
 	),
 	'ṣ': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(split_at(x, y))
+		call = lambda x, y: listify(split_at(iterable(x, make_digits = True), y))
 	),
 	'T': attrdict(
 		arity = 1,
@@ -1606,7 +1620,11 @@ atoms = {
 	'œs': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = split_evenly
+		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
+	),
+	'œṣ': attrdict(
+		arity = 2,
+		call = lambda x, y: listify(split_around(iterable(x, make_digits = True), iterable(y)))
 	),
 	'œ&': attrdict(
 		arity = 2,
