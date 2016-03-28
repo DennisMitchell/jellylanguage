@@ -359,6 +359,7 @@ def monadic_chain(chain, arg):
 			if not chain[1:] and hasattr(chain[0], 'chain'):
 				arg = ret
 				chain = chain[0].chain
+				atoms['⁸'].call = lambda literal = arg: literal
 				init = True
 			else:
 				ret = monadic_link(chain[0], ret)
@@ -488,6 +489,20 @@ def parse_literal(literal_match):
 			for index, component in enumerate(literal.split('ı'))
 		]))
 	return repr(parsed) + ' '
+
+def partition_at(booleans, array):
+	booleans = iterable(booleans)
+	array = iterable(array)
+	chunks = []
+	chunk = []
+	index = 0
+	while index < len(array):
+		if index < len(booleans) and booleans[index]:
+			chunks.append(chunk)
+			chunk = []
+		chunk.append(array[index])
+		index += 1
+	return chunks[1:] + [chunk]
 
 def Pi(number):
 	if type(number) == int:
@@ -1621,6 +1636,10 @@ atoms = {
 		arity = 2,
 		rdepth = 0,
 		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
+	),
+	'œṡ': attrdict(
+		arity = 2,
+		call = partition_at
 	),
 	'œṣ': attrdict(
 		arity = 2,
