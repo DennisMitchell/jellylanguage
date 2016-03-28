@@ -148,7 +148,7 @@ def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 
 def equal(array):
 	array = iterable(array)
-	return all(item == array[0] for item in array)
+	return int(all(item == array[0] for item in array))
 
 def flatten(argument):
 	flat = []
