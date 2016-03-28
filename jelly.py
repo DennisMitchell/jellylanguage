@@ -212,7 +212,7 @@ def iterable(argument, make_copy = True, make_digits = False, make_range = False
 		return list(range(1, int(argument) + 1))
 	return [argument]
 
-def index(haystack, needle):
+def index_of(haystack, needle):
 	for index, item in enumerate(iterable(haystack)):
 		if item == needle:
 			return 1 + index
@@ -299,7 +299,7 @@ def loop_until_loop(link, args, return_all = False, return_loop = False):
 			if return_all:
 				return cumret
 			if return_loop:
-				return cumret[index(cumret, ret) - 1 :]
+				return cumret[index_of(cumret, ret) - 1 :]
 			return larg
 
 def nfind(links, args):
@@ -336,7 +336,7 @@ def monadic_chain(chain, arg):
 		if init:
 			for link in chain:
 				if link.arity < 0:
-					link.arity = max(1, link.arity)
+					link.arity = 1
 			if leading_constant(chain):
 				ret = niladic_link(chain[0])
 				chain = chain[1:]
@@ -570,7 +570,7 @@ def split_fixed(array, width):
 
 def split_rolling(array, width):
 	array = iterable(array)
-	return [array[index : index + width] for i in range(len(array) - width + 1)]
+	return [array[index : index + width] for index in range(len(array) - width + 1)]
 
 def sss(compressed):
 	decompressed = ''
@@ -963,7 +963,7 @@ atoms = {
 	),
 	'i': attrdict(
 		arity = 2,
-		call = index
+		call = index_of
 	),
 	'ị': attrdict(
 		arity = 2,
@@ -1007,7 +1007,7 @@ atoms = {
 	),
 	'ṁ': attrdict(
 		arity = 2,
-		call = lambda x, y: mold(flatten(x), iterable(y, make_copy = True, make_range = True))
+		call = lambda x, y: mold(iterable(x, make_copy = True), iterable(y, make_copy = True, make_range = True))
 	),
 	'N': attrdict(
 		arity = 1,
