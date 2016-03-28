@@ -199,6 +199,16 @@ def grid(array):
 		return join([join(row, ' ') for row in array], '\n')
 	return join(array, '\n')
 
+def group(array):
+	array = iterable(array, make_digits = True)
+	grouped = {}
+	for index, item in enumerate(array):
+		if item in grouped:
+			grouped[item].append(index + 1)
+		else:
+			grouped[item] = [index + 1]
+	return [grouped[key] for key in sorted(grouped)]
+
 def identity(argument):
 	return argument
 
@@ -946,6 +956,10 @@ atoms = {
 	'G': attrdict(
 		arity = 1,
 		call = grid
+	),
+	'Ġ': attrdict(
+		arity = 1,
+		call = group
 	),
 	'g': attrdict(
 		arity = 2,
