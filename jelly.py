@@ -1660,11 +1660,6 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
 	),
-	'œs': attrdict(
-		arity = 2,
-		rdepth = 0,
-		call = lambda x, y: split_evenly(iterable(x, make_range = True), y)
-	),
 	'œṡ': attrdict(
 		arity = 2,
 		rdepth = 0,
@@ -1730,11 +1725,11 @@ quicks = {
 	),
 	'Ñ': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [create__chain(outmost_links[(index + 1) % len(outmost_links)], 1)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[(index + 1) % len(outmost_links)], 1)]
 	),
 	'ñ': attrdict(
 		condition = lambda links: True,
-		quicklink = lambda links, outmost_links, index: [create__chain(outmost_links[(index + 1) % len(outmost_links)], 2)]
+		quicklink = lambda links, outmost_links, index: [create_chain(outmost_links[(index + 1) % len(outmost_links)], 2)]
 	),
 	'¦': attrdict(
 		condition = lambda links: len(links) == 2,
