@@ -1,4 +1,4 @@
-import ast, cmath, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, re, sympy, sys
+import ast, cmath, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, re, sympy, sys, time
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -427,10 +427,7 @@ def niladic_link(link):
 def ntimes(links, args, cumulative = False):
 	ret, rarg = args
 	repetitions = variadic_link(links[1], args) if len(links) == 2 else last_input()
-	try:
-		repetitions = int(repetitions)
-	except:
-		repetitions = bool(repetitions)
+	repetitions = overload((int, bool), repetitions)
 	if cumulative:
 		cumret = [0] * repetitions
 	for index in range(repetitions):
@@ -561,6 +558,10 @@ def rotate_left(array, units):
 
 def safe_eval(string, dirty = True):
 	return listify(ast.literal_eval(string), dirty)
+
+def time_format(bitfield):
+	time_string = ':'.join(['%H'] * (bitfield & 4 > 0) + ['%M'] * (bitfield & 2 > 0) + ['%S'] * (bitfield & 1 > 0))
+	return time.strftime(time_string)
 
 def sparse(link, args, indices):
 	larg = args[0]
@@ -1569,6 +1570,10 @@ atoms = {
 		ldepth = 1,
 		call = lambda z: to_case(z, swap = True)
 	),
+	'ŒT': attrdict(
+		arity = 1,
+		call = time_format
+	),
 	'Œt': attrdict(
 		arity = 1,
 		ldepth = 1,
@@ -1654,6 +1659,10 @@ atoms = {
 	'œr': attrdict(
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), right = True)
+	),
+	'œS': attrdict(
+		arity = 2,
+		call = lambda x, y: time.sleep(overload((float, bool), y)) or x
 	),
 	'œs': attrdict(
 		arity = 2,
