@@ -1694,17 +1694,61 @@ atoms = {
 		arity = 2,
 		call = multiset_union
 	),
+	'ØA': attrdict(
+		arity = 0,
+		call = lambda: str_upper
+	),
+	'ØB': attrdict(
+		arity = 0,
+		call = lambda: str_digit + str_upper + str_lower
+	),
+	'ØD': attrdict(
+		arity = 0,
+		call = lambda: str_digit
+	),
+	'ØH': attrdict(
+		arity = 0,
+		call = lambda: str_digit + 'ABCDEF'
+	),
 	'ØP': attrdict(
 		arity = 0,
 		call = lambda: math.pi
+	),
+	'ØV': attrdict(
+		arity = 0,
+		call = lambda: 'ṘV'
+	),
+	'Øq': attrdict(
+		arity = 0,
+		call = lambda: ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']
+	),
+	'Øa': attrdict(
+		arity = 0,
+		call = lambda: str_lower
+	),
+	'Øb': attrdict(
+		arity = 0,
+		call = lambda: str_upper + str_lower + str_digit + '+/'
 	),
 	'Øe': attrdict(
 		arity = 0,
 		call = lambda: math.e
 	),
+	'Øh': attrdict(
+		arity = 0,
+		call = lambda: str_digit + 'abcdef'
+	),
 	'Øp': attrdict(
 		arity = 0,
 		call = lambda: (1 + math.sqrt(5)) / 2
+	),
+	'Øq': attrdict(
+		arity = 0,
+		call = lambda: ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
+	),
+	'Øv': attrdict(
+		arity = 0,
+		call = lambda: 'Ṙv'
 	)
 }
 
