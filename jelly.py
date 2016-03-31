@@ -1,4 +1,4 @@
-import ast, cmath, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, re, sympy, sys, time
+import ast, cmath, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -559,9 +559,10 @@ def rotate_left(array, units):
 def safe_eval(string, dirty = True):
 	return listify(ast.literal_eval(string), dirty)
 
-def time_format(bitfield):
-	time_string = ':'.join(['%H'] * (bitfield & 4 > 0) + ['%M'] * (bitfield & 2 > 0) + ['%S'] * (bitfield & 1 > 0))
-	return time.strftime(time_string)
+def shuffle(array):
+	array = iterable(array, make_copy = True, make_range = True)
+	random.shuffle(array)
+	return array
 
 def sparse(link, args, indices):
 	larg = args[0]
@@ -654,6 +655,10 @@ def stringify(iterable, recurse = True):
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
+
+def time_format(bitfield):
+	time_string = ':'.join(['%H'] * (bitfield & 4 > 0) + ['%M'] * (bitfield & 2 > 0) + ['%S'] * (bitfield & 1 > 0))
+	return list(time.strftime(time_string))
 
 def trim(trimmee, trimmer, left = False, right = False):
 	lindex = 0
@@ -1224,6 +1229,14 @@ atoms = {
 		arity = 1,
 		call = lambda z: [z]
 	),
+	'X': attrdict(
+		arity = 1,
+		call = lambda z: random.choice(iterable(z, make_range = True)) if z else 0
+	),
+	'Ẋ': attrdict(
+		arity = 1,
+		call = shuffle
+	),
 	'x': attrdict(
 		arity = 2,
 		ldepth = 1,
@@ -1696,19 +1709,19 @@ atoms = {
 	),
 	'ØA': attrdict(
 		arity = 0,
-		call = lambda: str_upper
+		call = lambda: list(str_upper)
 	),
 	'ØB': attrdict(
 		arity = 0,
-		call = lambda: str_digit + str_upper + str_lower
+		call = lambda: list(str_digit + str_upper + str_lower)
 	),
 	'ØD': attrdict(
 		arity = 0,
-		call = lambda: str_digit
+		call = lambda: list(str_digit)
 	),
 	'ØH': attrdict(
 		arity = 0,
-		call = lambda: str_digit + 'ABCDEF'
+		call = lambda: list(str_digit + 'ABCDEF')
 	),
 	'ØP': attrdict(
 		arity = 0,
@@ -1716,19 +1729,19 @@ atoms = {
 	),
 	'ØV': attrdict(
 		arity = 0,
-		call = lambda: 'ṘV'
+		call = lambda: list('ṘV')
 	),
 	'Øq': attrdict(
 		arity = 0,
-		call = lambda: ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']
+		call = lambda: [list('QWERTYUIOP'), list('ASDFGHJKL'), list('ZXCVBNM')]
 	),
 	'Øa': attrdict(
 		arity = 0,
-		call = lambda: str_lower
+		call = lambda: list(str_lower)
 	),
 	'Øb': attrdict(
 		arity = 0,
-		call = lambda: str_upper + str_lower + str_digit + '+/'
+		call = lambda: list(str_upper + str_lower + str_digit + '+/')
 	),
 	'Øe': attrdict(
 		arity = 0,
@@ -1736,7 +1749,7 @@ atoms = {
 	),
 	'Øh': attrdict(
 		arity = 0,
-		call = lambda: str_digit + 'abcdef'
+		call = lambda: list(str_digit + 'abcdef')
 	),
 	'Øp': attrdict(
 		arity = 0,
@@ -1744,11 +1757,11 @@ atoms = {
 	),
 	'Øq': attrdict(
 		arity = 0,
-		call = lambda: ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
+		call = lambda: [list('qwertyuiop'), list('asdfghjkl'), list('zxcvbnm')]
 	),
 	'Øv': attrdict(
 		arity = 0,
-		call = lambda: 'Ṙv'
+		call = lambda: list('Ṙv')
 	)
 }
 
