@@ -792,6 +792,7 @@ def output(argument, end = '', transform = stringify):
 		print(transform(argument), end = end)
 	else:
 		print(unicode_to_jelly(transform(argument)), end = unicode_to_jelly(end))
+	sys.stdout.flush()
 	return argument
 
 def zip_ragged(array):
