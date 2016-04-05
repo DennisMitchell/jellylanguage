@@ -212,7 +212,7 @@ def group(array):
 def identity(argument):
 	return argument
 
-def iterable(argument, make_copy = True, make_digits = False, make_range = False):
+def iterable(argument, make_copy = False, make_digits = False, make_range = False):
 	the_type = type(argument)
 	if the_type == list:
 		return argument[:] if make_copy else argument
