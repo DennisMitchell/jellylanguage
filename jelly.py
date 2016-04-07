@@ -242,7 +242,7 @@ def is_string(iterable):
 	return all(map(lambda t: type(t) == str, iterable))
 
 def jelly_eval(code, arguments):
-	return variadic_chain(parse_code(code)[-1] if code else '', arguments, main = True)
+	return variadic_chain(parse_code(code)[-1] if code else '', arguments)
 
 def jelly_uneval(argument, top = True):
 	the_type = type(argument)
@@ -497,7 +497,7 @@ def parse_literal(literal_match):
 		]))
 	return repr(parsed) + ' '
 
-def partition_at(booleans, array):
+def partition_at(booleans, array, keep_border = True):
 	booleans = iterable(booleans)
 	array = iterable(array)
 	chunks = []
@@ -506,8 +506,9 @@ def partition_at(booleans, array):
 	while index < len(array):
 		if index < len(booleans) and booleans[index]:
 			chunks.append(chunk)
-			chunk = []
-		chunk.append(array[index])
+			chunk = [array[index]] if keep_border else []
+		else:
+			chunk.append(array[index])
 		index += 1
 	return chunks + [chunk]
 
@@ -742,20 +743,16 @@ def unique(iterable):
 			result.append(element)
 	return result
 
-def variadic_chain(chain, args, main = False):
+def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
 	if len(args) == 0:
 		return niladic_chain(chain)
 	if len(args) == 1:
-		if main:
-			return monadic_chain(chain, args[0])
 		larg_save = atoms['⁸'].call
 		atoms['⁸'].call = lambda literal = args[0]: literal
 		ret = monadic_chain(chain, args[0])
 		atoms['⁸'].call = larg_save
 	if len(args) == 2:
-		if main:
-			return dyadic_chain(chain, args)
 		larg_save = atoms['⁸'].call
 		atoms['⁸'].call = lambda literal = args[0]: literal
 		rarg_save = atoms['⁹'].call
@@ -1666,6 +1663,10 @@ atoms = {
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), left = True)
 	),
+	'œp': attrdict(
+		arity = 2,
+		call = lambda x, y: partition_at(x, y, keep_border = False)
+	),
 	'œṗ': attrdict(
 		arity = 2,
 		call = partition_at
@@ -1731,6 +1732,10 @@ atoms = {
 	'ØV': attrdict(
 		arity = 0,
 		call = lambda: list('ṘV')
+	),
+	'ØW': attrdict(
+		arity = 0,
+		call = lambda: list(str_upper + str_lower + str_digit + '_')
 	),
 	'Øq': attrdict(
 		arity = 0,
