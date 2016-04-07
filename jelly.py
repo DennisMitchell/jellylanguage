@@ -1729,6 +1729,10 @@ atoms = {
 		arity = 0,
 		call = lambda: math.pi
 	),
+	'ØQ': attrdict(
+		arity = 0,
+		call = lambda: [list('QWERTYUIOP'), list('ASDFGHJKL'), list('ZXCVBNM')]
+	),
 	'ØV': attrdict(
 		arity = 0,
 		call = lambda: list('ṘV')
@@ -1736,10 +1740,6 @@ atoms = {
 	'ØW': attrdict(
 		arity = 0,
 		call = lambda: list(str_upper + str_lower + str_digit + '_')
-	),
-	'Øq': attrdict(
-		arity = 0,
-		call = lambda: [list('QWERTYUIOP'), list('ASDFGHJKL'), list('ZXCVBNM')]
 	),
 	'Øa': attrdict(
 		arity = 0,
