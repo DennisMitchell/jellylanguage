@@ -323,7 +323,7 @@ def nfind(links, args):
 	return found
 
 def max_arity(links):
-	return max(arities(links)) if min(arities(links)) > -1 else ~max(arities(links))
+	return max(arities(links)) if min(arities(links)) > -1 else (~max(arities(links)) or -1)
 
 def maximal_indices(iterable):
 	maximum = max(iterable)
