@@ -447,6 +447,16 @@ def overload(operators, *args):
 		else:
 			return ret
 
+def partitions(array):
+	array = iterable(array, make_digits = True)
+	ret = []
+	for index in range(1, len(array)):
+		for subarray in partitions(array[index:]):
+			subarray.insert(0, array[:index])
+			ret.append(subarray)
+	ret.append([array])
+	return ret
+
 def parse_code(code):
 	lines = regex_flink.findall(code)
 	links = [[] for line in lines]
@@ -1562,6 +1572,10 @@ atoms = {
 	'ŒP': attrdict(
 		arity = 1,
 		call = powerset
+	),
+	'ŒṖ': attrdict(
+		arity = 1,
+		call = partitions
 	),
 	'Œp': attrdict(
 		arity = 1,
