@@ -1961,6 +1961,10 @@ hypers = {
 		arity = link.arity,
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
+	'Ð€': lambda link, none = None: attrdict(
+		arity = link.arity,
+		call = lambda x, y = None: [variadic_link(link, (x, t)) for t in iterable(y, make_range = True)]
+	),
 	'£': lambda index, links: attrdict(
 		arity = index.arity,
 		call = lambda x = None, y = None: niladic_chain(links[(variadic_link(index, (x, y)) - 1) % (len(links) - 1)])
