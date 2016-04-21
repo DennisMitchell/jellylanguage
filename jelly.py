@@ -9,6 +9,7 @@ str_upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 inf = float('inf')
 nan = float('nan')
+sys.setrecursionlimit(1 << 30)
 
 class attrdict(dict):
 	def __init__(self, *args, **kwargs):
@@ -1441,6 +1442,11 @@ atoms = {
 		ldepth = 0,
 		call = sympy.ntheory.factor_.divisors
 	),
+	'ÆḊ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = lambda z: sympy.Matrix(z).det()
+	),
 	'ÆE': attrdict(
 		arity = 1,
 		ldepth = 0,
@@ -1614,6 +1620,18 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = symmetric_mod
+	),
+	'æ*': attrdict(
+		arity = 2,
+		ldepth = 2,
+		rdepth = 0,
+		call = lambda x, y: [[float(t) if t % 1 else int(t) for t in row] for row in (sympy.Matrix(x) ** y).tolist()]
+	),
+	'æ×': attrdict(
+		arity = 2,
+		ldepth = 2,
+		rdepth = 2,
+		call = lambda x, y: [[float(t) if t % 1 else int(t) for t in row] for row in (sympy.Matrix(x) * sympy.Matrix(y)).tolist()]
 	),
 	'æA': attrdict(
 		arity = 2,
