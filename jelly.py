@@ -66,6 +66,12 @@ def conv_monadic_integer(link, arg):
 	except:
 		return 0
 
+def determinant(matrix):
+	matrix = sympy.Matrix(matrix)
+	if matrix.is_square:
+		return simplest_number(matrix.det())
+	return simplest_number(math.sqrt((matrix * matrix.transpose()).det()))
+
 def div(dividend, divisor, floor = False):
 	if divisor == 0:
 		return nan if dividend == 0 else inf
@@ -184,6 +190,13 @@ def from_exponents(exponents):
 	for index, exponent in enumerate(exponents):
 		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
+
+def simplest_number(number):
+	if abs(number ** 2) != number ** 2:
+		return number
+	if number % 1:
+		return float(number)
+	return int(number)
 
 def grid(array):
 	if depth(array) == 1:
@@ -322,6 +335,9 @@ def nfind(links, args):
 			found.append(larg)
 		larg += 1
 	return found
+
+def matrix_to_list(matrix):
+	return [[simplest_number(entry) for entry in row] for row in matrix.tolist()]
 
 def max_arity(links):
 	return max(arities(links)) if min(arities(links)) > -1 else (~max(arities(links)) or -1)
@@ -1445,7 +1461,7 @@ atoms = {
 	'ÆḊ': attrdict(
 		arity = 1,
 		ldepth = 2,
-		call = lambda z: sympy.Matrix(z).det()
+		call = determinant
 	),
 	'ÆE': attrdict(
 		arity = 1,
@@ -1625,13 +1641,13 @@ atoms = {
 		arity = 2,
 		ldepth = 2,
 		rdepth = 0,
-		call = lambda x, y: [[float(t) if t % 1 else int(t) for t in row] for row in (sympy.Matrix(x) ** y).tolist()]
+		call = lambda x, y: matrix_to_list((sympy.Matrix(x) ** y))
 	),
 	'æ×': attrdict(
 		arity = 2,
 		ldepth = 2,
 		rdepth = 2,
-		call = lambda x, y: [[float(t) if t % 1 else int(t) for t in row] for row in (sympy.Matrix(x) * sympy.Matrix(y)).tolist()]
+		call = lambda x, y: matrix_to_list((sympy.Matrix(x) * sympy.Matrix(y)))
 	),
 	'æA': attrdict(
 		arity = 2,
