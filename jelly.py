@@ -431,6 +431,13 @@ def multiset_symdif(left, right):
 def multiset_union(left, right):
 	return iterable(left) + multiset_difference(right, left)
 
+def nCr(left, right):
+	result = 1
+	for i in range(1,right):
+		result *= left - i + 1
+		result /= i
+	return result
+
 def niladic_chain(chain):
 	while len(chain) == 1 and hasattr(chain[0], 'chain'):
 		chain = chain[0].chain
@@ -919,7 +926,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: div(Pi(x), Pi(x - y) * Pi(y))
+		call = lambda x, y: overload((nCr(x,y), div(Pi(x), Pi(x - y) * Pi(y))), x, y)
 	),
 	'ċ': attrdict(
 		arity = 2,
