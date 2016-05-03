@@ -328,6 +328,7 @@ def loop_until_loop(link, args, return_all = False, return_loop = False):
 
 def nfind(links, args):
 	larg, rarg = args
+	larg = larg or 0
 	matches = variadic_link(links[1], args) if len(links) == 2 else last_input()
 	found = []
 	while len(found) < matches:
