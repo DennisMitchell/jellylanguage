@@ -433,11 +433,14 @@ def multiset_union(left, right):
 
 def nCr(left, right):
 	if type(left) == int and type(right) == int:
-		result = 1
-		for i in range(1,right+1):
-			result *= left - i + 1
-			result //= i
-		return result
+		if right < 0 or right > left:
+			return 0
+		else:
+			result = 1
+			for i in range(1,right+1):
+				result *= left - i + 1
+				result //= i
+			return result
 	else:
 		return div(Pi(x), Pi(x - y) * Pi(y))
 
