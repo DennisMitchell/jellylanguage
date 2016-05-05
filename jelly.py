@@ -432,7 +432,7 @@ def multiset_union(left, right):
 	return iterable(left) + multiset_difference(right, left)
 
 def nCr(left, right):
-	if type(number) == int:
+	if type(left) == int and type(right) == int:
 		result = 1
 		for i in range(1,right+1):
 			result *= left - i + 1
