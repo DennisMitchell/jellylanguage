@@ -217,6 +217,7 @@ def group(array):
 	array = iterable(array, make_digits = True)
 	grouped = {}
 	for index, item in enumerate(array):
+		item = repr(item)
 		if item in grouped:
 			grouped[item].append(index + 1)
 		else:
@@ -608,7 +609,7 @@ def shift_left(number, bits):
 def shift_right(number, bits):
 	if type(number) == int and type(bits) == int:
 		return number >> bits
-	return div(number, 2 ** bits)
+	return div(number, 2 ** bits, floor = True)
 
 def shuffle(array):
 	array = iterable(array, make_copy = True, make_range = True)
