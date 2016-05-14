@@ -600,6 +600,16 @@ def rotate_left(array, units):
 def safe_eval(string, dirty = True):
 	return listify(ast.literal_eval(string), dirty)
 
+def shift_left(number, bits):
+	if type(number) == int and type(bits) == int:
+		return number << bits
+	return number * 2 ** bits
+
+def shift_right(number, bits):
+	if type(number) == int and type(bits) == int:
+		return number >> bits
+	return div(number, 2 ** bits)
+
 def shuffle(array):
 	array = iterable(array, make_copy = True, make_range = True)
 	random.shuffle(array)
@@ -1702,13 +1712,13 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: x * 2 ** y
+		call = shift_left
 	),
 	'æ»': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: div(x, 2 ** y, floor = True)
+		call = shift_right
 	),
 	'œc': attrdict(
 		arity = 2,
