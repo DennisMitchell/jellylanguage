@@ -1,4 +1,4 @@
-import ast, cmath, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
+import ast, cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -42,7 +42,7 @@ def create_literal(string):
 		call = lambda: safe_eval(string, False)
 	)
 
-def copy(atom, value):
+def copy_to(atom, value):
 	atom.call = lambda: value
 	return value
 
@@ -230,7 +230,7 @@ def identity(argument):
 def iterable(argument, make_copy = False, make_digits = False, make_range = False):
 	the_type = type(argument)
 	if the_type == list:
-		return argument[:] if make_copy else argument
+		return copy.deepcopy(argument) if make_copy else argument
 	if the_type != str and make_digits:
 		return to_base(argument, 10)
 	if the_type != str and make_range:
@@ -419,7 +419,7 @@ def multiset_difference(left, right):
 	return result[::-1]
 
 def multiset_intersect(left, right):
-	right = iterable(right)[:]
+	right = iterable(right, make_copy = True)
 	result = []
 	for element in iterable(left):
 		if element in right:
@@ -1848,7 +1848,7 @@ quicks = {
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = links[0].arity,
-			call = lambda x = None, y = None: copy(atoms['®'], variadic_link(links[0], (x, y)))
+			call = lambda x = None, y = None: copy_to(atoms['®'], variadic_link(links[0], (x, y)))
 		)]
 	),
 	'ß': attrdict(
