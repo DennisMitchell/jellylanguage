@@ -217,7 +217,7 @@ def group(array):
 	array = iterable(array, make_digits = True)
 	grouped = {}
 	for index, item in enumerate(array):
-		item = repr(item)
+		item = repr(item) if type(item) == list else item
 		if item in grouped:
 			grouped[item].append(index + 1)
 		else:
