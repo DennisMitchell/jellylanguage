@@ -203,12 +203,12 @@ def grid(array):
 		return join(array, ' ')
 	if depth(array) == 2 and equal(map(len, array)):
 		array = [[str(entry) for entry in row] for row in array]
-		width = max(max([len(entry) for entry in row]) for row in array)
+		width = max(max([len(entry) for entry in row]) if row else 0 for row in array)
 		array = [[entry.rjust(width) for entry in row] for row in array]
 		return join([join(row, ' ') for row in array], '\n')
 	if depth(array) == 3 and all(type(item) == str for item in flatten(array)):
 		array = [[''.join(entry) for entry in row] for row in array]
-		width = max(max([len(entry) for entry in row]) for row in array)
+		width = max(max([len(entry) for entry in row]) if row else 0 for row in array)
 		array = [[entry.ljust(width) for entry in row] for row in array]
 		return join([join(row, ' ') for row in array], '\n')
 	return join(array, '\n')
