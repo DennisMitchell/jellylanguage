@@ -756,7 +756,7 @@ def to_base(integer, base, bijective = False):
 
 def to_case(argument, lower = False, swap = False, title = False, upper = False):
 	ret = []
-	last_item = ''
+	last_item = ' '
 	for item in argument:
 		if type(item) == str:
 			if lower:
