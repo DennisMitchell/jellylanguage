@@ -712,6 +712,17 @@ def time_format(bitfield):
 	time_string = ':'.join(['%H'] * (bitfield & 4 > 0) + ['%M'] * (bitfield & 2 > 0) + ['%S'] * (bitfield & 1 > 0))
 	return list(time.strftime(time_string))
 
+def translate(mapping, array):
+	array = iterable(array, make_copy = True)
+	mapping = iterable(mapping, make_copy = True)
+	while mapping:
+		source = iterable(mapping.pop(0))
+		destination = iterable(mapping.pop(0))
+		for (index, item) in enumerate(array):
+			if item in source:
+				array[index] = destination[min(source.index(item), len(destination) - 1)]
+	return array
+
 def trim(trimmee, trimmer, left = False, right = False):
 	lindex = 0
 	rindex = len(trimmee)
@@ -1295,6 +1306,10 @@ atoms = {
 		arity = 2,
 		rdepth = 0,
 		call = lambda x, y: iterable(x) * int(y)
+	),
+	'y': attrdict(
+		arity = 2,
+		call = translate
 	),
 	'Z': attrdict(
 		arity = 1,
