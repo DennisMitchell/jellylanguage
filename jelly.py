@@ -443,7 +443,7 @@ def nCr(left, right):
 			result *= left - i
 			result //= i + 1
 		return result
-	return div(Pi(x), Pi(x - y) * Pi(y))
+	return div(Pi(left), Pi(left - right) * Pi(right))
 
 def niladic_chain(chain):
 	while len(chain) == 1 and hasattr(chain[0], 'chain'):
