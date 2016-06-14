@@ -283,7 +283,7 @@ def jelly_uneval_real(number):
 	return string.lstrip('0') if number else string
 
 def join(array, glue):
-	array = iterable(array)
+	array = iterable(array, make_copy = True)
 	last = array.pop() if array else []
 	glue = iterable(glue)
 	ret = []
