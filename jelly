@@ -5,6 +5,37 @@ import jelly
 flag_utf8 = False
 end = ''
 
+usage = '''Usage:
+
+    jelly f <file> [input]    Reads the Jelly program stored in the
+                              specified file, using the Jelly code page.
+                              This option should be considered the default,
+                              but it exists solely for scoring purposes in
+                              code golf contests.
+
+    jelly fu <file> [input]   Reads the Jelly program stored in the
+                              specified file, using the UTF-8 encoding.
+
+    jelly e <code> [input]    Reads a Jelly program as a command line
+                              argument, using the Jelly code page. This
+                              requires setting the environment variable
+                              LANG (or your OS's equivalent) to en_US or
+                              compatible.
+
+    jelly e <code> [input]    Reads a Jelly program as a command line
+                              argument, using the UTF-8 encoding. This
+                              requires setting the environment variable
+                              LANG (or your OS's equivalent) to en_US.UTF8
+                              or compatible.
+
+    Append an `n` to the flag list to append a trailing newline to the
+    program's output.
+
+Visit http://github.com/DennisMitchell/jelly for more information.\n'''
+
+if len(jelly.sys.argv) < 3:
+    raise SystemExit(usage)
+
 for char in jelly.sys.argv[1]:
 	if char == 'f':
 		flag_file = True
