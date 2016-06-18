@@ -74,7 +74,7 @@ def determinant(matrix):
 
 def div(dividend, divisor, floor = False):
 	if divisor == 0:
-		return nan if dividend == 0 else inf
+		return dividend * inf
 	if divisor == inf:
 		return 0
 	if floor or (type(dividend) == int and type(divisor) == int and not dividend % divisor):
