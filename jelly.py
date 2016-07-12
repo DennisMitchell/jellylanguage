@@ -224,6 +224,16 @@ def group(array):
 			grouped[item] = [index + 1]
 	return [grouped[key] for key in sorted(grouped)]
 
+def group_equal(array):
+	array = iterable(array, make_digits = True)
+	groups = []
+	for x in array:
+		if groups and groups[-1][0] == x:
+			groups[-1].append(x)
+		else:
+			groups.append([x])
+	return groups
+
 def identity(argument):
 	return argument
 
@@ -593,6 +603,9 @@ def reduce_cumulative(links, outmost_links, index):
 def rld(runs):
 	return list(itertools.chain(*[[u] * v for u, v in runs]))
 
+def rle(array):
+	return [[group[0], len(group)] for group in group_equal(array)]
+
 def rotate_left(array, units):
 	array = iterable(array)
 	length = len(array)
@@ -703,6 +716,10 @@ def stringify(iterable, recurse = True):
 		return ''.join(map(str, iterable))
 	iterable = [stringify(item) for item in iterable]
 	return stringify(iterable, False) if recurse else iterable
+
+def substrings(array):
+	array = iterable(array, make_range = True)
+	return [x for w in range(len(array)) for x in split_rolling(array, w + 1)]
 
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
@@ -1611,6 +1628,16 @@ atoms = {
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
 	),
+	'Œc': attrdict(
+		arity = 1,
+		rdepth = 0,
+		call = lambda z: listify(itertools.combinations(iterable(z, make_range = True), 2))
+	),
+	'Œċ': attrdict(
+		arity = 1,
+		rdepth = 0,
+		call = lambda z: listify(itertools.combinations_with_replacement(iterable(z, make_range = True), 2))
+	),
 	'ŒD': attrdict(
 		arity = 1,
 		ldepth = 2,
@@ -1624,6 +1651,11 @@ atoms = {
 	'ŒḊ': attrdict(
 		arity = 1,
 		call = depth
+	),
+	'Œg': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = group_equal
 	),
 	'Œl': attrdict(
 		arity = 1,
@@ -1651,10 +1683,24 @@ atoms = {
 		arity = 1,
 		call = lambda z: listify(repr(z))
 	),
+	'Œr': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = rle
+	),
+	'Œṙ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = rld
+	),
 	'Œs': attrdict(
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, swap = True)
+	),
+	'Œṡ': attrdict(
+		arity = 1,
+		uball = substrings
 	),
 	'ŒT': attrdict(
 		arity = 1,
