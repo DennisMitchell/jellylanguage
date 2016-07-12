@@ -1700,7 +1700,7 @@ atoms = {
 	),
 	'Œṡ': attrdict(
 		arity = 1,
-		uball = substrings
+		call = substrings
 	),
 	'ŒT': attrdict(
 		arity = 1,
