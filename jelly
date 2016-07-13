@@ -22,7 +22,7 @@ usage = '''Usage:
                               LANG (or your OS's equivalent) to en_US or
                               compatible.
 
-    jelly e <code> [input]    Reads a Jelly program as a command line
+    jelly eu <code> [input]   Reads a Jelly program as a command line
                               argument, using the UTF-8 encoding. This
                               requires setting the environment variable
                               LANG (or your OS's equivalent) to en_US.UTF8
