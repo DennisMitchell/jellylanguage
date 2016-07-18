@@ -717,10 +717,6 @@ def stringify(iterable, recurse = True):
 	iterable = [stringify(item) for item in iterable]
 	return stringify(iterable, False) if recurse else iterable
 
-def substrings(array):
-	array = iterable(array, make_range = True)
-	return [x for w in range(len(array)) for x in split_rolling(array, w + 1)]
-
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
@@ -862,6 +858,28 @@ def while_loop(link, condition, args, cumulative = False):
 		ret = variadic_link(link, (larg, rarg))
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
+
+def windowed_exists(needle, haystack):
+	haystack = iterable(haystack, make_digits = True)
+	needle = iterable(needle, make_digits = True)
+	needle_length = len(needle)
+	for index in range(len(haystack)):
+		if haystack[index : index + needle_length] == needle:
+			return 1
+	return 0
+
+def windowed_index_of(haystack, needle):
+	haystack = iterable(haystack, make_digits = True)
+	needle = iterable(needle, make_digits = True)
+	needle_length = len(needle)
+	for index in range(len(haystack)):
+		if haystack[index : index + needle_length] == needle:
+			return 1 + index
+	return 0
+
+def windowed_sublists(array):
+	array = iterable(array, make_range = True)
+	return [sublist for width in range(1, len(array) + 1) for sublist in split_rolling(array, width)]
 
 def output(argument, end = '', transform = stringify):
 	if locale.getdefaultlocale()[1][0:3] == 'UTF':
@@ -1092,6 +1110,10 @@ atoms = {
 		ldepth = 0,
 		call = lambda z: int(abs(z) <= 1)
 	),
+	'J': attrdict(
+		arity = 1,
+		call = lambda z: list(range(1, len(z) + 1))
+	),
 	'i': attrdict(
 		arity = 2,
 		call = index_of
@@ -1305,6 +1327,18 @@ atoms = {
 	'W': attrdict(
 		arity = 1,
 		call = lambda z: [z]
+	),
+	'Ẇ': attrdict(
+		arity = 1,
+		call = windowed_sublists
+	),
+	'w': attrdict(
+		arity = 2,
+		call = windowed_index_of
+	),
+	'ẇ': attrdict(
+		arity = 2,
+		call = windowed_exists
 	),
 	'X': attrdict(
 		arity = 1,
@@ -1697,10 +1731,6 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, swap = True)
-	),
-	'Œṡ': attrdict(
-		arity = 1,
-		call = substrings
 	),
 	'ŒT': attrdict(
 		arity = 1,
