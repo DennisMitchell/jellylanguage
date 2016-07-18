@@ -94,6 +94,15 @@ def diagonals(matrix):
 		shifted[~index] = index * [None] + row
 	return rotate_left(zip_ragged(shifted), len(matrix) - 1)
 
+def dot_product(left, right):
+	right = [complex(t).conjugate() for t in right]
+	product = sum(dyadic_link(atoms['×'], (left, right)))
+	if product.imag == 0:
+		product = product.real
+		if product.is_integer():
+			product = int(product)
+	return product
+
 def dyadic_chain(chain, args):
 	larg, rarg = args
 	for link in chain:
@@ -1131,6 +1140,11 @@ atoms = {
 		arity = 1,
 		call = lambda z: len(iterable(z))
 	),
+	'Ḷ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: list(range(z))
+	),
 	'l': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -1746,6 +1760,12 @@ atoms = {
 		ldepth = 1,
 		call = lambda z: to_case(z, upper = True)
 	),
+	'æ.': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 1,
+		call = dot_product
+	),
 	'æ%': attrdict(
 		arity = 2,
 		ldepth = 0,
@@ -2110,7 +2130,7 @@ hypers = {
 		arity = link.arity,
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
-	'Þ': lambda link, none = None: attrdict(
+	'§': lambda link, none = None: attrdict(
 		arity = 1,
 		call = lambda x: sorted(x, key=lambda t: monadic_link(link, t))
 	),
