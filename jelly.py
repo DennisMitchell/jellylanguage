@@ -2130,7 +2130,7 @@ hypers = {
 		arity = link.arity,
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
-	'§': lambda link, none = None: attrdict(
+	'Þ': lambda link, none = None: attrdict(
 		arity = 1,
 		call = lambda x: sorted(x, key=lambda t: monadic_link(link, t))
 	),
