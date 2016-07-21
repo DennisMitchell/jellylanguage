@@ -823,7 +823,7 @@ def unicode_to_jelly(string):
 def unique(array):
 	array = iterable(array, make_digits = True)
 	result = []
-	for element in iterable:
+	for element in array:
 		if not element in result:
 			result.append(element)
 	return result
