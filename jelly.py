@@ -213,12 +213,12 @@ def grid(array):
 	if depth(array) == 2 and equal(map(len, array)):
 		array = [[str(entry) for entry in row] for row in array]
 		width = max(max([len(entry) for entry in row]) if row else 0 for row in array)
-		array = [[entry.rjust(width) for entry in row] for row in array]
+		array = [[list(entry.rjust(width)) for entry in row] for row in array]
 		return join([join(row, ' ') for row in array], '\n')
 	if depth(array) == 3 and all(type(item) == str for item in flatten(array)):
 		array = [[''.join(entry) for entry in row] for row in array]
 		width = max(max([len(entry) for entry in row]) if row else 0 for row in array)
-		array = [[entry.ljust(width) for entry in row] for row in array]
+		array = [[list(entry.ljust(width)) for entry in row] for row in array]
 		return join([join(row, ' ') for row in array], '\n')
 	return join(array, '\n')
 
@@ -294,7 +294,7 @@ def jelly_uneval(argument, top = True):
 		string = ''.join(argument)
 		if all(map(lambda t: code_page.find(t) < 250, string)):
 			return '“' + string + '”'
-	middle = ','.join(jelly_uneval(item, top = False) for item in argument)
+	middle = list(','.join(jelly_uneval(item, top = False) for item in argument))
 	return middle if top else '[' + middle + ']'
 
 def jelly_uneval_real(number):
@@ -820,7 +820,8 @@ def to_exponents(integer):
 def unicode_to_jelly(string):
 	return ''.join(chr(code_page.find(char)) for char in str(string).replace('\n', '¶') if char in code_page)
 
-def unique(iterable):
+def unique(array):
+	array = iterable(array, make_digits = True)
 	result = []
 	for element in iterable:
 		if not element in result:
@@ -934,6 +935,14 @@ atoms = {
 		arity = 1,
 		ldepth = 0,
 		call = abs
+	),
+	'Ȧ': attrdict(
+		arity = 1,
+		call = lambda z: int(iterable(z) > [] and all(flatten(z)))
+	),
+	'Ạ': attrdict(
+		arity = 1,
+		call = lambda z: int(all(z))
 	),
 	'a': attrdict(
 		arity = 2,
@@ -1188,6 +1197,12 @@ atoms = {
 	'Ṇ': attrdict(
 		arity = 1,
 		call = lambda z: int(not(z))
+	),
+	'n': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: int(x != y)
 	),
 	'O': attrdict(
 		arity = 1,
@@ -1533,6 +1548,10 @@ atoms = {
 	'⁼': attrdict(
 		arity = 2,
 		call = lambda x, y: int(x == y)
+	),
+	'⁻': attrdict(
+		arity = 2,
+		call = lambda x, y: int(x != y)
 	),
 	'®': attrdict(
 		arity = 0,
@@ -2048,6 +2067,13 @@ quicks = {
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = max(link.arity for link in links),
 			call = lambda x = None, y = None: variadic_link(links[0], (x, y)) if variadic_link(links[2], (x, y)) else variadic_link(links[1], (x, y))
+		)]
+	),
+	'`': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: dyadic_link(links[0], (z, z))
 		)]
 	),
 	'⁺': attrdict(
