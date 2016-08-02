@@ -1130,7 +1130,7 @@ atoms = {
 	),
 	'J': attrdict(
 		arity = 1,
-		call = lambda z: list(range(1, len(z) + 1))
+		call = lambda z: list(range(1, len(iterable(z)) + 1))
 	),
 	'i': attrdict(
 		arity = 2,
