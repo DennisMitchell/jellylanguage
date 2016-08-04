@@ -942,7 +942,7 @@ atoms = {
 	),
 	'Ạ': attrdict(
 		arity = 1,
-		call = lambda z: int(all(z))
+		call = lambda z: int(all(iterable(z)))
 	),
 	'a': attrdict(
 		arity = 2,
