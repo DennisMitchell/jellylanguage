@@ -488,7 +488,7 @@ def ntimes(links, args, cumulative = False):
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
 
-def order(divisor, number):
+def order(number, divisor):
 	if number == 0 or abs(divisor) == 1:
 		return inf
 	if divisor == 0:
