@@ -488,6 +488,19 @@ def ntimes(links, args, cumulative = False):
 		rarg = larg
 	return cumret + [ret] if cumulative else ret
 
+def order(divisor, number):
+	if number == 0 or abs(divisor) == 1:
+		return inf
+	if divisor == 0:
+		return 0
+	ret = 0
+	while True:
+		number, residue = divmod(number, divisor)
+		if residue:
+			break
+		ret += 1
+	return ret
+
 def overload(operators, *args):
 	for operator in operators:
 		try:
@@ -1223,6 +1236,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: x or y
+	),
+	'ọ': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = order
 	),
 	'ȯ': attrdict(
 		arity = 2,
