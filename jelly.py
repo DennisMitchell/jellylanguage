@@ -96,8 +96,6 @@ def diagonals(matrix):
 
 def dot_product(left, right):
 	left, right = iterable(left), iterable(right)
-	if not left + right:
-		return 0
 	if complex in map(type, left + right):
 		right = [complex(t).conjugate() for t in right]
 	product = sum(dyadic_link(atoms['×'], (left, right)))
@@ -559,11 +557,16 @@ def parse_literal(literal_match):
 		else:
 			mode = ''
 		parsed = literal.split('“')[1:]
-		if mode == '»':
+		if   mode == '»':
 			parsed = [sss(string).replace('¶', '\n') for string in parsed]
+		elif mode == '‘':
+			parsed = [[code_page.find(char) for char in string] for string in parsed]
+		elif mode == '’':
+			parsed = [from_base([code_page.find(char) + 1 for char in string], 250) for string in parsed]
 		else:
 			parsed = [string.replace('¶', '\n') for string in parsed]
-		parsed = [[string] if len(string) == 1 else string for string in parsed]
+		if mode not in '‘’':
+			parsed = [[string] if len(string) == 1 else string for string in parsed]
 		if len(parsed) == 1:
 			parsed = parsed[0]
 	else:
