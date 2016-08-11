@@ -95,7 +95,11 @@ def diagonals(matrix):
 	return rotate_left(zip_ragged(shifted), len(matrix) - 1)
 
 def dot_product(left, right):
-	right = [complex(t).conjugate() for t in right]
+	left, right = iterable(left), iterable(right)
+	if not left + right:
+		return 0
+	if complex in map(type, left + right):
+		right = [complex(t).conjugate() for t in right]
 	product = sum(dyadic_link(atoms['×'], (left, right)))
 	if product.imag == 0:
 		product = product.real
