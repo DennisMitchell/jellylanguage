@@ -103,7 +103,7 @@ def dot_product(left, right):
 	product = sum(dyadic_link(atoms['×'], (left, right)))
 	if product.imag == 0:
 		product = product.real
-		if product.is_integer():
+		if type(product) != int and product.is_integer():
 			product = int(product)
 	return product
 
