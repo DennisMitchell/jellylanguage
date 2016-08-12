@@ -2,7 +2,7 @@ import ast, cmath, copy, dictionary, fractions, functools, itertools, locale, ma
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
-# Unused letters for single atoms: ƁƇƊƑƘⱮƝƤƬƲȤɓɗƒɦƙɱɲƥʠɼʂƭʋȥẸḲẈĿṘẹḥḳṃṇọụṿẉỵẓḋėġŀṅẏ
+# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƤƬƲȤɓɗƒɦƙɱɲƥʠɼʂƭʋȥẸẈẒĿṘẎŻẹḥḳṃṇọụṿẉỵẓḋėġŀṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -1166,6 +1166,14 @@ atoms = {
 		arity = 2,
 		call = join
 	),
+	'K': attrdict(
+		arity = 1,
+		call = lambda z: join(z, ' ')
+	),
+	'Ḳ': attrdict(
+		arity = 1,
+		call = lambda z: listify(split_at(iterable(z), ' '))
+	),
 	'L': attrdict(
 		arity = 1,
 		call = lambda z: len(iterable(z))
@@ -1414,11 +1422,11 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: iterable(x) * int(y)
 	),
-	'Ỵ': attrdict(
+	'Y': attrdict(
 		arity = 1,
 		call = lambda z: join(z, '\n')
 	),
-	'Ẏ': attrdict(
+	'Ỵ': attrdict(
 		arity = 1,
 		call = lambda z: listify(split_at(iterable(z), '\n'))
 	),
@@ -1429,14 +1437,6 @@ atoms = {
 	'Z': attrdict(
 		arity = 1,
 		call = zip_ragged
-	),
-	'Ẓ': attrdict(
-		arity = 1,
-		call = lambda z: join(z, ' ')
-	),
-	'Ż': attrdict(
-		arity = 1,
-		call = lambda z: listify(split_at(iterable(z), ' '))
 	),
 	'z': attrdict(
 		arity = 2,
