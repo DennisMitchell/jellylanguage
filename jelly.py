@@ -1414,14 +1414,14 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: iterable(x) * int(y)
 	),
-    'Ỵ': attrdict(
-        arity = 1,
-        call = lambda z: join(z, '\n')
-    ),
-    'Ẏ': attrdict(
-        arity = 1,
-        call = lambda z: listify(split_at(iterable(z), '\n'))
-    ),
+	'Ỵ': attrdict(
+		arity = 1,
+		call = lambda z: join(z, '\n')
+	),
+	'Ẏ': attrdict(
+		arity = 1,
+		call = lambda z: listify(split_at(iterable(z), '\n'))
+	),
 	'y': attrdict(
 		arity = 2,
 		call = translate
@@ -1430,14 +1430,14 @@ atoms = {
 		arity = 1,
 		call = zip_ragged
 	),
-    'Ẓ': attrdict(
-        arity = 1,
-        call = lambda z: join(z, ' ')
-    ),
-    'Ż': attrdict(
-        arity = 1,
-        call = lambda z: listify(split_at(iterable(z), ' '))
-    ),
+	'Ẓ': attrdict(
+		arity = 1,
+		call = lambda z: join(z, ' ')
+	),
+	'Ż': attrdict(
+		arity = 1,
+		call = lambda z: listify(split_at(iterable(z), ' '))
+	),
 	'z': attrdict(
 		arity = 2,
 		call = lambda x, y: listify(itertools.zip_longest(*map(iterable, x), fillvalue = y))
