@@ -2,6 +2,7 @@ import ast, cmath, copy, dictionary, fractions, functools, itertools, locale, ma
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
+# Unused letters for single atoms: ƁƇƊƑƘⱮƝƤƬƲȤɓɗƒɦƙɱɲƥʠɼʂƭʋȥẸḲẈĿṘẹḥḳṃṇọụṿẉỵẓḋėġŀṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -1413,6 +1414,14 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: iterable(x) * int(y)
 	),
+    'Ỵ': attrdict(
+        arity = 1,
+        call = lambda z: join(z, '\n')
+    ),
+    'Ẏ': attrdict(
+        arity = 1,
+        call = lambda z: listify(split_at(iterable(z), '\n'))
+    ),
 	'y': attrdict(
 		arity = 2,
 		call = translate
@@ -1421,6 +1430,14 @@ atoms = {
 		arity = 1,
 		call = zip_ragged
 	),
+    'Ẓ': attrdict(
+        arity = 1,
+        call = lambda z: join(z, ' ')
+    ),
+    'Ż': attrdict(
+        arity = 1,
+        call = lambda z: listify(split_at(iterable(z), ' '))
+    ),
 	'z': attrdict(
 		arity = 2,
 		call = lambda x, y: listify(itertools.zip_longest(*map(iterable, x), fillvalue = y))
