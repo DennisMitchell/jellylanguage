@@ -30,6 +30,9 @@ def at_index(index, array):
 		return array[low_index % len(array)]
 	return [array[low_index % len(array)], array[high_index % len(array)]]
 
+def bounce(array):
+	return array[:-1] + array[::-1]
+
 def create_chain(chain, arity = -1):
 	return attrdict(
 		arity = arity,
@@ -1737,6 +1740,15 @@ atoms = {
 	'Œ!': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
+	),
+	'ŒB': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: bounce(z)
+	),
+	'ŒḄ': attrdict(
+		arity = 1,
+		call = lambda z: bounce(iterable(z, make_range = True))
 	),
 	'Œc': attrdict(
 		arity = 1,
