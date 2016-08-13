@@ -549,7 +549,7 @@ def parse_code(code):
 
 def parse_literal(literal_match):
 	literal = literal_match.group(0)
-	if literal[0] == '”':
+	if literal[0] in '”⁾':
 		return repr(literal[1:])
 	elif literal[0] == '“':
 		if literal[-1] in '«»‘’”':
@@ -2228,10 +2228,11 @@ hypers = {
 str_arities = 'øµð'
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
+str_chrpair = '⁾..'
 str_realdec = '(?:0|-?\d*\.\d*|-?\d+|-)'
 str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
-str_literal = '(?:' + str_strings + '|' + str_charlit + '|' + str_complex + ')'
+str_literal = '(?:%s)' % '|'.join([str_strings, str_charlit, str_chrpair, str_complex])
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
 str_nonlits = '|'.join(map(re.escape, list(atoms) + list(quicks) + list(hypers)))
 
