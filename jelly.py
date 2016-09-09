@@ -1041,7 +1041,7 @@ atoms = {
 	),
 	'ƈ': attrdict(
 		arity = 0,
-		call = lambda: sys.stdin.read(1)
+		call = lambda: sys.stdin.read(1) or []
 	),
 	'D': attrdict(
 		arity = 1,
