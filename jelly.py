@@ -172,6 +172,14 @@ def equal(array):
 	array = iterable(array)
 	return int(all(item == array[0] for item in array))
 
+def extremes(min_or_max, link, array):
+	array = iterable(array, make_range=True)
+	if not array:
+		return []
+	results = [monadic_link(link, x) for x in array]
+	best = min_or_max(results)
+	return [x for x, fx in zip(array, results) if fx == best]
+
 def flatten(argument):
 	flat = []
 	if type(argument) == list:
@@ -2185,7 +2193,21 @@ quicks = {
 			arity = links[0].arity,
 			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_loop = True)
 		)]
-	)
+	),
+	'ÐṂ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: extremes(min, links[0], z)
+		)]
+	),
+	'ÐṀ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: extremes(max, links[0], z)
+		)]
+	),
 }
 
 hypers = {
