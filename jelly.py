@@ -33,6 +33,15 @@ def at_index(index, array):
 def bounce(array):
 	return array[:-1] + array[::-1]
 
+def carmichael(n):
+    n = int(n)
+    if n < 1:
+        return 0
+    c = 1
+    for p, k in sympy.ntheory.factor_.factorint(n).items():
+        c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
+    return c
+
 def create_chain(chain, arity = -1):
 	return attrdict(
 		arity = arity,
@@ -345,6 +354,9 @@ def listify(element, dirty = False):
 		return complex(element)
 	return [listify(item, dirty) for item in element]
 
+def lcm(x, y):
+    return x * y // (fractions.gcd(x, y) or 1)
+
 def loop_until_loop(link, args, return_all = False, return_loop = False):
 	ret, rarg = args
 	cumret = []
@@ -380,6 +392,10 @@ def max_arity(links):
 def maximal_indices(iterable):
 	maximum = max(iterable)
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
+
+def modinv(a, m):
+    i, _, g = sympy.numbers.igcdex(a, m)
+    return i % m if g == 1 else 0
 
 def mold(content, shape):
 	for index in range(len(shape)):
@@ -1632,10 +1648,30 @@ atoms = {
 		ldepth = 0,
 		call = sympy.ntheory.generate.primepi
 	),
+	'Æc': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = carmichael
+	),
 	'ÆD': attrdict(
 		arity = 1,
 		ldepth = 0,
 		call = sympy.ntheory.factor_.divisors
+	),
+	'ÆḌ': attrdict(
+		arity = 1,
+		ldepth = 0,
+        call = lambda z: sympy.ntheory.factor_.divisors(z)[:-1]
+	),
+	'Æd': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = sympy.ntheory.factor_.divisor_count
+	),
+	'Æḍ': attrdict(
+		arity = 1,
+		ldepth = 0,
+        call = lambda z: sympy.ntheory.factor_.divisor_count(z) - 1
 	),
 	'ÆḊ': attrdict(
 		arity = 1,
@@ -1731,6 +1767,21 @@ atoms = {
 		arity = 1,
 		ldepth = 0,
 		call = lambda z: overload((math.asin, cmath.asin), z)
+	),
+	'Æs': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = sympy.ntheory.factor_.divisor_sigma
+	),
+	'Æṣ': attrdict(
+		arity = 1,
+		ldepth = 0,
+        call = lambda z: sympy.ntheory.factor_.divisor_sigma(z) - z
+	),
+	'Æv': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: len(sympy.ntheory.factor_.factorint(z))
 	),
 	'Æ²': attrdict(
 		arity = 1,
@@ -1886,11 +1937,17 @@ atoms = {
 		rdepth = 0,
 		call = lambda x, y: from_base([1] + [0] * (len(to_base(x, y)) - 1), y)
 	),
+	'æi': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = modinv
+	),
 	'æl': attrdict(
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: x * y // (fractions.gcd(x, y) or 1)
+		call = lcm
 	),
 	'ær': attrdict(
 		arity = 2,
