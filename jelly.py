@@ -1666,12 +1666,12 @@ atoms = {
 	'Æd': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.factor_.divisor_count
+		call = lambda z: int(sympy.ntheory.factor_.divisor_count(z))
 	),
 	'Æḍ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: sympy.ntheory.factor_.divisor_count(z) - 1
+        call = lambda z: int(sympy.ntheory.factor_.divisor_count(z) - 1)
 	),
 	'ÆḊ': attrdict(
 		arity = 1,
@@ -1771,12 +1771,12 @@ atoms = {
 	'Æs': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.factor_.divisor_sigma
+		call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z))
 	),
 	'Æṣ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: sympy.ntheory.factor_.divisor_sigma(z) - z
+        call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z) - z)
 	),
 	'Æv': attrdict(
 		arity = 1,
