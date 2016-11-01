@@ -897,7 +897,7 @@ def to_primorial_base(integer):
 	while integer:
 		placeIndex += 1
 		integer, remainder = divmod(integer, sympy.ntheory.generate.prime(placeIndex))
-		digits.append(remainder) 
+		digits.append(remainder)
 	return digits[::-1]
 
 def unicode_to_jelly(string):
@@ -1841,6 +1841,16 @@ atoms = {
 		ldepth = 1,
 		call = from_factorial_base
 	),
+	'Æ?': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = to_primorial_base
+	),
+	'Æ¿': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = from_primorial_base
+	),
 	'Œ!': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
@@ -1937,16 +1947,6 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, upper = True)
-	),
-	'Œ!': attrdict(
-		arity = 1,
-		ldepth = 0,
-		call = to_primorial_base
-	),
-	'Œ¡': attrdict(
-		arity = 1,
-		ldepth = 1,
-		call = from_primorial_base
 	),
 	'æ.': attrdict(
 		arity = 2,
