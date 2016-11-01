@@ -223,6 +223,20 @@ def from_exponents(exponents):
 		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
 
+def from_factorial_base(digits):
+	placeValue = 1
+	integer = 0
+	for nextPlaceIndex, digit in enumerate(digits[::-1], 1):
+		integer += digit * placeValue
+		placeValue *= nextPlaceIndex
+	return integer
+
+def from_primorial_base(digits):
+	integer = digits and digits[-1] or 0
+	for placeIndex, digit in enumerate(digits[-2::-1], 1):
+		integer += digit * sympy.ntheory.generate.primorial(placeIndex)
+	return integer
+
 def simplest_number(number):
 	if abs(number ** 2) != number ** 2:
 		return number
@@ -355,7 +369,7 @@ def listify(element, dirty = False):
 	return [listify(item, dirty) for item in element]
 
 def lcm(x, y):
-    return x * y // (fractions.gcd(x, y) or 1)
+	return x * y // (fractions.gcd(x, y) or 1)
 
 def loop_until_loop(link, args, return_all = False, return_loop = False):
 	ret, rarg = args
@@ -866,6 +880,25 @@ def to_exponents(integer):
 		else:
 			exponents.append(0)
 	return exponents
+
+def to_factorial_base(integer):
+	radix = 1
+	digits = []
+	while integer:
+		integer, remainder = divmod(integer, radix)
+		digits.append(remainder)
+		radix += 1
+	return digits[::-1] or [0]
+
+def to_primorial_base(integer):
+	placeIndex = 1
+	integer, remainder = divmod(integer, 2)
+	digits = [remainder]
+	while integer:
+		placeIndex += 1
+		integer, remainder = divmod(integer, sympy.ntheory.generate.prime(placeIndex))
+		digits.append(remainder) 
+	return digits[::-1]
 
 def unicode_to_jelly(string):
 	return ''.join(chr(code_page.find(char)) for char in str(string).replace('\n', '¶') if char in code_page)
@@ -1798,6 +1831,16 @@ atoms = {
 		ldepth = 0,
 		call = math.degrees
 	),
+	'Æ!': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = to_factorial_base
+	),
+	'Æ¡': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = from_factorial_base
+	),
 	'Œ!': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
@@ -1894,6 +1937,16 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, upper = True)
+	),
+	'Œ!': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = to_primorial_base
+	),
+	'Œ¡': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = from_primorial_base
 	),
 	'æ.': attrdict(
 		arity = 2,
