@@ -1573,7 +1573,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = operator.mod
+		call = lambda x, y: x % y if abs(div(x, y) + div(y, x)) < inf else nan
 	),
 	'*': attrdict(
 		arity = 2,
@@ -2281,14 +2281,14 @@ quicks = {
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = links[0].arity,
-			call = lambda x, y = None: list(filter(lambda t: variadic_link(links[0], (t, y)), x))
+			call = lambda x, y = None: list(filter(lambda t: variadic_link(links[0], (t, y)), iterable(x, make_range = True)))
 		)]
 	),
 	'Ðḟ': attrdict(
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = links[0].arity,
-			call = lambda x, y = None: list(itertools.filterfalse(lambda t: variadic_link(links[0], (t, y)), x))
+			call = lambda x, y = None: list(itertools.filterfalse(lambda t: variadic_link(links[0], (t, y)), iterable(x, make_range = True)))
 		)]
 	),
 	'ÐL': attrdict(
