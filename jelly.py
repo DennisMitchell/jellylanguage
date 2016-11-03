@@ -636,6 +636,42 @@ def partition_at(booleans, array, keep_border = True):
 		index += 1
 	return chunks + [chunk]
 
+def pemutation_at_index(index, array = None):
+	result = []
+	if array is None:
+		divisor = 1
+		count = 0
+		while divisor < index:
+			count += 1
+			divisor *= count
+		values = list(range(1, count + 1))
+	else:
+		values = iterable(array, make_copy = True, make_range = True)
+		try:
+			divisor = math.factorial(len(values))
+		except:
+			divisor = functools.reduce(operator.mul, range(1, len(values) + 1), 1)
+	index -= 1
+	index %= divisor
+	while values:
+		divisor //= len(values)
+		quotient, index = divmod(index, divisor)
+		result.append(values.pop(quotient))
+	return result
+
+def permutation_index(array):
+	result = 1
+	array = iterable(array)
+	length = len(array)
+	for index in range(length):
+		k = sum(1 for value in array[index + 1:] if value < array[index])
+		try:
+			factor = math.factorial(length - index - 1)
+		except:
+			factor = functools.reduce(operator.mul, range(1, length - index), 1)
+		result += k * factor
+	return result
+
 def Pi(number):
 	if type(number) == int:
 		if number < 0:
@@ -1855,6 +1891,15 @@ atoms = {
 		arity = 1,
 		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
 	),
+	'Œ?': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = pemutation_at_index
+	),
+	'Œ¿': attrdict(
+		arity = 1,
+		call = permutation_index
+	),
 	'ŒB': attrdict(
 		arity = 1,
 		ldepth = 1,
@@ -1947,6 +1992,15 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, upper = True)
+	),
+	'œ?': attrdict(
+		arity = 2,
+		ldepth = 0,
+		call = pemutation_at_index
+	),
+	'œ¿': attrdict(
+		arity = 2,
+		call = lambda x, y: permutation_index([y.index(value) for value in x])
 	),
 	'æ.': attrdict(
 		arity = 2,
