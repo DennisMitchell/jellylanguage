@@ -1444,7 +1444,7 @@ atoms = {
 	'Ṭ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: [int(t + 1 in iterable(z)) for t in range(max(iterable(z)))]
+		call = lambda z: [int(t + 1 in iterable(z)) for t in range(max(iterable(z) or [0]))]
 	),
 	'Ṫ': attrdict(
 		arity = 1,
