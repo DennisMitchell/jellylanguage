@@ -411,6 +411,12 @@ def modinv(a, m):
     i, _, g = sympy.numbers.igcdex(a, m)
     return i % m if g == 1 else 0
 
+def modulus(dividend, divisor):
+	try:
+		return dividend % divisor
+	except:
+		return nan
+
 def mold(content, shape):
 	for index in range(len(shape)):
 		if type(shape[index]) == list:
@@ -1609,7 +1615,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: x % y if abs(div(x, y) + div(y, x)) < inf else nan
+		call = modulus
 	),
 	'*': attrdict(
 		arity = 2,
