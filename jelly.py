@@ -1,4 +1,4 @@
-import ast, cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
+import cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -52,7 +52,7 @@ def create_chain(chain, arity = -1):
 def create_literal(string):
 	return attrdict(
 		arity = 0,
-		call = lambda: safe_eval(string, False)
+		call = lambda: python_eval(string, False)
 	)
 
 def copy_to(atom, value):
@@ -349,13 +349,15 @@ def join(array, glue):
 
 def last_input():
 	if len(sys.argv) > 3:
-		return safe_eval(sys.argv[-1])
-	return safe_eval(input())
+		return python_eval(sys.argv[-1])
+	return python_eval(input())
 
 def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
 def listify(element, dirty = False):
+	if element == None:
+		return []
 	if type(element) == str and dirty:
 		return list(element)
 	if type(element) in (int, float, complex) or (type(element) == str and len(element) == 1):
@@ -366,7 +368,10 @@ def listify(element, dirty = False):
 		return float(element) if element % 1 else int(element)
 	if type(element) == numpy.complex128:
 		return complex(element)
-	return [listify(item, dirty) for item in element]
+	try:
+		return [listify(item, dirty) for item in element]
+	except:
+		return element
 
 def lcm(x, y):
 	return x * y // (fractions.gcd(x, y) or 1)
@@ -695,6 +700,13 @@ def powerset(array):
 		ret += listify(itertools.combinations(array, t))
 	return ret
 
+def python_eval(string, dirty = True):
+	try:
+		return listify(eval(string), dirty)
+	except SyntaxError:
+		exec(string)
+		return []
+
 def reduce(links, outmost_links, index):
 	ret = [attrdict(arity = 1)]
 	if len(links) == 1:
@@ -725,9 +737,6 @@ def rotate_left(array, units):
 	array = iterable(array)
 	length = len(array)
 	return array[units % length :] + array[: units % length] if length else []
-
-def safe_eval(string, dirty = True):
-	return listify(ast.literal_eval(string), dirty)
 
 def shift_left(number, bits):
 	if type(number) == int and type(bits) == int:
@@ -827,6 +836,8 @@ def sss(compressed):
 def stringify(iterable, recurse = True):
 	if type(iterable) != list:
 		return iterable
+	if len(iterable) == 1:
+		return stringify(iterable[0])
 	if str in map(type, iterable) and not list in map(type, iterable) or not iterable:
 		return ''.join(map(str, iterable))
 	iterable = [stringify(item) for item in iterable]
@@ -864,7 +875,7 @@ def trim(trimmee, trimmer, left = False, right = False):
 
 def try_eval(string):
 	try:
-		return safe_eval(string)
+		return python_eval(string)
 	except:
 		return listify(string, True)
 
@@ -1213,7 +1224,7 @@ atoms = {
 	),
 	'Ɠ': attrdict(
 		arity = 0,
-		call = lambda: safe_eval(input())
+		call = lambda: python_eval(input())
 	),
 	'ɠ': attrdict(
 		arity = 0,
@@ -2008,6 +2019,11 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, title = True)
+	),
+	'ŒV': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: python_eval(''.join(map(str, z)))
 	),
 	'Œu': attrdict(
 		arity = 1,
