@@ -1723,6 +1723,11 @@ atoms = {
 		ldepth = 0,
 		call = sympy.ntheory.generate.primepi
 	),
+	'ÆĊ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: int(sympy.functions.combinatorial.numbers.catalan(z))
+	),
 	'Æc': attrdict(
 		arity = 1,
 		ldepth = 0,
@@ -1777,6 +1782,16 @@ atoms = {
 		arity = 1,
 		ldepth = 0,
 		call = lambda z: rld(sorted(sympy.ntheory.factor_.factorint(z).items()))
+	),
+	'ÆḞ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: int(sympy.functions.combinatorial.numbers.fibonacci(z))
+	),
+	'ÆĿ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: int(sympy.functions.combinatorial.numbers.lucas(z))
 	),
 	'Æl': attrdict(
 		arity = 1,
