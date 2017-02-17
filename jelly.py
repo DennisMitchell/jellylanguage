@@ -2,7 +2,7 @@ import cmath, copy, dictionary, fractions, functools, itertools, locale, math, n
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
-# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƤƬƲȤɓɗƒɦƙɱɲƥʠɼʂƭʋȥẸẈẒĿṘẎŻẹḥḳṃṇọụṿẉỵẓḋėġŀṅẏ
+# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƤƬƲȤɓɗƒɦƙɱɲƥʠɼʂƭʋȥẸẈẒĿṘẎŻẹḥḳṇọụṿẉỵẓḋėġŀṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -29,6 +29,10 @@ def at_index(index, array):
 	if low_index == high_index:
 		return array[low_index % len(array)]
 	return [array[low_index % len(array)], array[high_index % len(array)]]
+
+def base_decompression(integer, digits):
+	digits = iterable(digits, make_range=True)
+	return [digits[i-1] for i in to_base(integer, len(digits))]
 
 def bounce(array):
 	return array[:-1] + array[::-1]
@@ -1328,6 +1332,10 @@ atoms = {
 	'ṁ': attrdict(
 		arity = 2,
 		call = lambda x, y: mold(iterable(x, make_copy = True), iterable(y, make_copy = True, make_range = True))
+	),
+	'ṃ': attrdict(
+		arity = 2,
+		call = base_decompression
 	),
 	'N': attrdict(
 		arity = 1,
