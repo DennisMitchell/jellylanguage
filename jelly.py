@@ -2221,6 +2221,10 @@ atoms = {
 		arity = 0,
 		call = lambda: list(str_upper + str_lower + str_digit + '_')
 	),
+	'ØY': attrdict(
+		arity = 0,
+		call = lambda: list('BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxz')
+	),
 	'Øa': attrdict(
 		arity = 0,
 		call = lambda: list(str_lower)
@@ -2252,6 +2256,10 @@ atoms = {
 	'Øv': attrdict(
 		arity = 0,
 		call = lambda: list('Ṙv')
+	),
+	'Øy': attrdict(
+		arity = 0,
+		call = lambda: list('AEIOUYaeiouy')
 	)
 }
 
