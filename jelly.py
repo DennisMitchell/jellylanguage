@@ -311,6 +311,11 @@ def isqrt(number):
 		b = (a + number // a) // 2
 	return int(a)
 
+def is_palindrome(argument):
+	if type(argument) == int:
+		argument = iterable(argument, make_digits = True)
+	return argument == argument[::-1]
+
 def is_string(iterable):
 	if type(iterable) != list:
 		return False
@@ -1949,6 +1954,10 @@ atoms = {
 		arity = 1,
 		call = lambda z: bounce(iterable(z, make_range = True))
 	),
+	'ŒḂ': attrdict(
+		arity = 1,
+		call = lambda z: int(is_palindrome(z))
+	),
 	'Œc': attrdict(
 		arity = 1,
 		rdepth = 0,
@@ -2077,6 +2086,12 @@ atoms = {
 		rdepth = 0,
 		call = math.atan2
 	),
+	'æR': attrdict(
+		arity = 2,
+		ldepth = 0,
+		rdepth = 0,
+		call = lambda x, y: list(sympy.primerange(x, y + 1))
+	)
 	'æċ': attrdict(
 		arity = 2,
 		ldepth = 0,
