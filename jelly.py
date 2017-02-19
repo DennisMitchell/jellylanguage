@@ -312,14 +312,13 @@ def isqrt(number):
 	return int(a)
 
 def is_palindrome(argument):
-	if type(argument) == int:
-		argument = iterable(argument, make_digits = True)
-	return argument == argument[::-1]
+	argument = iterable(argument, make_digits = True)
+	return int(argument == argument[::-1])
 
-def is_string(iterable):
-	if type(iterable) != list:
+def is_string(argument):
+	if type(argument) != list:
 		return False
-	return all(map(lambda t: type(t) == str, iterable))
+	return all(map(lambda t: type(t) == str, argument))
 
 def jelly_eval(code, arguments):
 	return variadic_chain(parse_code(code)[-1] if code else '', arguments)
@@ -1956,7 +1955,7 @@ atoms = {
 	),
 	'ŒḂ': attrdict(
 		arity = 1,
-		call = lambda z: int(is_palindrome(z))
+		call = is_palindrome
 	),
 	'Œc': attrdict(
 		arity = 1,
@@ -2091,7 +2090,7 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: list(sympy.primerange(x, y + 1))
-	)
+	),
 	'æċ': attrdict(
 		arity = 2,
 		ldepth = 0,
