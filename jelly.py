@@ -715,6 +715,14 @@ def python_eval(string, dirty = True):
 		exec(string)
 		return []
 
+def random_int(pool):
+	if not pool:
+		return 0
+	if type(pool) == list:
+		return random.choice(pool)
+	return random.randint(1, pool)
+
+
 def reduce(links, outmost_links, index):
 	ret = [attrdict(arity = 1)]
 	if len(links) == 1:
@@ -1533,7 +1541,7 @@ atoms = {
 	),
 	'X': attrdict(
 		arity = 1,
-		call = lambda z: random.choice(iterable(z, make_range = True)) if z else 0
+		call = random_int
 	),
 	'Ẋ': attrdict(
 		arity = 1,
