@@ -1347,6 +1347,7 @@ atoms = {
 	),
 	'ṃ': attrdict(
 		arity = 2,
+		ldepth = 0,
 		call = base_decompression
 	),
 	'N': attrdict(
