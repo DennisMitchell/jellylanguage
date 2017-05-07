@@ -33,6 +33,7 @@ Jelly's main input method is via command line arguments, although reading input 
 * [Tutorial]
 * [Atoms]
 * [Quicks]
+* [Syntax]
 
 [Atoms]: https://github.com/DennisMitchell/jelly/wiki/Atoms
 [Jelly code page]: https://github.com/DennisMitchell/jelly/wiki/Code-page
@@ -40,5 +41,6 @@ Jelly's main input method is via command line arguments, although reading input 
 [NumPy]: http://www.numpy.org/
 [Quicks]: https://github.com/DennisMitchell/jelly/wiki/Quicks
 [SymPy]: http://www.sympy.org/
+[Syntax]: https://github.com/DennisMitchell/jelly/wiki/Syntax
 [Try it online!]: http://tryitonline.net
 [Tutorial]: https://github.com/DennisMitchell/jelly/wiki/Tutorial
