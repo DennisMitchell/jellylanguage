@@ -186,12 +186,13 @@ def equal(array):
 	return int(all(item == array[0] for item in array))
 
 def extremes(min_or_max, link, array):
-	array = iterable(array, make_range=True)
-	if not array:
+	x,y = array
+	x = iterable(x, make_range=True)
+	if not x:
 		return []
-	results = [monadic_link(link, x) for x in array]
+	results = [variadic_link(link, (t, y)) for t in x]
 	best = min_or_max(results)
-	return [x for x, fx in zip(array, results) if fx == best]
+	return [t for t, ft in zip(x, results) if ft == best]
 
 def flatten(argument):
 	flat = []
@@ -2445,15 +2446,15 @@ quicks = {
 	'ÐṂ': attrdict(
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: extremes(min, links[0], z)
+			arity = links[0].arity,
+			call = lambda x, y = None: extremes(min, links[0], (x, y))
 		)]
 	),
 	'ÐṀ': attrdict(
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: extremes(max, links[0], z)
+			arity = links[0].arity,
+			call = lambda x, y = None: extremes(max, links[0], (x, y))
 		)]
 	),
 }
@@ -2484,8 +2485,8 @@ hypers = {
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
 	'Þ': lambda link, none = None: attrdict(
-		arity = 1,
-		call = lambda x: sorted(x, key=lambda t: monadic_link(link, t))
+		arity = link.arity,
+		call = lambda x, y = None: sorted(x, key=lambda t: variadic_link(link, (t, y)))
 	),
 	'þ': lambda link, none = None: attrdict(
 		arity = 2,
