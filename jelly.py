@@ -46,11 +46,11 @@ def carmichael(n):
         c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
     return c
 
-def create_chain(chain, arity = -1):
+def create_chain(chain, arity = -1, isForward = True):
 	return attrdict(
 		arity = arity,
 		chain = chain,
-		call = lambda x = None, y = None: variadic_chain(chain, (x, y))
+		call = lambda x = None, y = None: variadic_chain(chain, isForward and (x, y) or (y, x))
 	)
 
 def create_literal(string):
@@ -593,7 +593,7 @@ def parse_code(code):
 		chains = links[index]
 		for word in regex_chain.findall(line):
 			chain = []
-			arity = str_arities.find(word[0])
+			arity, isForward = chain_separators.get(word[0], default_chain_separation)
 			for token in regex_token.findall(word):
 				if token in atoms:
 					chain.append(atoms[token])
@@ -607,7 +607,7 @@ def parse_code(code):
 					chain.append(hypers[token](x, links))
 				else:
 					chain.append(create_literal(regex_liter.sub(parse_literal, token)))
-			chains.append(create_chain(chain, arity))
+			chains.append(create_chain(chain, arity, isForward))
 	return links
 
 def parse_literal(literal_match):
@@ -2510,7 +2510,9 @@ hypers = {
 	)
 }
 
-str_arities = 'øµð'
+chain_separators = {'ø': (0, True), 'µ': (1, True), 'ð': (2, True), 'ɓ': (2, False)}
+default_chain_separation = (-1, True)
+str_arities = ''.join(chain_separators.keys())
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
 str_chrpair = '⁾..'
