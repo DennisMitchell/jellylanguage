@@ -633,6 +633,9 @@ def parse_literal(literal_match):
 			parsed = [[string] if len(string) == 1 else string for string in parsed]
 		if len(parsed) == 1:
 			parsed = parsed[0]
+	elif literal[0] == '⁽':
+		parsed = from_base([code_page.find(char) + 1 for char in literal[1:]], 250)
+		parsed += parsed > 31500 and -62850 or 750
 	else:
 		parsed = eval('+ 1j *'.join([
 			repr(eval('* 10 **'.join(['-1' if part == '-' else (part + '5' if part[-1:] == '.' else part) or repr(2 * index + 1)
@@ -2516,10 +2519,11 @@ str_arities = ''.join(chain_separators.keys())
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
 str_chrpair = '⁾..'
+str_intpair = '⁽..'
 str_realdec = '(?:0|-?\d*\.\d*|-?\d+|-)'
 str_realnum = str_realdec.join(['(?:', '?ȷ', '?|', ')'])
 str_complex = str_realnum.join(['(?:', '?ı', '?|', ')'])
-str_literal = '(?:%s)' % '|'.join([str_strings, str_charlit, str_chrpair, str_complex])
+str_literal = '(?:%s)' % '|'.join([str_strings, str_charlit, str_chrpair, str_complex, str_intpair])
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
 str_nonlits = '|'.join(map(re.escape, list(atoms) + list(quicks) + list(hypers)))
 
