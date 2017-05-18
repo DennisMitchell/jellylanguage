@@ -1,4 +1,4 @@
-import cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time
+import cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time, urllib.request
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -248,6 +248,15 @@ def simplest_number(number):
 	if number % 1:
 		return float(number)
 	return int(number)
+
+def get_request(url):
+	url = ''.join(map(str, url))
+	url = (re.match(r"[A-Za-z][A-Za-z0-9+.-]*://", url) == None and "http://" or "") + url
+	response = urllib.request.urlopen(url).read()
+	try:
+		return response.decode('utf-8')
+	except:
+		return response.decode('latin-1')
 
 def grid(array):
 	if depth(array) == 1:
@@ -1993,6 +2002,11 @@ atoms = {
 	'ŒḊ': attrdict(
 		arity = 1,
 		call = depth
+	),
+	'ŒG': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = get_request
 	),
 	'Œg': attrdict(
 		arity = 1,
