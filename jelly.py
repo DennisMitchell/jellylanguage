@@ -613,7 +613,7 @@ def parse_code(code):
 def parse_literal(literal_match):
 	literal = literal_match.group(0)
 	if literal[0] in '”⁾':
-		return repr(literal[1:])
+		return repr(literal[1:].replace('¶', '\n'))
 	elif literal[0] == '“':
 		if literal[-1] in '«»‘’”':
 			mode = literal[-1]
