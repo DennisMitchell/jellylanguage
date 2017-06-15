@@ -721,6 +721,12 @@ def powerset(array):
 		ret += listify(itertools.combinations(array, t))
 	return ret
 
+def primerange(start, end):
+	if start > end:
+		return list(sympy.primerange(end, start + 1))[::-1]
+	else:
+		return list(sympy.primerange(start, end + 1))
+
 def python_eval(string, dirty = True):
 	try:
 		return listify(eval(string), dirty)
@@ -1579,6 +1585,10 @@ atoms = {
 		arity = 1,
 		call = lambda z: listify(split_at(iterable(z), '\n'))
 	),
+	'Ẏ': attrdict(
+		arity = 1,
+		call = lambda z: sum(map(iterable, iterable(z)), [])
+	),
 	'y': attrdict(
 		arity = 2,
 		call = translate
@@ -2116,7 +2126,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = lambda x, y: list(sympy.primerange(x, y + 1))
+		call = primerange
 	),
 	'æċ': attrdict(
 		arity = 2,
