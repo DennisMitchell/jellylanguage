@@ -111,6 +111,13 @@ def diagonals(matrix):
 		shifted[~index] = index * [None] + row
 	return rotate_left(zip_ragged(shifted), len(matrix) - 1)
 
+def distinct_sieve(array):
+	array = iterable(array, make_digits = True)
+	result = []
+	for (i, x) in enumerate(array):
+		result.append(1 if i == array.index(x) else 0)
+	return result
+
 def dot_product(left, right):
 	left, right = iterable(left), iterable(right)
 	if complex in map(type, left + right):
@@ -2039,6 +2046,10 @@ atoms = {
 	'Œp': attrdict(
 		arity = 1,
 		call = lambda z: listify(itertools.product(*[iterable(t, make_range = True) for t in z]))
+	),
+	'ŒQ': attrdict(
+		arity = 1,
+		call = distinct_sieve
 	),
 	'ŒR': attrdict(
 		arity = 1,
