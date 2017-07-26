@@ -59,10 +59,6 @@ def create_literal(string):
 		call = lambda: python_eval(string, False)
 	)
 
-def copy_to(atom, value):
-	atom.call = lambda: value
-	return value
-
 def conv_dyadic_integer(link, larg, rarg):
 	try:
 		iconv_larg = int(larg)
@@ -82,6 +78,18 @@ def conv_monadic_integer(link, arg):
 		return link(int(arg))
 	except:
 		return 0
+
+def convolve(left, right):
+	left, right = iterable(left, make_range = True), iterable(right, make_range = True)
+	result = [0]*(len(left)+len(right)-1)
+	for i,x in enumerate(left):
+		for j,y in enumerate(right):
+			result[i+j] += x*y
+	return result
+
+def copy_to(atom, value):
+	atom.call = lambda: value
+	return value
 
 def determinant(matrix):
 	matrix = sympy.Matrix(matrix)
@@ -2138,6 +2146,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = primerange
+	),
+	'æc': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 1,
+		call = convolve
 	),
 	'æċ': attrdict(
 		arity = 2,
