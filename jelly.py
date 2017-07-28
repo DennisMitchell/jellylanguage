@@ -1346,7 +1346,7 @@ atoms = {
 	'Ḷ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: list(range(z))
+		call = lambda z: list(range(int(z)))
 	),
 	'l': attrdict(
 		arity = 2,
