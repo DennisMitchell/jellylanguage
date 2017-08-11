@@ -389,7 +389,7 @@ def leading_constant(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
 def listify(element, dirty = False):
-	if element == None:
+	if element is None:
 		return []
 	if type(element) == str and dirty:
 		return list(element)
