@@ -1901,7 +1901,7 @@ atoms = {
 	'Æṛ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: listify(numpy.poly(z))[::-1]
+		call = lambda z: iterable(listify(numpy.poly(z)))[::-1]
 	),
 	'ÆT': attrdict(
 		arity = 1,
