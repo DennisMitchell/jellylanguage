@@ -1,4 +1,4 @@
-import cmath, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time, urllib.request
+import cmath, collections, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time, urllib.request
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -444,6 +444,25 @@ def max_arity(links):
 def maximal_indices(iterable):
 	maximum = max(iterable)
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
+
+def median(array):
+	array = sorted(array)
+	return div(array[(len(array) - 1) // 2] + array[len(array) // 2], 2)
+
+def mode(array):
+	frequencies = collections.defaultdict(lambda: 0)
+	maxfreq = 0
+	retval = []
+	for element in array:
+		string = repr(element)
+		frequencies[string] += 1
+		maxfreq = max(frequencies[string], maxfreq)
+	for element in array:
+		string = repr(element)
+		if frequencies[string] == maxfreq:
+			retval.append(element)
+			frequencies[string] = 0
+	return retval
 
 def modinv(a, m):
     i, _, g = sympy.numbers.igcdex(a, m)
@@ -1907,6 +1926,21 @@ atoms = {
 		arity = 1,
 		ldepth = 0,
 		call = lambda z: overload((math.log, cmath.log), z)
+	),
+	'Æm': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: div(sum(z), len(z))
+	),
+	'Æṁ': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = median
+	),
+	'Æṃ': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = mode
 	),
 	'ÆN': attrdict(
 		arity = 1,
