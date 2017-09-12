@@ -3,7 +3,7 @@ import cmath, collections, copy, dictionary, fractions, functools, itertools, lo
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƬƲȤɗƒɦɱɲƥʠɼʂƭʋȥẈẒŻẹḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƬƲȤɗƒɦɱɲƥʠɼʂʋȥẈẒŻẹḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -972,6 +972,18 @@ def suffix(links, outmost_links, index):
 def symmetric_mod(number, half_divisor):
 	modulus = number % (2 * half_divisor)
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
+
+def tie(links, outmost_links, index):
+	ret = [attrdict(arity=2 if max(link.arity for link in links) == 2 else 1)]
+	n = 2 if links[-1].arity else links[-1].call()
+	def _make_tie():
+		i = 0
+		while True:
+			yield links[i]
+			i = (i + 1) % n
+	cycle = _make_tie()
+	ret[0].call = lambda x = None, y = None: variadic_link(next(cycle), (x, y))
+	return ret
 
 def time_format(bitfield):
 	time_string = ':'.join(['%H'] * (bitfield & 4 > 0) + ['%M'] * (bitfield & 2 > 0) + ['%S'] * (bitfield & 1 > 0))
@@ -2517,6 +2529,12 @@ quicks = {
 			arity = 2,
 			call = lambda x, y: [monadic_link(links[0], g) for g in split_key(iterable(x, make_digits = True), iterable(y, make_digits = True))]
 		)]
+	),
+	'ƭ': attrdict(
+		condition = lambda links: links and (
+			(links[-1].arity == 0 and len(links) - 1 == links[-1].call()) or
+			(links[-1].arity and len(links) == 2)),
+		quicklink = tie
 	),
 	'¤': attrdict(
 		condition = lambda links: len(links) > 1 and links[0].arity == 0,
