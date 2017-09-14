@@ -620,6 +620,13 @@ def overload(operators, *args):
 		else:
 			return ret
 
+def integer_partitions(n, I=1):
+	result = [[n,]]
+	for i in range(I, n//2 + 1):
+		for p in integer_partitions(n-i, i):
+			result.append([i,] + p)
+	return result
+
 def partitions(array):
 	array = iterable(array, make_digits = True)
 	ret = []
@@ -2157,6 +2164,11 @@ atoms = {
 	'ŒṖ': attrdict(
 		arity = 1,
 		call = partitions
+	),
+	'Œṗ': attrdict(
+		arity = 1,
+		ldepth = 0,
+		call = lambda z: sorted(integer_partitions(z), key = len, reverse = True)
 	),
 	'Œp': attrdict(
 		arity = 1,
