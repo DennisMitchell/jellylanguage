@@ -293,12 +293,15 @@ def group(array):
 	array = iterable(array, make_digits = True)
 	grouped = {}
 	for index, item in enumerate(array):
-		item = repr(item) if type(item) == list else item
+		item = repr(item)
 		if item in grouped:
 			grouped[item].append(index + 1)
 		else:
 			grouped[item] = [index + 1]
-	return [grouped[key] for key in sorted(grouped)]
+	try:
+		return [grouped[key] for key in sorted(grouped, key = eval)]
+	except TypeError:
+		return [grouped[key] for key in sorted(grouped)]
 
 def group_equal(array):
 	array = iterable(array, make_digits = True)
