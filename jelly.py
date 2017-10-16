@@ -1,4 +1,4 @@
-import cmath, collections, copy, dictionary, fractions, functools, itertools, locale, math, numpy, operator, parser, random, re, sympy, sys, time, urllib.request
+import cmath, copy, functools, itertools, locale, math, operator, re, sys, time
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
@@ -43,7 +43,7 @@ def carmichael(n):
     if n < 1:
         return 0
     c = 1
-    for p, k in sympy.ntheory.factor_.factorint(n).items():
+    for p, k in __import__('sympy').ntheory.factor_.factorint(n).items():
         c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
     return c
 
@@ -93,7 +93,7 @@ def copy_to(atom, value):
 	return value
 
 def determinant(matrix):
-	matrix = sympy.Matrix(matrix)
+	matrix = __import__('sympy').Matrix(matrix)
 	if matrix.is_square:
 		return simplest_number(matrix.det())
 	return simplest_number(math.sqrt((matrix * matrix.transpose()).det()))
@@ -241,7 +241,7 @@ def from_diagonals(diagonals):
 def from_exponents(exponents):
 	integer = 1
 	for index, exponent in enumerate(exponents):
-		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
+		integer *= __import__('sympy').ntheory.generate.prime(index + 1) ** exponent
 	return integer
 
 def from_factorial_base(digits):
@@ -255,7 +255,7 @@ def from_factorial_base(digits):
 def from_primorial_base(digits):
 	integer = digits and digits[-1] or 0
 	for placeIndex, digit in enumerate(digits[-2::-1], 1):
-		integer += digit * sympy.ntheory.generate.primorial(placeIndex)
+		integer += digit * __import__('sympy').ntheory.generate.primorial(placeIndex)
 	return integer
 
 def simplest_number(number):
@@ -268,7 +268,7 @@ def simplest_number(number):
 def get_request(url):
 	url = ''.join(map(str, url))
 	url = (re.match(r"[A-Za-z][A-Za-z0-9+.-]*://", url) == None and "http://" or "") + url
-	response = urllib.request.urlopen(url).read()
+	response = __import__('urllib.request').request.urlopen(url).read()
 	try:
 		return response.decode('utf-8')
 	except:
@@ -399,19 +399,10 @@ def listify(element, dirty = False):
 		return list(element)
 	if type(element) in (int, float, complex) or (type(element) == str and len(element) == 1):
 		return element
-	if type(element) == numpy.int64:
-		return int(element)
-	if type(element) == numpy.float64:
-		return float(element) if element % 1 else int(element)
-	if type(element) == numpy.complex128:
-		return complex(element)
-	try:
-		return [listify(item, dirty) for item in element]
-	except:
-		return element
+	return [listify(item, dirty) for item in element]
 
 def lcm(x, y):
-	return x * y // (fractions.gcd(x, y) or 1)
+	return x * y // (math.gcd(x, y) or 1)
 
 def loop_until_loop(link, args, return_all = False, return_loop = False):
 	ret, rarg = args
@@ -454,7 +445,7 @@ def median(array):
 	return div(array[(len(array) - 1) // 2] + array[len(array) // 2], 2)
 
 def mode(array):
-	frequencies = collections.defaultdict(lambda: 0)
+	frequencies = __import__('collections').defaultdict(lambda: 0)
 	maxfreq = 0
 	retval = []
 	for element in array:
@@ -469,7 +460,7 @@ def mode(array):
 	return retval
 
 def modinv(a, m):
-    i, _, g = sympy.numbers.igcdex(a, m)
+    i, _, g = __import__('sympy').numbers.igcdex(a, m)
     return i % m if g == 1 else 0
 
 def modulus(dividend, divisor):
@@ -780,9 +771,9 @@ def prefix(links, outmost_links, index):
 
 def primerange(start, end):
 	if start > end:
-		return list(sympy.primerange(end, start + 1))[::-1]
+		return list(__import__('sympy').primerange(end, start + 1))[::-1]
 	else:
-		return list(sympy.primerange(start, end + 1))
+		return list(__import__('sympy').primerange(start, end + 1))
 
 def python_eval(string, dirty = True):
 	try:
@@ -795,9 +786,8 @@ def random_int(pool):
 	if not pool:
 		return 0
 	if type(pool) == list:
-		return random.choice(pool)
-	return random.randint(1, pool)
-
+		return __import__('random').choice(pool)
+	return __import__('random').randint(1, pool)
 
 def reduce(links, outmost_links, index):
 	ret = [attrdict(arity = 1)]
@@ -842,7 +832,7 @@ def shift_right(number, bits):
 
 def shuffle(array):
 	array = iterable(array, make_copy = True, make_range = True)
-	random.shuffle(array)
+	__import__('random').shuffle(array)
 	return array
 
 def sparse(link, args, indices):
@@ -947,7 +937,7 @@ def sss(compressed):
 				flag_swap = flag != 1
 				flag_space ^= flag != 0
 			integer, short = divmod(integer, 2)
-			the_dictionary = (dictionary.long, dictionary.short)[short]
+			the_dictionary = (__import__('dictionary').long, __import__('dictionary').short)[short]
 			integer, index = divmod(integer, len(the_dictionary))
 			word = the_dictionary[index]
 			if flag_swap:
@@ -1073,9 +1063,9 @@ def to_case(argument, lower = False, swap = False, title = False, upper = False)
 def to_exponents(integer):
 	if integer == 1:
 		return []
-	pairs = sympy.ntheory.factor_.factorint(integer)
+	pairs = __import__('sympy').ntheory.factor_.factorint(integer)
 	exponents = []
-	for prime in sympy.ntheory.generate.primerange(2, max(pairs) + 1):
+	for prime in __import__('sympy').ntheory.generate.primerange(2, max(pairs) + 1):
 		if prime in pairs:
 			exponents.append(pairs[prime])
 		else:
@@ -1097,7 +1087,7 @@ def to_primorial_base(integer):
 	digits = [remainder]
 	while integer:
 		placeIndex += 1
-		integer, remainder = divmod(integer, sympy.ntheory.generate.prime(placeIndex))
+		integer, remainder = divmod(integer, __import__('sympy').ntheory.generate.prime(placeIndex))
 		digits.append(remainder)
 	return digits[::-1]
 
@@ -1372,7 +1362,7 @@ atoms = {
 		arity = 2,
 		ldepth = 0,
 		rdepth = 0,
-		call = fractions.gcd
+		call = math.gcd
 	),
 	'Ɠ': attrdict(
 		arity = 0,
@@ -1893,12 +1883,12 @@ atoms = {
 	'ÆC': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.generate.primepi
+		call = lambda z: __import__('sympy').ntheory.generate.primepi(z)
 	),
 	'ÆĊ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.functions.combinatorial.numbers.catalan(z))
+		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.catalan(z))
 	),
 	'Æc': attrdict(
 		arity = 1,
@@ -1908,22 +1898,22 @@ atoms = {
 	'ÆD': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.factor_.divisors
+		call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)
 	),
 	'ÆḌ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: sympy.ntheory.factor_.divisors(z)[:-1]
+        call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)[:-1]
 	),
 	'Æd': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.ntheory.factor_.divisor_count(z))
+		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z))
 	),
 	'Æḍ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: int(sympy.ntheory.factor_.divisor_count(z) - 1)
+        call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z) - 1)
 	),
 	'ÆḊ': attrdict(
 		arity = 1,
@@ -1943,7 +1933,7 @@ atoms = {
 	'ÆF': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: [[x, y] for x, y in sorted(sympy.ntheory.factor_.factorint(z).items())]
+		call = lambda z: [[x, y] for x, y in sorted(__import__('sympy').ntheory.factor_.factorint(z).items())]
 	),
 	'Æe': attrdict(
 		arity = 1,
@@ -1953,17 +1943,17 @@ atoms = {
 	'Æf': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: rld(sorted(sympy.ntheory.factor_.factorint(z).items()))
+		call = lambda z: rld(sorted(__import__('sympy').ntheory.factor_.factorint(z).items()))
 	),
 	'ÆḞ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.functions.combinatorial.numbers.fibonacci(z))
+		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.fibonacci(z))
 	),
 	'ÆĿ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.functions.combinatorial.numbers.lucas(z))
+		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.lucas(z))
 	),
 	'Æl': attrdict(
 		arity = 1,
@@ -1988,37 +1978,37 @@ atoms = {
 	'ÆN': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.generate.prime
+		call = lambda z: __import__('sympy').ntheory.generate.prime(z)
 	),
 	'Æn': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.generate.nextprime
+		call = lambda z: __import__('sympy').ntheory.generate.nextprime(z)
 	),
 	'ÆP': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.primetest.isprime(z))
+		call = lambda z: int(__import__('sympy').primetest.isprime(z))
 	),
 	'Æp': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = sympy.ntheory.generate.prevprime
+		call = lambda z: __import__('sympy').ntheory.generate.prevprime(z)
 	),
 	'ÆR': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
+		call = lambda z: list(__import__('sympy').ntheory.generate.primerange(2, z + 1))
 	),
 	'Ær': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: listify(numpy.roots(z[::-1]))
+		call = lambda z: __import__('numpy').roots(z[::-1]).tolist()
 	),
 	'Æṛ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: iterable(listify(numpy.poly(z)))[::-1]
+		call = lambda z: iterable(__import__('numpy').poly(z).tolist())[::-1]
 	),
 	'ÆT': attrdict(
 		arity = 1,
@@ -2033,7 +2023,7 @@ atoms = {
 	'ÆṪ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: sympy.ntheory.factor_.totient(z) if z > 0 else 0
+		call = lambda z: __import__('sympy').ntheory.factor_.totient(z) if z > 0 else 0
 	),
 	'ÆS': attrdict(
 		arity = 1,
@@ -2048,17 +2038,17 @@ atoms = {
 	'Æs': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z))
+		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z))
 	),
 	'Æṣ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z) - z)
+        call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z) - z)
 	),
 	'Æv': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: len(sympy.ntheory.factor_.factorint(z))
+		call = lambda z: len(__import__('sympy').ntheory.factor_.factorint(z))
 	),
 	'Æ²': attrdict(
 		arity = 1,
@@ -2249,13 +2239,13 @@ atoms = {
 		arity = 2,
 		ldepth = 2,
 		rdepth = 0,
-		call = lambda x, y: matrix_to_list((sympy.Matrix(x) ** y))
+		call = lambda x, y: matrix_to_list((__import__('sympy').Matrix(x) ** y))
 	),
 	'æ×': attrdict(
 		arity = 2,
 		ldepth = 2,
 		rdepth = 2,
-		call = lambda x, y: matrix_to_list((sympy.Matrix(x) * sympy.Matrix(y)))
+		call = lambda x, y: matrix_to_list((__import__('sympy').Matrix(x) * __import__('sympy').Matrix(y)))
 	),
 	'æA': attrdict(
 		arity = 2,
