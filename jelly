@@ -65,4 +65,9 @@ args = list(map(jelly.try_eval, jelly.sys.argv[3:]))
 for index in range(min(7, len(args))):
 	jelly.atoms['³⁴⁵⁶⁷⁸⁹'[index]].call = lambda literal = args[index]: literal
 
-jelly.output(jelly.jelly_eval(code, args[:2]), end)
+try:
+	jelly.output(jelly.jelly_eval(code, args[:2]), end)
+except KeyboardInterrupt:
+	if jelly.sys.stderr.isatty():
+		jelly.sys.stderr.write('\n')
+	raise SystemExit(130)
