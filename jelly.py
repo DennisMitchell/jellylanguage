@@ -210,6 +210,10 @@ def extremes(min_or_max, link, array):
 	best = min_or_max(results)
 	return [t for t, ft in zip(x, results) if ft == best]
 
+def filter_array(sand, mesh, is_in = True):
+	mesh = {repr(element) for element in iterable(mesh)}
+	return [element for element in iterable(sand) if (repr(element) in mesh) == is_in]
+
 def flatten(argument):
 	flat = []
 	if type(argument) == list:
@@ -1344,11 +1348,11 @@ atoms = {
 	),
 	'f': attrdict(
 		arity = 2,
-		call = lambda x, y: [t for t in iterable(x) if t in iterable(y)]
+		call = filter_array
 	),
 	'ḟ': attrdict(
 		arity = 2,
-		call = lambda x, y: [t for t in iterable(x) if not t in iterable(y)]
+		call = lambda x, y: filter_array(x, y, False)
 	),
 	'G': attrdict(
 		arity = 1,
