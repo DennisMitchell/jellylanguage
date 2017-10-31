@@ -486,6 +486,7 @@ def mold(content, shape):
 def monadic_chain(chain, arg):
 	init = True
 	ret = arg
+	larg_save = atoms['⁸'].call
 	while True:
 		if init:
 			for link in chain:
@@ -522,6 +523,7 @@ def monadic_chain(chain, arg):
 			output(ret)
 			ret = niladic_link(chain[0])
 			chain = chain[1:]
+	atoms['⁸'].call = larg_save
 	return ret
 
 def monadic_link(link, arg, flat = False, conv = True):
@@ -1108,21 +1110,19 @@ def unique(array):
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
+	larg_save = atoms['⁸'].call
+	rarg_save = atoms['⁹'].call
 	if len(args) == 0:
 		return niladic_chain(chain)
 	if len(args) == 1:
-		larg_save = atoms['⁸'].call
 		atoms['⁸'].call = lambda literal = args[0]: literal
 		ret = monadic_chain(chain, args[0])
-		atoms['⁸'].call = larg_save
 	if len(args) == 2:
-		larg_save = atoms['⁸'].call
 		atoms['⁸'].call = lambda literal = args[0]: literal
-		rarg_save = atoms['⁹'].call
 		atoms['⁹'].call = lambda literal = args[1]: literal
 		ret = dyadic_chain(chain, args)
-		atoms['⁸'].call = larg_save
-		atoms['⁹'].call = rarg_save
+	atoms['⁸'].call = larg_save
+	atoms['⁹'].call = rarg_save
 	return ret
 
 def variadic_link(link, args, flat = False, lflat = False, rflat = False):
