@@ -768,11 +768,7 @@ def prefix(links, outmost_links, index):
 	if len(links) == 1:
 		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_prefix(z)]
 	else:
-		width = links[1].call()
-		if width < 0:
-			ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_rolling_out(z, abs(width))]
-		else:
-			ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_rolling(z, width)]
+		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_rolling(z, niladic_link(links[1]))]
 	return ret
 
 def primerange(start, end):
@@ -883,6 +879,8 @@ def split_evenly(array, chunks):
 	return ret
 
 def split_fixed(array, width):
+	if width < 0:
+		return split_fixed_out(array, -width)
 	array = iterable(array)
 	return [array[index : index + width] for index in range(0, len(array), width)]
 
@@ -916,6 +914,8 @@ def split_prefix(array):
 	return [array[:index + 1] for index in range(len(array))]
 
 def split_rolling(array, width):
+	if width < 0:
+		return split_rolling_out(array, -width)
 	array = iterable(array)
 	return [array[index : index + width] for index in range(len(array) - width + 1)]
 
@@ -968,11 +968,7 @@ def suffix(links, outmost_links, index):
 	if len(links) == 1:
 		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_suffix(z)]
 	else:
-		width = links[1].call()
-		if width < 0:
-			ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_fixed_out(z, abs(width))]
-		else:
-			ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_fixed(z, width)]
+		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_fixed(z, niladic_link(links[1]))]
 	return ret
 
 def symmetric_mod(number, half_divisor):
