@@ -3,7 +3,7 @@ import cmath, copy, functools, itertools, locale, math, operator, re, sys, time
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused letters for single atoms: kquƁƇƊƑƘⱮƝƬƲȤɗƒɦɱɲƥʠɼʂʋȥẈẒŻẹḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused letters for single atoms: kquƁƇƊƑƘⱮƬƲȤɗƒɦɱɲƥʠɼʂʋȥẈẒŻẹḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -626,6 +626,11 @@ def integer_partitions(n, I=1):
 		for p in integer_partitions(n-i, i):
 			result.append([i,] + p)
 	return result
+
+def neighbors(links, array):
+	array = iterable(array, make_digits = True)
+	chain = dyadic_chain if links[-1].arity == 2 else monadic_chain
+	return [chain(links, list(pair)) for pair in zip(array, array[1:])]
 
 def partitions(array):
 	array = iterable(array, make_digits = True)
@@ -2519,6 +2524,13 @@ quicks = {
 	'\\': attrdict(
 		condition = lambda links: links and links[0].arity,
 		quicklink = reduce_cumulative
+	),
+	'Ɲ': attrdict(
+		condition = lambda links: links and not leading_constant(links),
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: neighbors(links, z)
+		)]
 	),
 	'Ƥ': attrdict(
 		condition = lambda links: links and links[0].arity,
