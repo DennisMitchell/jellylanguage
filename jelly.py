@@ -2691,7 +2691,7 @@ hypers = {
 	),
 	'Þ': lambda link, none = None: attrdict(
 		arity = link.arity,
-		call = lambda x, y = None: sorted(x, key=lambda t: variadic_link(link, (t, y)))
+		call = lambda x, y = None: sorted(iterable(x, make_range = True), key=lambda t: variadic_link(link, (t, y)))
 	),
 	'þ': lambda link, none = None: attrdict(
 		arity = 2,
