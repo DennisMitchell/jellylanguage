@@ -31,6 +31,12 @@ def at_index(index, array):
 		return array[low_index % len(array)]
 	return [array[low_index % len(array)], array[high_index % len(array)]]
 
+def at_index_ndim(indices, array):
+	retval = array
+	for index in indices:
+		retval = at_index(index, retval)
+	return retval
+
 def base_decompression(integer, digits):
 	digits = iterable(digits, make_range=True)
 	return [digits[i-1] for i in to_base(integer, len(digits))]
@@ -2153,6 +2159,11 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = group_equal
+	),
+	'œị': attrdict(
+		arity = 2,
+		ldepth = 1,
+		call = at_index_ndim
 	),
 	'Œl': attrdict(
 		arity = 1,
