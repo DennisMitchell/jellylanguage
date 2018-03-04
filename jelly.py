@@ -378,7 +378,7 @@ def jelly_uneval(argument, top = True):
 		string = ''.join(argument)
 		if all(map(lambda t: code_page.find(t) < 250, string)):
 			return '“' + string + '”'
-	middle = list(','.join(jelly_uneval(item, top = False) for item in argument))
+	middle = ','.join(jelly_uneval(item, top = False) for item in argument)
 	return middle if top else '[' + middle + ']'
 
 def jelly_uneval_real(number):
