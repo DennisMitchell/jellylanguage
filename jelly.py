@@ -3,7 +3,7 @@ import cmath, copy, functools, itertools, locale, math, operator, re, sys, time
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused letters for single atoms: kquƁƇƊƑƘⱮƬƲȤɗƒɦɱɲƥʠɼʂʋȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: ()kquƁƇƑƘⱮƬȤƒɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -2569,21 +2569,49 @@ quicks = {
 		quicklink = tie
 	),
 	'¤': attrdict(
-		condition = lambda links: len(links) > 1 and links[0].arity == 0,
+		condition = lambda links: len(links) >= 2 and links[0].arity == 0,
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 0,
 			call = lambda: niladic_chain(links)
 		)]
 	),
 	'$': attrdict(
-		condition = lambda links: len(links) > 1 and not leading_constant(links),
+		condition = lambda links: len(links) >= 2 and not leading_constant(links),
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 1,
 			call = lambda z: monadic_chain(links, z)
 		)]
 	),
 	'¥': attrdict(
-		condition = lambda links: len(links) > 1 and not leading_constant(links),
+		condition = lambda links: len(links) >= 2 and not leading_constant(links),
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 2,
+			call = lambda x, y: dyadic_chain(links, (x, y))
+		)]
+	),
+	'Ɗ': attrdict(
+		condition = lambda links: len(links) >= 3 and not leading_constant(links),
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: monadic_chain(links, z)
+		)]
+	),
+	'ɗ': attrdict(
+		condition = lambda links: len(links) >= 3 and not leading_constant(links),
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 2,
+			call = lambda x, y: dyadic_chain(links, (x, y))
+		)]
+	),
+	'Ʋ': attrdict(
+		condition = lambda links: len(links) >= 4 and not leading_constant(links),
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = 1,
+			call = lambda z: monadic_chain(links, z)
+		)]
+	),
+	'ʋ': attrdict(
+		condition = lambda links: len(links) >= 4 and not leading_constant(links),
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 2,
 			call = lambda x, y: dyadic_chain(links, (x, y))
