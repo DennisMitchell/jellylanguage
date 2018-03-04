@@ -152,13 +152,13 @@ def dyadic_chain(chain, args):
 	if chain and arities(chain[0:3]) == [2, 2, 2]:
 		ret = dyadic_link(chain[0], args)
 		chain = chain[1:]
-	elif leading_constant(chain):
+	elif leading_nilad(chain):
 		ret = niladic_link(chain[0])
 		chain = chain[1:]
 	else:
 		ret = larg
 	while chain:
-		if arities(chain[0:3]) == [2, 2, 0] and leading_constant(chain[2:]):
+		if arities(chain[0:3]) == [2, 2, 0] and leading_nilad(chain[2:]):
 			ret = dyadic_link(chain[1], (dyadic_link(chain[0], (ret, rarg)), niladic_link(chain[2])))
 			chain = chain[3:]
 		elif arities(chain[0:2]) == [2, 2]:
@@ -399,7 +399,7 @@ def last_input():
 		return python_eval(sys.argv[-1])
 	return python_eval(input())
 
-def leading_constant(chain):
+def leading_nilad(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
 
 def listify(element, dirty = False):
@@ -498,7 +498,7 @@ def monadic_chain(chain, arg):
 			for link in chain:
 				if link.arity < 0:
 					link.arity = 1
-			if leading_constant(chain):
+			if leading_nilad(chain):
 				ret = niladic_link(chain[0])
 				chain = chain[1:]
 			init = False
@@ -794,6 +794,19 @@ def python_eval(string, dirty = True):
 	except SyntaxError:
 		exec(string)
 		return []
+
+def quickchain(arity, min_length):
+	return attrdict(
+		condition =
+			(lambda links: len(links) >= min_length and links[0].arity == 0)
+			if arity == 0 else
+			lambda links:
+				len(links) - sum(map(leading_nilad, split_suffix(links)[:-1])) >= min_length,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = arity,
+			call = lambda x = None, y = None: variadic_chain(links, (x, y))
+		)]
+	)
 
 def random_int(pool):
 	if not pool:
@@ -2541,7 +2554,7 @@ quicks = {
 		quicklink = reduce_cumulative
 	),
 	'Ɲ': attrdict(
-		condition = lambda links: links and not leading_constant(links),
+		condition = lambda links: links and not leading_nilad(links),
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 1,
 			call = lambda z: neighbors(links, z)
@@ -2568,55 +2581,13 @@ quicks = {
 			(links[-1].arity and len(links) == 2)),
 		quicklink = tie
 	),
-	'¤': attrdict(
-		condition = lambda links: len(links) >= 2 and links[0].arity == 0,
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 0,
-			call = lambda: niladic_chain(links)
-		)]
-	),
-	'$': attrdict(
-		condition = lambda links: len(links) >= 2 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: monadic_chain(links, z)
-		)]
-	),
-	'¥': attrdict(
-		condition = lambda links: len(links) >= 2 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 2,
-			call = lambda x, y: dyadic_chain(links, (x, y))
-		)]
-	),
-	'Ɗ': attrdict(
-		condition = lambda links: len(links) >= 3 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: monadic_chain(links, z)
-		)]
-	),
-	'ɗ': attrdict(
-		condition = lambda links: len(links) >= 3 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 2,
-			call = lambda x, y: dyadic_chain(links, (x, y))
-		)]
-	),
-	'Ʋ': attrdict(
-		condition = lambda links: len(links) >= 4 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 1,
-			call = lambda z: monadic_chain(links, z)
-		)]
-	),
-	'ʋ': attrdict(
-		condition = lambda links: len(links) >= 4 and not leading_constant(links),
-		quicklink = lambda links, outmost_links, index: [attrdict(
-			arity = 2,
-			call = lambda x, y: dyadic_chain(links, (x, y))
-		)]
-	),
+	'¤': quickchain(0, 2),
+	'$': quickchain(1, 2),
+	'Ɗ': quickchain(1, 3),
+	'Ʋ': quickchain(1, 4),
+	'¥': quickchain(2, 2),
+	'ɗ': quickchain(2, 3),
+	'ʋ': quickchain(2, 4),
 	'#': attrdict(
 		condition = lambda links: len(links) == 2,
 		quicklink = lambda links, outmost_links, index: ([links.pop(0)] if len(links) == 2 and links[0].arity == 0 else []) + [attrdict(
