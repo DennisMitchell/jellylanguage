@@ -447,7 +447,7 @@ def max_arity(links):
 	return max(arities(links)) if min(arities(links)) > -1 else (~max(arities(links)) or -1)
 
 def maximal_indices(iterable):
-	maximum = max(iterable)
+	maximum = max(iterable or [0])
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
 
 def median(array):
