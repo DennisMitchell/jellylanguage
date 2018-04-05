@@ -2700,7 +2700,7 @@ hypers = {
 		call = lambda x, y: monadic_link(link, y)
 	),
 	'€': lambda link, none = None: attrdict(
-		arity = link.arity,
+		arity = max(1, link.arity),
 		call = lambda x, y = None: [variadic_link(link, (t, y)) for t in iterable(x, make_range = True)]
 	),
 	'Þ': lambda link, none = None: attrdict(
@@ -2712,7 +2712,7 @@ hypers = {
 		call = lambda x, y: [[dyadic_link(link, (u, v)) for u in iterable(x, make_range = True)] for v in iterable(y, make_range = True)]
 	),
 	'Ð€': lambda link, none = None: attrdict(
-		arity = link.arity,
+		arity = max(1, link.arity),
 		call = lambda x, y = None: [variadic_link(link, (x, t)) for t in iterable(y, make_range = True)]
 	),
 	'£': lambda index, links: attrdict(
