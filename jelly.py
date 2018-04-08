@@ -45,13 +45,13 @@ def bounce(array):
 	return array[:-1] + array[::-1]
 
 def carmichael(n):
-    n = int(n)
-    if n < 1:
-        return 0
-    c = 1
-    for p, k in __import__('sympy').ntheory.factor_.factorint(n).items():
-        c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
-    return c
+	n = int(n)
+	if n < 1:
+		return 0
+	c = 1
+	for p, k in __import__('sympy').ntheory.factor_.factorint(n).items():
+		c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
+	return c
 
 def create_chain(chain, arity = -1, isForward = True):
 	return attrdict(
@@ -470,8 +470,8 @@ def mode(array):
 	return retval
 
 def modinv(a, m):
-    i, _, g = __import__('sympy').numbers.igcdex(a, m)
-    return i % m if g == 1 else 0
+	i, _, g = __import__('sympy').numbers.igcdex(a, m)
+	return i % m if g == 1 else 0
 
 def modulus(dividend, divisor):
 	try:
@@ -1931,7 +1931,7 @@ atoms = {
 	'ÆḌ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)[:-1]
+		call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)[:-1]
 	),
 	'Æd': attrdict(
 		arity = 1,
@@ -1941,7 +1941,7 @@ atoms = {
 	'Æḍ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z) - 1)
+		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z) - 1)
 	),
 	'ÆḊ': attrdict(
 		arity = 1,
@@ -2071,7 +2071,7 @@ atoms = {
 	'Æṣ': attrdict(
 		arity = 1,
 		ldepth = 0,
-        call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z) - z)
+		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z) - z)
 	),
 	'Æv': attrdict(
 		arity = 1,

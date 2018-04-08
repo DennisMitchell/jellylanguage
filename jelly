@@ -34,7 +34,7 @@ usage = '''Usage:
 Visit http://github.com/DennisMitchell/jelly for more information.\n'''
 
 if len(jelly.sys.argv) < 3:
-    raise SystemExit(usage)
+	raise SystemExit(usage)
 
 for char in jelly.sys.argv[1]:
 	if char == 'f':
