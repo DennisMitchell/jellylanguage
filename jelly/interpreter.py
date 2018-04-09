@@ -952,6 +952,7 @@ def split_suffix(array):
 	return [array[index:] for index in range(len(array))]
 
 def sss(compressed):
+	from . import dictionary
 	decompressed = ''
 	integer = from_base([code_page.find(char) + 1 for char in compressed], 250)
 	while integer:
@@ -967,7 +968,7 @@ def sss(compressed):
 				flag_swap = flag != 1
 				flag_space ^= flag != 0
 			integer, short = divmod(integer, 2)
-			the_dictionary = (__import__('dictionary').long, __import__('dictionary').short)[short]
+			the_dictionary = (dictionary.long, dictionary.short)[short]
 			integer, index = divmod(integer, len(the_dictionary))
 			word = the_dictionary[index]
 			if flag_swap:

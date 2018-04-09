@@ -1,6 +1,13 @@
-#!/usr/bin/env python3
+#!python3
 
-import jelly
+if __package__ == '':
+	from os.path import dirname
+	from sys import path
+
+	path[0] = dirname(path[0])
+
+from jelly import code_page, main, try_eval
+from sys import argv
 
 flag_utf8 = False
 end = ''
@@ -31,12 +38,12 @@ usage = '''Usage:
     Append an `n` to the flag list to append a trailing newline to the
     program's output.
 
-Visit http://github.com/DennisMitchell/jelly for more information.\n'''
+Visit http://github.com/DennisMitchell/jellylanguage for more information.'''
 
-if len(jelly.sys.argv) < 3:
+if len(argv) < 3:
 	raise SystemExit(usage)
 
-for char in jelly.sys.argv[1]:
+for char in argv[1]:
 	if char == 'f':
 		flag_file = True
 	elif char == 'u':
@@ -47,27 +54,19 @@ for char in jelly.sys.argv[1]:
 		end = '\n'
 
 if flag_file:
-	with open(jelly.sys.argv[2], 'rb') as file:
+	with open(argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = ''.join(char for char in code.decode('utf-8').replace('\n', '¶') if char in jelly.code_page)
+		code = ''.join(char for char in code.decode('utf-8').replace('\n', '¶') if char in code_page)
 	else:
-		code = ''.join(jelly.code_page[i] for i in code)
+		code = ''.join(code_page[i] for i in code)
 else:
-	code = jelly.sys.argv[2]
+	code = argv[2]
 	if flag_utf8:
-		code = ''.join(char for char in code.replace('\n', '¶') if char in jelly.code_page)
+		code = ''.join(char for char in code.replace('\n', '¶') if char in code_page)
 	else:
-		code = ''.join(jelly.code_page[ord(i)] for i in code)
+		code = ''.join(code_page[ord(i)] for i in code)
 
-args = list(map(jelly.try_eval, jelly.sys.argv[3:]))
+args = list(map(try_eval, argv[3:]))
 
-for index in range(min(7, len(args))):
-	jelly.atoms['³⁴⁵⁶⁷⁸⁹'[index]].call = lambda literal = args[index]: literal
-
-try:
-	jelly.output(jelly.jelly_eval(code, args[:2]), end)
-except KeyboardInterrupt:
-	if jelly.sys.stderr.isatty():
-		jelly.sys.stderr.write('\n')
-	raise SystemExit(130)
+raise SystemExit(main(code, args, end))
