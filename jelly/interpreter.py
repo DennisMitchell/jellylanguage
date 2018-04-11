@@ -775,11 +775,11 @@ def powerset(array):
 	return ret
 
 def prefix(links, outmost_links, index):
-	ret = [attrdict(arity = 1)]
+	ret = [attrdict(arity = max(1, links[0].arity))]
 	if len(links) == 1:
-		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_prefix(z)]
+		ret[0].call = lambda x, y = None: [variadic_link(links[0], (t, y)) for t in split_prefix(x)]
 	else:
-		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_rolling(z, niladic_link(links[1]))]
+		ret[0].call = lambda z: [variadic_link(links[0], (t, y)) for t in split_rolling(x, niladic_link(links[1]))]
 	return ret
 
 def primerange(start, end):
@@ -989,11 +989,11 @@ def stringify(iterable, recurse = True):
 	return stringify(iterable, False) if recurse else iterable
 
 def suffix(links, outmost_links, index):
-	ret = [attrdict(arity = 1)]
+	ret = [attrdict(arity = max(1, links[0].arity))]
 	if len(links) == 1:
-		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_suffix(z)]
+		ret[0].call = lambda x, y = None: [variadic_link(links[0], (t, y)) for t in split_suffix(x)]
 	else:
-		ret[0].call = lambda z: [monadic_link(links[0], t) for t in split_fixed(z, niladic_link(links[1]))]
+		ret[0].call = lambda x, y = None: [variadic_link(links[0], (t, y)) for t in split_fixed(x, niladic_link(links[1]))]
 	return ret
 
 def symmetric_mod(number, half_divisor):
@@ -1001,7 +1001,7 @@ def symmetric_mod(number, half_divisor):
 	return modulus - 2 * half_divisor * (modulus > half_divisor)
 
 def tie(links, outmost_links, index):
-	ret = [attrdict(arity=2 if max(link.arity for link in links) == 2 else 1)]
+	ret = [attrdict(arity= max(1, *arities(links)))]
 	n = 2 if links[-1].arity else links[-1].call()
 	def _make_tie():
 		i = 0
