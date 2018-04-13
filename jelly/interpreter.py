@@ -779,7 +779,7 @@ def prefix(links, outmost_links, index):
 	if len(links) == 1:
 		ret[0].call = lambda x, y = None: [variadic_link(links[0], (t, y)) for t in split_prefix(x)]
 	else:
-		ret[0].call = lambda z: [variadic_link(links[0], (t, y)) for t in split_rolling(x, niladic_link(links[1]))]
+		ret[0].call = lambda x, y = None: [variadic_link(links[0], (t, y)) for t in split_rolling(x, niladic_link(links[1]))]
 	return ret
 
 def primerange(start, end):
