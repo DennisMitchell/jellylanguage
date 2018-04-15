@@ -1,5 +1,9 @@
 import cmath, copy, functools, itertools, locale, math, operator, re, sys, time
 
+from .utils import attrdict, lazy_import
+
+random, sympy, urllib_request = lazy_import('random sympy urllib.request')
+
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
@@ -12,11 +16,6 @@ str_upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 inf = float('inf')
 nan = float('nan')
 sys.setrecursionlimit(1 << 30)
-
-class attrdict(dict):
-	def __init__(self, *args, **kwargs):
-		dict.__init__(self, *args, **kwargs)
-		self.__dict__ = self
 
 def arities(links):
 	return [link.arity for link in links]
@@ -49,7 +48,7 @@ def carmichael(n):
 	if n < 1:
 		return 0
 	c = 1
-	for p, k in __import__('sympy').ntheory.factor_.factorint(n).items():
+	for p, k in sympy.ntheory.factor_.factorint(n).items():
 		c = lcm(c, 2 ** (k - 2) if p == 2 < k else (p - 1) * p ** (k - 1))
 	return c
 
@@ -99,7 +98,7 @@ def copy_to(atom, value):
 	return value
 
 def determinant(matrix):
-	matrix = __import__('sympy').Matrix(matrix)
+	matrix = sympy.Matrix(matrix)
 	if matrix.is_square:
 		return simplest_number(matrix.det())
 	return simplest_number(math.sqrt((matrix * matrix.transpose()).det()))
@@ -251,7 +250,7 @@ def from_diagonals(diagonals):
 def from_exponents(exponents):
 	integer = 1
 	for index, exponent in enumerate(exponents):
-		integer *= __import__('sympy').ntheory.generate.prime(index + 1) ** exponent
+		integer *= sympy.ntheory.generate.prime(index + 1) ** exponent
 	return integer
 
 def from_factorial_base(digits):
@@ -265,7 +264,7 @@ def from_factorial_base(digits):
 def from_primorial_base(digits):
 	integer = digits and digits[-1] or 0
 	for placeIndex, digit in enumerate(digits[-2::-1], 1):
-		integer += digit * __import__('sympy').ntheory.generate.primorial(placeIndex)
+		integer += digit * sympy.ntheory.generate.primorial(placeIndex)
 	return integer
 
 def simplest_number(number):
@@ -278,7 +277,7 @@ def simplest_number(number):
 def get_request(url):
 	url = ''.join(map(str, url))
 	url = (re.match(r"[A-Za-z][A-Za-z0-9+.-]*://", url) == None and "http://" or "") + url
-	response = __import__('urllib.request').request.urlopen(url).read()
+	response = urllib_request.request.urlopen(url).read()
 	try:
 		return response.decode('utf-8')
 	except:
@@ -385,6 +384,22 @@ def jelly_uneval_real(number):
 	string = str(number if number % 1 else int(number))
 	return string.lstrip('0') if number else string
 
+def jellify(element, dirty = False):
+	if element is None:
+		return []
+	if type(element) == str and dirty:
+		return list(element)
+	if type(element) in (int, float, complex) or (type(element) == str and len(element) == 1):
+		return element
+	try:
+		return [jellify(item, dirty) for item in element]
+	except:
+		if element.is_integer:
+			return int(element)
+		if element.is_real:
+			return float(element)
+		return complex(element)
+
 def join(array, glue):
 	array = iterable(array, make_copy = True)
 	last = array.pop() if array else []
@@ -401,15 +416,6 @@ def last_input():
 
 def leading_nilad(chain):
 	return chain and arities(chain) + [1] < [0, 2] * len(chain)
-
-def listify(element, dirty = False):
-	if element is None:
-		return []
-	if type(element) == str and dirty:
-		return list(element)
-	if type(element) in (int, float, complex) or (type(element) == str and len(element) == 1):
-		return element
-	return [listify(item, dirty) for item in element]
 
 def lcm(x, y):
 	return x * y // (math.gcd(x, y) or 1)
@@ -455,12 +461,12 @@ def median(array):
 	return div(array[(len(array) - 1) // 2] + array[len(array) // 2], 2)
 
 def mode(array):
-	frequencies = __import__('collections').defaultdict(lambda: 0)
+	frequencies = {}
 	maxfreq = 0
 	retval = []
 	for element in array:
 		string = repr(element)
-		frequencies[string] += 1
+		frequencies[string] = frequencies.get(string, 0) + 1
 		maxfreq = max(frequencies[string], maxfreq)
 	for element in array:
 		string = repr(element)
@@ -470,7 +476,7 @@ def mode(array):
 	return retval
 
 def modinv(a, m):
-	i, _, g = __import__('sympy').numbers.igcdex(a, m)
+	i, _, g = sympy.numbers.igcdex(a, m)
 	return i % m if g == 1 else 0
 
 def modulus(dividend, divisor):
@@ -771,7 +777,7 @@ def powerset(array):
 	array = iterable(array, make_range = True)
 	ret = []
 	for t in range(len(array) + 1):
-		ret += listify(itertools.combinations(array, t))
+		ret += jellify(itertools.combinations(array, t))
 	return ret
 
 def prefix(links, outmost_links, index):
@@ -784,13 +790,13 @@ def prefix(links, outmost_links, index):
 
 def primerange(start, end):
 	if start > end:
-		return list(__import__('sympy').primerange(end, start + 1))[::-1]
+		return list(sympy.primerange(end, start + 1))[::-1]
 	else:
-		return list(__import__('sympy').primerange(start, end + 1))
+		return list(sympy.primerange(start, end + 1))
 
 def python_eval(string, dirty = True):
 	try:
-		return listify(eval(string), dirty)
+		return jellify(eval(string), dirty)
 	except SyntaxError:
 		exec(string)
 		return []
@@ -812,8 +818,8 @@ def random_int(pool):
 	if not pool:
 		return 0
 	if type(pool) == list:
-		return __import__('random').choice(pool)
-	return __import__('random').randint(1, pool)
+		return random.choice(pool)
+	return random.randint(1, pool)
 
 def reduce(links, outmost_links, index):
 	ret = [attrdict(arity = 1)]
@@ -858,7 +864,7 @@ def shift_right(number, bits):
 
 def shuffle(array):
 	array = iterable(array, make_copy = True, make_range = True)
-	__import__('random').shuffle(array)
+	random.shuffle(array)
 	return array
 
 def sparse(link, args, indices):
@@ -1042,7 +1048,7 @@ def try_eval(string):
 	try:
 		return python_eval(string)
 	except:
-		return listify(string, True)
+		return jellify(string, True)
 
 def to_base(integer, base, bijective = False):
 	if integer == 0:
@@ -1090,9 +1096,9 @@ def to_case(argument, lower = False, swap = False, title = False, upper = False)
 def to_exponents(integer):
 	if integer == 1:
 		return []
-	pairs = __import__('sympy').ntheory.factor_.factorint(integer)
+	pairs = sympy.ntheory.factor_.factorint(integer)
 	exponents = []
-	for prime in __import__('sympy').ntheory.generate.primerange(2, max(pairs) + 1):
+	for prime in sympy.ntheory.generate.primerange(2, max(pairs) + 1):
 		if prime in pairs:
 			exponents.append(pairs[prime])
 		else:
@@ -1114,7 +1120,7 @@ def to_primorial_base(integer):
 	digits = [remainder]
 	while integer:
 		placeIndex += 1
-		integer, remainder = divmod(integer, __import__('sympy').ntheory.generate.prime(placeIndex))
+		integer, remainder = divmod(integer, sympy.ntheory.generate.prime(placeIndex))
 		digits.append(remainder)
 	return digits[::-1]
 
@@ -1199,7 +1205,7 @@ def output(argument, end = '', transform = stringify):
 	return argument
 
 def zip_ragged(array):
-	return listify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(iterable, array))))
+	return jellify(map(lambda t: filter(None.__ne__, t), itertools.zip_longest(*map(iterable, array))))
 
 atoms = {
 	'³': attrdict(
@@ -1399,7 +1405,7 @@ atoms = {
 	),
 	'ɠ': attrdict(
 		arity = 0,
-		call = lambda: listify(input(), dirty = True)
+		call = lambda: jellify(input(), dirty = True)
 	),
 	'H': attrdict(
 		arity = 1,
@@ -1458,7 +1464,7 @@ atoms = {
 	),
 	'Ḳ': attrdict(
 		arity = 1,
-		call = lambda z: listify(split_at(iterable(z), ' '))
+		call = lambda z: jellify(split_at(iterable(z), ' '))
 	),
 	'L': attrdict(
 		arity = 1,
@@ -1564,12 +1570,12 @@ atoms = {
 	),
 	'p': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(itertools.product(iterable(x, make_range = True), iterable(y, make_range = True)))
+		call = lambda x, y: jellify(itertools.product(iterable(x, make_range = True), iterable(y, make_range = True)))
 	),
 	'ṗ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.product(*([iterable(x, make_range = True)] * y)))
+		call = lambda x, y: jellify(itertools.product(*([iterable(x, make_range = True)] * y)))
 	),
 	'Q': attrdict(
 		arity = 1,
@@ -1628,7 +1634,7 @@ atoms = {
 	),
 	'ṣ': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(split_at(iterable(x, make_digits = True), y))
+		call = lambda x, y: jellify(split_at(iterable(x, make_digits = True), y))
 	),
 	'T': attrdict(
 		arity = 1,
@@ -1672,7 +1678,7 @@ atoms = {
 	),
 	'Ṿ': attrdict(
 		arity = 1,
-		call = lambda z: listify(jelly_uneval(z))
+		call = lambda z: jellify(jelly_uneval(z))
 	),
 	'v': attrdict(
 		arity = 2,
@@ -1719,7 +1725,7 @@ atoms = {
 	),
 	'Ỵ': attrdict(
 		arity = 1,
-		call = lambda z: listify(split_at(iterable(z), '\n'))
+		call = lambda z: jellify(split_at(iterable(z), '\n'))
 	),
 	'Ẏ': attrdict(
 		arity = 1,
@@ -1735,7 +1741,7 @@ atoms = {
 	),
 	'z': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(itertools.zip_longest(*map(iterable, x), fillvalue = y))
+		call = lambda x, y: jellify(itertools.zip_longest(*map(iterable, x), fillvalue = y))
 	),
 	'ż': attrdict(
 		arity = 2,
@@ -1912,12 +1918,12 @@ atoms = {
 	'ÆC': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.generate.primepi(z)
+		call = lambda z: sympy.ntheory.generate.primepi(z)
 	),
 	'ÆĊ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.catalan(z))
+		call = lambda z: int(sympy.functions.combinatorial.numbers.catalan(z))
 	),
 	'Æc': attrdict(
 		arity = 1,
@@ -1927,22 +1933,22 @@ atoms = {
 	'ÆD': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)
+		call = lambda z: sympy.ntheory.factor_.divisors(z)
 	),
 	'ÆḌ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.factor_.divisors(z)[:-1]
+		call = lambda z: sympy.ntheory.factor_.divisors(z)[:-1]
 	),
 	'Æd': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z))
+		call = lambda z: int(sympy.ntheory.factor_.divisor_count(z))
 	),
 	'Æḍ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_count(z) - 1)
+		call = lambda z: int(sympy.ntheory.factor_.divisor_count(z) - 1)
 	),
 	'ÆḊ': attrdict(
 		arity = 1,
@@ -1962,7 +1968,7 @@ atoms = {
 	'ÆF': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: [[x, y] for x, y in sorted(__import__('sympy').ntheory.factor_.factorint(z).items())]
+		call = lambda z: [[x, y] for x, y in sorted(sympy.ntheory.factor_.factorint(z).items())]
 	),
 	'Æe': attrdict(
 		arity = 1,
@@ -1972,17 +1978,17 @@ atoms = {
 	'Æf': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: rld(sorted(__import__('sympy').ntheory.factor_.factorint(z).items()))
+		call = lambda z: rld(sorted(sympy.ntheory.factor_.factorint(z).items()))
 	),
 	'ÆḞ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.fibonacci(z))
+		call = lambda z: int(sympy.functions.combinatorial.numbers.fibonacci(z))
 	),
 	'ÆĿ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').functions.combinatorial.numbers.lucas(z))
+		call = lambda z: int(sympy.functions.combinatorial.numbers.lucas(z))
 	),
 	'Æl': attrdict(
 		arity = 1,
@@ -2007,37 +2013,37 @@ atoms = {
 	'ÆN': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.generate.prime(z)
+		call = lambda z: sympy.ntheory.generate.prime(z)
 	),
 	'Æn': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.generate.nextprime(z)
+		call = lambda z: sympy.ntheory.generate.nextprime(z)
 	),
 	'ÆP': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').primetest.isprime(z))
+		call = lambda z: int(sympy.primetest.isprime(z))
 	),
 	'Æp': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.generate.prevprime(z)
+		call = lambda z: sympy.ntheory.generate.prevprime(z)
 	),
 	'ÆR': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: list(__import__('sympy').ntheory.generate.primerange(2, z + 1))
+		call = lambda z: list(sympy.ntheory.generate.primerange(2, z + 1))
 	),
 	'Ær': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: __import__('numpy').roots(z[::-1]).tolist()
+		call = lambda z: jellify(from_base(z[::-1], sympy.poly('x')).all_roots())
 	),
 	'Æṛ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: iterable(__import__('numpy').poly(z).tolist())[::-1]
+		call = lambda z: jellify(sympy.prod(map(sympy.poly('x').__sub__, z)).coeffs()[::-1])
 	),
 	'ÆT': attrdict(
 		arity = 1,
@@ -2052,7 +2058,7 @@ atoms = {
 	'ÆṪ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: __import__('sympy').ntheory.factor_.totient(z) if z > 0 else 0
+		call = lambda z: sympy.ntheory.factor_.totient(z) if z > 0 else 0
 	),
 	'ÆS': attrdict(
 		arity = 1,
@@ -2067,17 +2073,17 @@ atoms = {
 	'Æs': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z))
+		call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z))
 	),
 	'Æṣ': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: int(__import__('sympy').ntheory.factor_.divisor_sigma(z) - z)
+		call = lambda z: int(sympy.ntheory.factor_.divisor_sigma(z) - z)
 	),
 	'Æv': attrdict(
 		arity = 1,
 		ldepth = 0,
-		call = lambda z: len(__import__('sympy').ntheory.factor_.factorint(z))
+		call = lambda z: len(sympy.ntheory.factor_.factorint(z))
 	),
 	'Æ²': attrdict(
 		arity = 1,
@@ -2116,7 +2122,7 @@ atoms = {
 	),
 	'Œ!': attrdict(
 		arity = 1,
-		call = lambda z: listify(itertools.permutations(iterable(z, make_range = True)))
+		call = lambda z: jellify(itertools.permutations(iterable(z, make_range = True)))
 	),
 	'Œ?': attrdict(
 		arity = 1,
@@ -2143,12 +2149,12 @@ atoms = {
 	'Œc': attrdict(
 		arity = 1,
 		rdepth = 0,
-		call = lambda z: listify(itertools.combinations(iterable(z, make_range = True), 2))
+		call = lambda z: jellify(itertools.combinations(iterable(z, make_range = True), 2))
 	),
 	'Œċ': attrdict(
 		arity = 1,
 		rdepth = 0,
-		call = lambda z: listify(itertools.combinations_with_replacement(iterable(z, make_range = True), 2))
+		call = lambda z: jellify(itertools.combinations_with_replacement(iterable(z, make_range = True), 2))
 	),
 	'ŒD': attrdict(
 		arity = 1,
@@ -2199,7 +2205,7 @@ atoms = {
 	),
 	'Œp': attrdict(
 		arity = 1,
-		call = lambda z: listify(itertools.product(*[iterable(t, make_range = True) for t in z]))
+		call = lambda z: jellify(itertools.product(*[iterable(t, make_range = True) for t in z]))
 	),
 	'ŒQ': attrdict(
 		arity = 1,
@@ -2212,7 +2218,7 @@ atoms = {
 	),
 	'ŒṘ': attrdict(
 		arity = 1,
-		call = lambda z: listify(repr(z))
+		call = lambda z: jellify(repr(z))
 	),
 	'Œr': attrdict(
 		arity = 1,
@@ -2273,13 +2279,13 @@ atoms = {
 		arity = 2,
 		ldepth = 2,
 		rdepth = 0,
-		call = lambda x, y: matrix_to_list((__import__('sympy').Matrix(x) ** y))
+		call = lambda x, y: matrix_to_list((sympy.Matrix(x) ** y))
 	),
 	'æ×': attrdict(
 		arity = 2,
 		ldepth = 2,
 		rdepth = 2,
-		call = lambda x, y: matrix_to_list((__import__('sympy').Matrix(x) * __import__('sympy').Matrix(y)))
+		call = lambda x, y: matrix_to_list((sympy.Matrix(x) * sympy.Matrix(y)))
 	),
 	'æA': attrdict(
 		arity = 2,
@@ -2350,12 +2356,12 @@ atoms = {
 	'œc': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.combinations(iterable(x, make_range = True), y))
+		call = lambda x, y: jellify(itertools.combinations(iterable(x, make_range = True), y))
 	),
 	'œċ': attrdict(
 		arity = 2,
 		rdepth = 0,
-		call = lambda x, y: listify(itertools.combinations_with_replacement(iterable(x, make_range = True), y))
+		call = lambda x, y: jellify(itertools.combinations_with_replacement(iterable(x, make_range = True), y))
 	),
 	'œl': attrdict(
 		arity = 2,
@@ -2389,7 +2395,7 @@ atoms = {
 	),
 	'œṣ': attrdict(
 		arity = 2,
-		call = lambda x, y: listify(split_around(iterable(x, make_digits = True), iterable(y)))
+		call = lambda x, y: jellify(split_around(iterable(x, make_digits = True), iterable(y)))
 	),
 	'œ&': attrdict(
 		arity = 2,
