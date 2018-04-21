@@ -7,7 +7,7 @@ random, sympy, urllib_request = lazy_import('random sympy urllib.request')
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused symbols for single-byte atoms/quicks: ()kquƁƇƑƘⱮƬȤƒɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: ()kquƁƇƘⱮƬȤƒɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -2575,6 +2575,13 @@ quicks = {
 	'\\': attrdict(
 		condition = lambda links: links and links[0].arity,
 		quicklink = reduce_cumulative
+	),
+	'Ƒ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = max(1, links[0].arity),
+			call = lambda x, y = None: int(x == variadic_link(links[0], (x, y)))
+		)]
 	),
 	'Ɲ': attrdict(
 		condition = lambda links: links and not leading_nilad(links),
