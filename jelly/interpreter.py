@@ -7,7 +7,7 @@ random, sympy, urllib_request = lazy_import('random sympy urllib.request')
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused symbols for single-byte atoms/quicks: ()kquƁƇƘⱮƬȤƒɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: ()kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -227,6 +227,9 @@ def flatten(argument):
 	else:
 		flat.append(argument)
 	return flat
+
+def foldl(*args):
+	return reduce(*args, arity = 2)
 
 def from_base(digits, base):
 	integer = 0
@@ -821,17 +824,17 @@ def random_int(pool):
 		return random.choice(pool)
 	return random.randint(1, pool)
 
-def reduce(links, outmost_links, index):
-	ret = [attrdict(arity = 1)]
+def reduce(links, outmost_links, index, arity = 1):
+	ret = [attrdict(arity = arity)]
 	if len(links) == 1:
-		ret[0].call = lambda z: reduce_simple(z, links[0])
+		ret[0].call = lambda x, *y: reduce_simple(x, links[0], *y)
 	else:
-		ret[0].call = lambda z: [reduce_simple(t, links[0]) for t in split_fixed(iterable(z), links[1].call())]
+		ret[0].call = lambda x, *y: [reduce_simple(t, links[0], *y) for t in split_fixed(iterable(x), links[1].call())]
 	return ret
 
-def reduce_simple(array, link):
+def reduce_simple(array, link, *init):
 	array = iterable(array)
-	return functools.reduce(lambda x, y: dyadic_link(link, (x, y)), array)
+	return functools.reduce(lambda x, y: dyadic_link(link, (x, y)), array, *init)
 
 def reduce_cumulative(links, outmost_links, index):
 	ret = [attrdict(arity = 1)]
@@ -2582,6 +2585,10 @@ quicks = {
 			arity = max(1, links[0].arity),
 			call = lambda x, y = None: int(x == variadic_link(links[0], (x, y)))
 		)]
+	),
+	'ƒ': attrdict(
+		condition = lambda links: links and links[0].arity,
+		quicklink = foldl
 	),
 	'Ɲ': attrdict(
 		condition = lambda links: links and not leading_nilad(links),
