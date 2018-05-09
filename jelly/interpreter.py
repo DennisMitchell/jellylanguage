@@ -2073,6 +2073,11 @@ atoms = {
 		ldepth = 0,
 		call = lambda z: sympy.ntheory.factor_.totient(z) if z > 0 else 0
 	),
+	'Æṭ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = lambda z: sum(sum(r[i : i+1]) for i, r in enumerate(z))
+	),
 	'ÆS': attrdict(
 		arity = 1,
 		ldepth = 0,
