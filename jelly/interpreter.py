@@ -1721,6 +1721,10 @@ atoms = {
 		arity = 1,
 		call = windowed_sublists
 	),
+	'Ẉ': attrdict(
+		arity = 1,
+		call = lambda z: [len(iterable(t, make_digits = True)) for t in iterable(z, make_range = True)]
+	),
 	'w': attrdict(
 		arity = 2,
 		call = windowed_index_of
@@ -2885,6 +2889,9 @@ hypers = {
 quicks['Ƈ'] = quicks['Ðf']
 hypers['Ɱ'] = hypers['Ð€']
 quicks['Ƭ'] = quicks['ÐĿ']
+atoms ['Ẓ'] = atoms ['ÆP']
+atoms ['k'] = atoms ['œṗ']
+atoms ['ḋ'] = atoms ['æ.']
 
 chain_separators = {
 	'ø': (0, '', True),
