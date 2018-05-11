@@ -93,6 +93,12 @@ def convolve(left, right):
 			result[i+j] += x*y
 	return result
 
+def convolve_power(polynomial, exponent):
+	retval = [1]
+	for _ in range(exponent):
+		retval = convolve(retval, polynomial)
+	return retval
+
 def copy_to(atom, value):
 	atom.call = lambda: value
 	return value
@@ -2344,6 +2350,12 @@ atoms = {
 		rdepth = 0,
 		call = primerange
 	),
+	'æC': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 0,
+		call = convolve_power
+	),
 	'æc': attrdict(
 		arity = 2,
 		ldepth = 1,
@@ -2463,6 +2475,66 @@ atoms = {
 	'œ|': attrdict(
 		arity = 2,
 		call = multiset_union
+	),
+	'Ø0': attrdict(
+		arity = 0,
+		call = lambda: [0, 0]
+	),
+	'Ø1': attrdict(
+		arity = 0,
+		call = lambda: [1, 1]
+	),
+	'Ø2': attrdict(
+		arity = 0,
+		call = lambda: [2, 2]
+	),
+	'Ø.': attrdict(
+		arity = 0,
+		call = lambda: [0, 1]
+	),
+	'Ø½': attrdict(
+		arity = 0,
+		call = lambda: [1, 2]
+	),
+	'Ø+': attrdict(
+		arity = 0,
+		call = lambda: [1, -1]
+	),
+	'Ø-': attrdict(
+		arity = 0,
+		call = lambda: [-1, 1]
+	),
+	'Ø(': attrdict(
+		arity = 0,
+		call = lambda: list('()')
+	),
+	'Ø<': attrdict(
+		arity = 0,
+		call = lambda: list('<>')
+	),
+	'Ø[': attrdict(
+		arity = 0,
+		call = lambda: list('[]')
+	),
+	'Ø{': attrdict(
+		arity = 0,
+		call = lambda: list('{}')
+	),
+	'Ø^': attrdict(
+		arity = 0,
+		call = lambda: list('/\\')
+	),
+	'Ø⁷': attrdict(
+		arity = 0,
+		call = lambda: 128
+	),
+	'Ø°': attrdict(
+		arity = 0,
+		call = lambda: 360
+	),
+	'Ø%': attrdict(
+		arity = 0,
+		call = lambda: 2 ** 32
 	),
 	'ØA': attrdict(
 		arity = 0,
