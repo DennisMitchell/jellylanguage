@@ -679,7 +679,7 @@ def parse_code(code):
 		chains = links[index]
 		for word in regex_chain.findall(line):
 			chain = []
-			arity, start, isForward = chain_separators.get(word[0], default_chain_separation)
+			arity, start, isForward = chain_separators.get(word[:1], default_chain_separation)
 			for token in regex_token.findall(start + word):
 				if token in atoms:
 					chain.append(atoms[token])
