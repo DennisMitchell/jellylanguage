@@ -344,6 +344,15 @@ def index_of(haystack, needle):
 			return 1 + index
 	return 0
 
+def indices_md(array, upper_level = []):
+	a_indices = []
+	for i, item in enumerate(array):
+		if type(item) != list:
+			a_indices.append(upper_level + [i + 1])
+		else:
+			a_indices.extend(indices_md(item, upper_level = upper_level + [i + 1]))
+	return a_indices
+
 def isqrt(number):
 	a = number
 	b = (a + 1) // 2
@@ -1046,6 +1055,16 @@ def trim(trimmee, trimmer, left = False, right = False):
 		while lindex < rindex and trimmee[rindex - 1] in trimmer:
 			rindex -= 1
 	return trimmee[lindex:rindex]
+
+def truth_md(array, upper_level = []):
+	t_indices = []
+	for i, item in enumerate(array):
+		if type(item) != list:
+			if item:
+				t_indices.append(upper_level + [i + 1])
+		else:
+			t_indices.extend(truth_md(item, upper_level = upper_level + [i + 1]))
+	return t_indices
 
 def try_eval(string):
 	try:
@@ -2203,6 +2222,10 @@ atoms = {
 		ldepth = 1,
 		call = at_index_ndim
 	),
+	'ŒJ': attrdict(
+		arity = 1,
+		call = indices_md
+	),
 	'Œl': attrdict(
 		arity = 1,
 		ldepth = 1,
@@ -2256,6 +2279,10 @@ atoms = {
 	'ŒT': attrdict(
 		arity = 1,
 		call = time_format
+	),
+	'ŒṪ': attrdict(
+		arity = 1,
+		call = truth_md
 	),
 	'Œt': attrdict(
 		arity = 1,
