@@ -7,7 +7,7 @@ random, sympy, urllib_request = lazy_import('random sympy urllib.request')
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused symbols for single-byte atoms/quicks: ()kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: (kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -679,8 +679,8 @@ def parse_code(code):
 		chains = links[index]
 		for word in regex_chain.findall(line):
 			chain = []
-			arity, isForward = chain_separators.get(word[0], default_chain_separation)
-			for token in regex_token.findall(word):
+			arity, start, isForward = chain_separators.get(word[0], default_chain_separation)
+			for token in regex_token.findall(start + word):
 				if token in atoms:
 					chain.append(atoms[token])
 				elif token in quicks:
@@ -2870,8 +2870,19 @@ hypers = {
 	)
 }
 
-chain_separators = {'ø': (0, True), 'µ': (1, True), 'ð': (2, True), 'ɓ': (2, False)}
-default_chain_separation = (-1, True)
+# Aliases
+
+quicks['Ƈ'] = quicks['Ðf']
+hypers['Ɱ'] = hypers['Ð€']
+quicks['Ƭ'] = quicks['ÐĿ']
+
+chain_separators = {
+	'ø': (0, '', True),
+	'µ': (1, '', True),
+	')': (1, '€', True),
+	'ð': (2, '', True),
+	'ɓ': (2, '', False)}
+default_chain_separation = (-1, '', True)
 str_arities = ''.join(chain_separators.keys())
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
 str_charlit = '”.'
@@ -2884,7 +2895,7 @@ str_literal = '(?:%s)' % '|'.join([str_strings, str_charlit, str_chrpair, str_co
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
 str_nonlits = '|'.join(map(re.escape, list(atoms) + list(quicks) + list(hypers)))
 
-regex_chain = re.compile('(?:^|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )+')
+regex_chain = re.compile('(?:^|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )*')
 regex_liter = re.compile(str_literal)
 regex_token = re.compile(str_nonlits + '|' + str_litlist)
 regex_flink = re.compile('(?=.)(?:[' + str_arities + ']|' + str_nonlits + '|' + str_litlist + '| )*¶?')
