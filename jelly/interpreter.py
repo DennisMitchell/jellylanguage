@@ -5,9 +5,9 @@ from .utils import attrdict, lazy_import
 random, sympy, urllib_request = lazy_import('random sympy urllib.request')
 
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
-code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭụṿẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
+code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭ§Äẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused symbols for single-byte atoms/quicks: (kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇụṿẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: (kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇẉỵẓḋėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -1774,6 +1774,16 @@ atoms = {
 	'ż': attrdict(
 		arity = 2,
 		call = lambda x, y: zip_ragged([x, y])
+	),
+	'§': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = sum
+	),
+	'Ä': attrdict(
+		arity = 1,
+		ldepth = 1,
+		call = lambda z: list(itertools.accumulate(z))
 	),
 	'!': attrdict(
 		arity = 1,

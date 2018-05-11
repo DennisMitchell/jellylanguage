@@ -53,17 +53,19 @@ for char in argv[1]:
 	elif char == 'n':
 		end = '\n'
 
+compat = str.maketrans('\nụṿ', '¶§Ä')
+
 if flag_file:
 	with open(argv[2], 'rb') as file:
 		code = file.read()
 	if flag_utf8:
-		code = ''.join(char for char in code.decode('utf-8').replace('\n', '¶') if char in code_page)
+		code = ''.join(char for char in code.decode('utf-8').translate(compat) if char in code_page)
 	else:
 		code = ''.join(code_page[i] for i in code)
 else:
 	code = argv[2]
 	if flag_utf8:
-		code = ''.join(char for char in code.replace('\n', '¶') if char in code_page)
+		code = ''.join(char for char in code.translate(compat) if char in code_page)
 	else:
 		code = ''.join(code_page[ord(i)] for i in code)
 
