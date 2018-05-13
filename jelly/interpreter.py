@@ -208,6 +208,13 @@ def dyadic_link(link, args, conv = True, lflat = False, rflat = False):
 		return [dyadic_link(link, (x, rarg)) for x in larg]
 	return [dyadic_link(link, (x, y)) for x, y in zip(*args)] + larg[len(rarg) :] + rarg[len(larg) :]
 
+def enumerate_md(array, upper_level = []):
+	for i, item in enumerate(array):
+		if type(item) != list:
+			yield [upper_level + [i + 1], item]
+		else:
+			yield from enumerate_md(item, upper_level + [i + 1])
+
 def equal(array):
 	array = iterable(array)
 	return int(all(item == array[0] for item in array))
@@ -321,6 +328,20 @@ def group(array):
 	except TypeError:
 		return [grouped[key] for key in sorted(grouped)]
 
+def group_md(array):
+	array = iterable(array, make_digits = True)
+	grouped = {}
+	for index, item in enumerate_md(array):
+		item = repr(item)
+		if item in grouped:
+			grouped[item].append(index)
+		else:
+			grouped[item] = [index]
+	try:
+		return [grouped[key] for key in sorted(grouped, key = eval)]
+	except TypeError:
+		return [grouped[key] for key in sorted(grouped)]
+
 def group_equal(array):
 	array = iterable(array, make_digits = True)
 	groups = []
@@ -349,6 +370,12 @@ def index_of(haystack, needle):
 		if item == needle:
 			return 1 + index
 	return 0
+
+def index_of_md(haystack, needle):
+	for index, item in enumerate_md(haystack):
+		if item == needle:
+			return index
+	return []
 
 def indices_md(array, upper_level = []):
 	a_indices = []
@@ -473,6 +500,18 @@ def max_arity(links):
 def maximal_indices(iterable):
 	maximum = max(iterable or [0])
 	return [u + 1 for u, v in enumerate(iterable) if v == maximum]
+
+def maximal_indices_md(iterable, upper_level = [], maximum = None):
+	if maximum == None:
+		maximum = max(flatten(iterable) or [0])
+	result = []
+	for i, item in enumerate(iterable):
+		if type(item) != list:
+			if item == maximum:
+				result.append(upper_level + [i + 1])
+		else:
+			result.extend(maximal_indices_md(item, upper_level = upper_level + [i + 1], maximum = maximum))
+	return result
 
 def median(array):
 	array = sorted(array)
@@ -2227,10 +2266,18 @@ atoms = {
 		arity = 1,
 		call = depth
 	),
+	'ŒĖ': attrdict(
+		arity = 1,
+		call = enumerate_md
+	),
 	'ŒG': attrdict(
 		arity = 1,
 		ldepth = 1,
 		call = get_request
+	),
+	'ŒĠ': attrdict(
+		arity = 1,
+		call = group_md
 	),
 	'Œg': attrdict(
 		arity = 1,
@@ -2250,6 +2297,10 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: to_case(z, lower = True)
+	),
+	'ŒM': attrdict(
+		arity = 1,
+		call = maximal_indices_md
 	),
 	'ŒP': attrdict(
 		arity = 1,
@@ -2313,6 +2364,10 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = lambda z: python_eval(''.join(map(str, z)))
+	),
+	'ŒỤ': attrdict(
+		arity = 1,
+		call = lambda z: sorted(indices_md(iterable(z)), key = lambda t: at_index_ndim(t, iterable(z)))
 	),
 	'Œu': attrdict(
 		arity = 1,
@@ -2439,6 +2494,14 @@ atoms = {
 		arity = 2,
 		rdepth = 0,
 		call = lambda x, y: jellify(itertools.combinations_with_replacement(iterable(x, make_range = True), y))
+	),
+	'œẹ': attrdict(
+		arity = 2,
+		call = lambda x, y: [t for t, u in enumerate_md(iterable(x)) if u == y]
+	),
+	'œi': attrdict(
+		arity = 2,
+		call = index_of_md
 	),
 	'œl': attrdict(
 		arity = 2,
