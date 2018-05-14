@@ -2268,7 +2268,7 @@ atoms = {
 	),
 	'ŒĖ': attrdict(
 		arity = 1,
-		call = enumerate_md
+		call = lambda z: list(enumerate_md(z))
 	),
 	'ŒG': attrdict(
 		arity = 1,
