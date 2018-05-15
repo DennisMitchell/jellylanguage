@@ -2975,7 +2975,7 @@ str_literal = '(?:%s)' % '|'.join([str_strings, str_charlit, str_chrpair, str_co
 str_litlist = '\[*' + str_literal + '(?:(?:\]*,\[*)' + str_literal + ')*' + '\]*'
 str_nonlits = '|'.join(map(re.escape, list(atoms) + list(quicks) + list(hypers)))
 
-regex_chain = re.compile('(?:^|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )*')
+regex_chain = re.compile('(?:^(?:' + str_nonlits + '|' + str_litlist + '| )+|[' + str_arities + '])(?:' + str_nonlits + '|' + str_litlist + '| )*')
 regex_liter = re.compile(str_literal)
 regex_token = re.compile(str_nonlits + '|' + str_litlist)
 regex_flink = re.compile('(?=.)(?:[' + str_arities + ']|' + str_nonlits + '|' + str_litlist + '| )*¶?')
