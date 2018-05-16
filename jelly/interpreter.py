@@ -2266,6 +2266,16 @@ atoms = {
 		arity = 1,
 		call = depth
 	),
+	'Œd': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = lambda z: diagonals([r[::-1] for r in z])
+	),
+	'Œḍ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = lambda z: [r[::-1] for r in from_diagonals(z)]
+	),
 	'ŒĖ': attrdict(
 		arity = 1,
 		call = lambda z: list(enumerate_md(z))
@@ -2283,6 +2293,10 @@ atoms = {
 		arity = 1,
 		ldepth = 1,
 		call = group_equal
+	),
+	'ŒH': attrdict(
+		arity = 1,
+		call = lambda z: split_evenly(iterable(z, make_range = True), 2)
 	),
 	'œị': attrdict(
 		arity = 2,
@@ -2507,6 +2521,14 @@ atoms = {
 		arity = 2,
 		call = lambda x, y: trim(x, iterable(y), left = True)
 	),
+	'œP': attrdict(
+		arity = 2,
+		call = lambda x, y: partition_at([int(t + 1 in iterable(x)) for t in range(max(iterable(x) or [0]))], y, keep_border = False)
+	),
+	'œṖ': attrdict(
+		arity = 2,
+		call = lambda x, y: partition_at([int(t + 1 in iterable(x)) for t in range(max(iterable(x) or [0]))], y)
+	),
 	'œp': attrdict(
 		arity = 2,
 		call = lambda x, y: partition_at(x, y, keep_border = False)
@@ -2601,6 +2623,10 @@ atoms = {
 		arity = 0,
 		call = lambda: list('/\\')
 	),
+	'Ø⁵': attrdict(
+		arity = 0,
+		call = lambda: 250
+	),
 	'Ø⁷': attrdict(
 		arity = 0,
 		call = lambda: 128
@@ -2616,6 +2642,10 @@ atoms = {
 	'ØA': attrdict(
 		arity = 0,
 		call = lambda: list(str_upper)
+	),
+	'ØẠ': attrdict(
+		arity = 0,
+		call = lambda: list(str_upper + str_lower)
 	),
 	'ØB': attrdict(
 		arity = 0,
@@ -2661,6 +2691,14 @@ atoms = {
 		arity = 0,
 		call = lambda: list('BCDFGHJKLMNPQRSTVWXZbcdfghjklmnpqrstvwxz')
 	),
+	'ØỴ': attrdict(
+		arity = 0,
+		call = lambda: list('bcdfghjklmnpqrstvwxz')
+	),
+	'ØẎ': attrdict(
+		arity = 0,
+		call = lambda: list('BCDFGHJKLMNPQRSTVWXZ')
+	),
 	'Øa': attrdict(
 		arity = 0,
 		call = lambda: list(str_lower)
@@ -2676,6 +2714,14 @@ atoms = {
 	'Øe': attrdict(
 		arity = 0,
 		call = lambda: math.e
+	),
+	'Øẹ': attrdict(
+		arity = 0,
+		call = lambda: list('aeiou')
+	),
+	'Øė': attrdict(
+		arity = 0,
+		call = lambda: list('AEIOU')
 	),
 	'Øh': attrdict(
 		arity = 0,
@@ -2696,6 +2742,14 @@ atoms = {
 	'Øy': attrdict(
 		arity = 0,
 		call = lambda: list('AEIOUYaeiouy')
+	),
+	'Øỵ': attrdict(
+		arity = 0,
+		call = lambda: list('aeiouy')
+	),
+	'Øẏ': attrdict(
+		arity = 0,
+		call = lambda: list('AEIOUY')
 	)
 }
 
