@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
 	name = 'jellylanguage',
-	version = '0.1.17',
+	version = '0.1.18',
 	packages = [
 		'jelly'
 	],

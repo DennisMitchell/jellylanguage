@@ -7,7 +7,7 @@ random, sympy, urllib_request = lazy_import('random sympy urllib.request')
 code_page  = '''¡¢£¤¥¦©¬®µ½¿€ÆÇÐÑ×ØŒÞßæçðıȷñ÷øœþ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¶'''
 code_page += '''°¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ƁƇƊƑƓƘⱮƝƤƬƲȤɓƈɗƒɠɦƙɱɲƥʠɼʂƭʋȥẠḄḌẸḤỊḲḶṂṆỌṚṢṬỤṾẈỴẒȦḂĊḊĖḞĠḢİĿṀṄȮṖṘṠṪẆẊẎŻạḅḍẹḥịḳḷṃṇọṛṣṭ§Äẉỵẓȧḃċḋėḟġḣŀṁṅȯṗṙṡṫẇẋẏż«»‘’“”'''
 
-# Unused symbols for single-byte atoms/quicks: (kquƁƇƘⱮƬȤɦɱɲƥʠɼʂȥẈẒŻḥḳṇẉỵẓḋėġṅẏ
+# Unused symbols for single-byte atoms/quicks: (quƁƘȤɦɱɲƥʠʂȥŻḥḳṇẉỵẓėġṅẏ
 
 str_digit = '0123456789'
 str_lower = 'abcdefghijklmnopqrstuvwxyz'
@@ -2845,6 +2845,13 @@ quicks = {
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = 2,
 			call = lambda x, y: [monadic_link(links[0], g) for g in split_key(iterable(x, make_digits = True), iterable(y, make_digits = True))]
+		)]
+	),
+	'ɼ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = max(0, links[0].arity - 1),
+			call = lambda z = None: copy_to(atoms['®'], variadic_link(links[0], (niladic_link(atoms['®']), z)))
 		)]
 	),
 	'ƭ': attrdict(
