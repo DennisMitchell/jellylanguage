@@ -1101,16 +1101,6 @@ def trim(trimmee, trimmer, left = False, right = False):
 			rindex -= 1
 	return trimmee[lindex:rindex]
 
-def truth_md(array, upper_level = []):
-	t_indices = []
-	for i, item in enumerate(array):
-		if type(item) != list:
-			if item:
-				t_indices.append(upper_level + [i + 1])
-		else:
-			t_indices.extend(truth_md(item, upper_level = upper_level + [i + 1]))
-	return t_indices
-
 def try_eval(string):
 	try:
 		return python_eval(string)
@@ -1201,6 +1191,15 @@ def unique(array):
 		if not element in result:
 			result.append(element)
 	return result
+
+def untruth_md(indices, shape = None, upper_level = []):
+	if not shape:
+		shape = [max(index_zipped) for index_zipped in zip(*indices)]
+	upper_len = len(upper_level)
+	if upper_len < len(shape) - 1:
+		return [untruth_md(indices, shape = shape, upper_level = upper_level + [i]) for i in range(shape[upper_len] + 1)]
+	else:
+		return [1 if (upper_level + [i] in indices) else 0 for i in range(shape[-1] + 1)]
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
@@ -2369,9 +2368,14 @@ atoms = {
 		arity = 1,
 		call = time_format
 	),
+	'ŒṬ': attrdict(
+		arity = 1,
+		ldepth = 2,
+		call = untruth_md
+	),
 	'ŒṪ': attrdict(
 		arity = 1,
-		call = truth_md
+		call = lambda z: [t for t, u in enumerate_md(iterable(z)) if u]
 	),
 	'Œt': attrdict(
 		arity = 1,
@@ -2662,6 +2666,14 @@ atoms = {
 	'ØD': attrdict(
 		arity = 0,
 		call = lambda: list(str_digit)
+	),
+	'ØḄ': attrdict(
+		arity = 0,
+		call = lambda: list('bcdfghjklmnpqrstvwxyz')
+	),
+	'ØḂ': attrdict(
+		arity = 0,
+		call = lambda: list('BCDFGHJKLMNPQRSTVWXYZ')
 	),
 	'ØH': attrdict(
 		arity = 0,
