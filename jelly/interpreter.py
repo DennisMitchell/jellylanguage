@@ -1197,9 +1197,9 @@ def untruth_md(indices, shape = None, upper_level = []):
 		shape = [max(index_zipped) for index_zipped in zip(*indices)]
 	upper_len = len(upper_level)
 	if upper_len < len(shape) - 1:
-		return [untruth_md(indices, shape = shape, upper_level = upper_level + [i]) for i in range(shape[upper_len] + 1)]
+		return [untruth_md(indices, shape = shape, upper_level = upper_level + [i + 1]) for i in range(shape[upper_len])]
 	else:
-		return [1 if (upper_level + [i] in indices) else 0 for i in range(shape[-1] + 1)]
+		return [1 if (upper_level + [i + 1] in indices) else 0 for i in range(shape[-1])]
 
 def variadic_chain(chain, args):
 	args = list(filter(None.__ne__, args))
@@ -2659,14 +2659,6 @@ atoms = {
 		arity = 0,
 		call = lambda: list(str_digit + str_upper + str_lower)
 	),
-	'ØC': attrdict(
-		arity = 0,
-		call = lambda: list('BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz')
-	),
-	'ØD': attrdict(
-		arity = 0,
-		call = lambda: list(str_digit)
-	),
 	'ØḄ': attrdict(
 		arity = 0,
 		call = lambda: list('bcdfghjklmnpqrstvwxyz')
@@ -2674,6 +2666,14 @@ atoms = {
 	'ØḂ': attrdict(
 		arity = 0,
 		call = lambda: list('BCDFGHJKLMNPQRSTVWXYZ')
+	),
+	'ØC': attrdict(
+		arity = 0,
+		call = lambda: list('BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz')
+	),
+	'ØD': attrdict(
+		arity = 0,
+		call = lambda: list(str_digit)
 	),
 	'ØH': attrdict(
 		arity = 0,
