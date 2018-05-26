@@ -785,20 +785,19 @@ def parse_literal(literal_match):
 		]))
 	return repr(parsed) + ' '
 
-def partition_at(booleans, array, keep_border = True):
+def partition_at(booleans, array, border = 1):
 	booleans = iterable(booleans)
 	array = iterable(array)
-	chunks = []
-	chunk = []
+	chunks = [[], []]
 	index = 0
 	while index < len(array):
 		if index < len(booleans) and booleans[index]:
-			chunks.append(chunk)
-			chunk = [array[index]] if keep_border else []
+			chunks.append([])
+			chunks[-border].append(array[index])
 		else:
-			chunk.append(array[index])
+			chunks[-1].append(array[index])
 		index += 1
-	return chunks + [chunk]
+	return chunks[1:]
 
 def pemutation_at_index(index, array = None):
 	result = []
@@ -1547,6 +1546,10 @@ atoms = {
 	'Ḳ': attrdict(
 		arity = 1,
 		call = lambda z: jellify(split_at(iterable(z), ' '))
+	),
+	'k': attrdict(
+		arity = 2,
+		call = lambda x, y: partition_at(x, y, border = 2)
 	),
 	'L': attrdict(
 		arity = 1,
@@ -2563,7 +2566,7 @@ atoms = {
 	),
 	'œp': attrdict(
 		arity = 2,
-		call = lambda x, y: partition_at(x, y, keep_border = False)
+		call = lambda x, y: partition_at(x, y, border = 0)
 	),
 	'œṗ': attrdict(
 		arity = 2,
@@ -3054,7 +3057,6 @@ quicks['Ƈ'] = quicks['Ðf']
 hypers['Ɱ'] = hypers['Ð€']
 quicks['Ƭ'] = quicks['ÐĿ']
 atoms ['Ẓ'] = atoms ['ÆP']
-atoms ['k'] = atoms ['œṗ']
 atoms ['ḋ'] = atoms ['æ.']
 
 chain_separators = {
