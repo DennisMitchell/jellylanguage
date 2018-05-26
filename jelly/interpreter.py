@@ -138,11 +138,14 @@ def distinct_sieve(array):
 		result.append(1 if i == array.index(x) else 0)
 	return result
 
-def dot_product(left, right):
+def dot_product(left, right, truncate = False):
 	left, right = iterable(left), iterable(right)
 	if complex in map(type, left + right):
 		right = [complex(t).conjugate() for t in right]
-	product = sum(dyadic_link(atoms['×'], (left, right)))
+	if truncate:
+		product = sum(map(operator.mul, left, right))
+	else:
+		product = sum(dyadic_link(atoms['×'], (left, right)))
 	if product.imag == 0:
 		product = product.real
 		if type(product) != int and product.is_integer():
@@ -1428,6 +1431,12 @@ atoms = {
 		ldepth = 0,
 		rdepth = 0,
 		call = lambda x, y: int(y % x == 0 if x else y == 0)
+	),
+	'ḋ': attrdict(
+		arity = 2,
+		ldepth = 1,
+		rdepth = 1,
+		call = lambda x, y: dot_product(x, y, truncate = True)
 	),
 	'E': attrdict(
 		arity = 1,
@@ -3057,14 +3066,14 @@ quicks['Ƈ'] = quicks['Ðf']
 hypers['Ɱ'] = hypers['Ð€']
 quicks['Ƭ'] = quicks['ÐĿ']
 atoms ['Ẓ'] = atoms ['ÆP']
-atoms ['ḋ'] = atoms ['æ.']
 
 chain_separators = {
 	'ø': (0, '', True),
 	'µ': (1, '', True),
 	')': (1, '€', True),
 	'ð': (2, '', True),
-	'ɓ': (2, '', False)}
+	'ɓ': (2, '', False)
+}
 default_chain_separation = (-1, '', True)
 str_arities = ''.join(chain_separators.keys())
 str_strings = '“[^«»‘’”]*[«»‘’”]?'
