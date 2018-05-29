@@ -480,14 +480,15 @@ def leading_nilad(chain):
 def lcm(x, y):
 	return x * y // (math.gcd(x, y) or 1)
 
-def loop_until_loop(link, args, return_all = False, return_loop = False):
+def loop_until_loop(link, args, return_all = False, return_loop = False, vary_rarg = True):
 	ret, rarg = args
 	cumret = []
 	while True:
 		cumret.append(ret)
 		larg = ret
 		ret = variadic_link(link, (larg, rarg))
-		rarg = larg
+		if vary_rarg:
+			rarg = larg
 		if ret in cumret:
 			if return_all:
 				return cumret
@@ -2916,6 +2917,13 @@ quicks = {
 			call = lambda z = None: copy_to(atoms['®'], variadic_link(links[0], (niladic_link(atoms['®']), z)))
 		)]
 	),
+	'Ƭ': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = links[0].arity,
+			call = lambda x = None, y = None: loop_until_loop(links[0], (x, y), return_all = True, vary_rarg = False)
+		)]
+	),
 	'ƭ': attrdict(
 		condition = lambda links: links and (
 			(links[-1].arity == 0 and len(links) - 1 == links[-1].call()) or
@@ -3088,7 +3096,6 @@ hypers = {
 
 quicks['Ƈ'] = quicks['Ðf']
 hypers['Ɱ'] = hypers['Ð€']
-quicks['Ƭ'] = quicks['ÐĿ']
 atoms ['Ẓ'] = atoms ['ÆP']
 
 chain_separators = {
