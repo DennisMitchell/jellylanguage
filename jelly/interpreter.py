@@ -942,9 +942,11 @@ def shuffle(array):
 	random.shuffle(array)
 	return array
 
-def sparse(link, args, indices):
+def sparse(link, args, indices, indices_literal = False):
 	larg = args[0]
-	indices = [index - 1 if index > 0 else index - 1 + len(larg) for index in iterable(variadic_link(indices, args))]
+	if not indices_literal:
+		indices = iterable(variadic_link(indices, args))
+	indices = [index - 1 if index > 0 else index - 1 + len(larg) for index in indices]
 	ret = iterable(variadic_link(link, args))
 	return [ret[t % len(ret)] if t in indices else u for t, u in enumerate(larg)]
 
@@ -2311,6 +2313,10 @@ atoms = {
 		arity = 1,
 		call = lambda z: list(enumerate_md(z))
 	),
+	'Œe': attrdict(
+		arity = 1,
+		call = lambda z: [t for t in iterable(z, make_range = True)[1::2]]
+	),
 	'ŒG': attrdict(
 		arity = 1,
 		ldepth = 1,
@@ -2346,6 +2352,10 @@ atoms = {
 	'ŒM': attrdict(
 		arity = 1,
 		call = maximal_indices_md
+	),
+	'Œo': attrdict(
+		arity = 1,
+		call = lambda z: [t for t in iterable(z, make_range = True)[::2]]
 	),
 	'ŒP': attrdict(
 		arity = 1,
@@ -2958,6 +2968,13 @@ quicks = {
 			call = lambda x = None, y = None: while_loop(links[0], links[1], (x, y), cumulative = True)
 		)]
 	),
+	'Ðe': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = max(1, links[0].arity),
+			call = lambda x, y = None: sparse(links[0], (x, y), range(2, len(x) + 2, 2), indices_literal = True)
+		)]
+	),
 	'Ðf': attrdict(
 		condition = lambda links: links,
 		quicklink = lambda links, outmost_links, index: [attrdict(
@@ -3005,6 +3022,13 @@ quicks = {
 		quicklink = lambda links, outmost_links, index: [attrdict(
 			arity = links[0].arity,
 			call = lambda x, y = None: extremes(max, links[0], (x, y))
+		)]
+	),
+	'Ðo': attrdict(
+		condition = lambda links: links,
+		quicklink = lambda links, outmost_links, index: [attrdict(
+			arity = max(1, links[0].arity),
+			call = lambda x, y = None: sparse(links[0], (x, y), range(1, len(x) + 1, 2), indices_literal = True)
 		)]
 	),
 }
