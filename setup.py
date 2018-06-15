@@ -9,7 +9,7 @@ setup(
 	scripts = [
 		'scripts/jelly'
 	],
-	requires = [
+	install_requires = [
 		'sympy'
 	]
 )
