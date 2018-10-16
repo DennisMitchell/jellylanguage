@@ -2276,6 +2276,10 @@ atoms = {
 		arity = 1,
 		call = is_palindrome
 	),
+	'Œb': attrdict(
+		arity = 1,
+		call = lambda z: partitions(z) if z else [[]]
+	),
 	'Œc': attrdict(
 		arity = 1,
 		rdepth = 0,
