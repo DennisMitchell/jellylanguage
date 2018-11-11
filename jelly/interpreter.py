@@ -2582,7 +2582,7 @@ atoms = {
 	),
 	'œP': attrdict(
 		arity = 2,
-		call = lambda x, y: partition_at([int(t + 1 in iterable(x)) for t in range(max(iterable(x) or [0]))], y, keep_border = False)
+		call = lambda x, y: partition_at([int(t + 1 in iterable(x)) for t in range(max(iterable(x) or [0]))], y, border = 0)
 	),
 	'œṖ': attrdict(
 		arity = 2,
