@@ -298,9 +298,9 @@ def get_request(url):
 	url = (re.match(r"[A-Za-z][A-Za-z0-9+.-]*://", url) == None and "http://" or "") + url
 	response = urllib_request.request.urlopen(url).read()
 	try:
-		return response.decode('utf-8')
+		return list(response.decode('utf-8'))
 	except:
-		return response.decode('latin-1')
+		return list(response.decode('latin-1'))
 
 def grid(array):
 	if depth(array) == 1:
