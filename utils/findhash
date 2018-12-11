@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd "$(dirname -- "$(readlink -e -- "$0")")"
+
+[[ -f findhash2 ]] || make -s
+
+(($# == 2)) && set "$@" $(seq "$2")
+
+python3 findhash1.py | ./findhash2 "$@"

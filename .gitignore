@@ -1,2 +1,3 @@
 build
+utils/findhash2
 *.pyc

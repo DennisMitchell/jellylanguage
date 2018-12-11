@@ -1,4 +1,4 @@
-import cmath, copy, functools, itertools, locale, math, operator, re, sys, time
+import cmath, copy, functools, hashlib, itertools, locale, math, operator, re, sys, time
 
 from .utils import attrdict, lazy_import
 
@@ -420,6 +420,23 @@ def is_string(argument):
 
 def jelly_eval(code, arguments):
 	return variadic_chain(parse_code(code)[-1] if code else '', arguments)
+
+def jelly_hash(spec, object):
+	if len(spec) > 2:
+		spec = [spec[0], spec[1:]]
+	if type(spec[0]) == list:
+		digits = [code_page.find(item) if type(item) == str else item for item in spec[0]]
+		magic = from_base([digit + 1 for digit in digits], 250) + 1
+	else:
+		magic = spec[0] + 1
+
+	buckets = spec[1] if type(spec[1]) == list else range(1, spec[1] + 1)
+
+	shake = hashlib.shake_256(repr(object).encode('utf-8')).digest(512)
+	longs = [int.from_bytes(shake[i : i + 8], 'little') for i in range(0, 512, 8)]
+	temp = sum(((magic >> i) - (magic >> i + 1)) * longs[i] for i in range(64))
+	hash = temp % 2**64 * len(buckets) >> 64
+	return buckets[hash - 1]
 
 def jelly_uneval(argument, top = True):
 	the_type = type(argument)
@@ -1541,6 +1558,10 @@ atoms = {
 	'i': attrdict(
 		arity = 2,
 		call = index_of
+	),
+	'ḥ': attrdict(
+		arity = 2,
+		call = jelly_hash
 	),
 	'ị': attrdict(
 		arity = 2,
