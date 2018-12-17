@@ -2579,6 +2579,11 @@ atoms = {
 		rdepth = 0,
 		call = shift_right
 	),
+	'œ!': attrdict(
+		arity = 2,
+		rdepth = 0,
+		call = lambda x, y: jellify(itertools.permutations(iterable(x, make_range = True), y))
+	),
 	'œc': attrdict(
 		arity = 2,
 		rdepth = 0,
