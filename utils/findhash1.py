@@ -7,7 +7,7 @@ objects = stdin.read()
 try:
 	objects = jellify(eval(objects))
 except:
-	objects = jelly_eval(objetcs, [])
+	objects = jelly_eval(objects, [])
 
 for object in objects:
 	stdout.buffer.write(shake_256(repr(object).encode('utf-8')).digest(512))
