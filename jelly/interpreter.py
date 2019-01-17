@@ -2189,7 +2189,7 @@ atoms = {
 	'Æṛ': attrdict(
 		arity = 1,
 		ldepth = 1,
-		call = lambda z: jellify(sympy.prod(map(sympy.poly('x').__sub__, z)).coeffs()[::-1])
+		call = lambda z: jellify(sympy.prod(map(sympy.poly('x').__sub__, z)).all_coeffs()[::-1])
 	),
 	'ÆT': attrdict(
 		arity = 1,
